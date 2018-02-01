@@ -14,13 +14,7 @@ public final class Grena3 {
 
     private Grena3() {
     }
-
-    public static void main(String[] args){
-        final GregorianCalendar dateTime = new GregorianCalendar();
-
-        AzimuthZenithAngle position = calculateSolarPosition(dateTime, 36.9, -122.03, 68, 1018, 15);
-        System.out.println("SPA: "+position);
-    }
+    
 
     /**
      * Calculate topocentric solar position, i.e. the location of the sun on the sky for a certain point in time on a

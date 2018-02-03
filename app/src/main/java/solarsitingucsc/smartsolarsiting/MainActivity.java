@@ -48,9 +48,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Display the camera view
+     */
     private void openCamera() {
         if (checkCameraHardware(this)) {
             mCamera = getCameraInstance();
+            //Make the display portrait mode
             mCamera.setDisplayOrientation(90);
             mPreview = new CameraPreview(this, mCamera);
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -58,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Display an alert dialog telling the user the permissions are needed
+     */
     private void showAlert() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Alert");
@@ -74,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    /**
+     * Ask for the permissions that we need, if we already have camera permissions, open the camera
+     */
     private void checkForPermissions() {
         String[] permissions = {Manifest.permission.CAMERA,
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -85,7 +95,9 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, permissions, 1);
     }
 
-    /** Check if this device has a camera */
+    /**
+     * Check if this device has a camera
+     */
     private boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
             // this device has a camera
@@ -96,7 +108,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** A safe way to get an instance of the Camera object. */
+    /**
+     * A safe way to get an instance of the Camera object.
+     */
     public Camera getCameraInstance(){
         Camera camera = null;
         try {

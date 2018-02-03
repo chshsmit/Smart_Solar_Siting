@@ -1,4 +1,4 @@
-package solarsitingucsc.smartsolarsiting;
+package solarsitingucsc.smartsolarsiting.View;
 
 import android.content.Context;
 import android.hardware.Camera;

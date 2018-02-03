@@ -1,4 +1,4 @@
-package solarsitingucsc.smartsolarsiting;
+package solarsitingucsc.smartsolarsiting.Model;
 
 /**
  * Created by chrissmith on 2/1/18.

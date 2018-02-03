@@ -1,4 +1,4 @@
-package solarsitingucsc.smartsolarsiting;
+package solarsitingucsc.smartsolarsiting.Controller;
 
 import android.Manifest;
 import android.content.Context;
@@ -13,6 +13,9 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+
+import solarsitingucsc.smartsolarsiting.R;
+import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 
 public class MainActivity extends AppCompatActivity {
 

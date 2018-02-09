@@ -2,80 +2,60 @@ package solarsitingucsc.smartsolarsiting.View;
 
 import android.content.Context;
 import android.hardware.Camera;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.List;
 
-import static android.content.ContentValues.TAG;
-
-/** A basic Camera preview class */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
-    private SurfaceHolder mHolder;
-    private Camera mCamera;
+    SurfaceHolder mHolder;
+    Camera mCamera;
 
     public CameraPreview(Context context) {
         super(context);
-    }
 
-    public CameraPreview(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public CameraPreview(Context context, Camera camera) {
-        super(context);
-        mCamera = camera;
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
         mHolder = getHolder();
         mHolder.addCallback(this);
-        // deprecated setting, but required on Android versions prior to 3.0
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
-        // The Surface has been created, now tell the camera where to draw the preview.
+        // The Surface has been created, acquire the camera and tell it where
+        // to draw.
+        mCamera = Camera.open();
         try {
             mCamera.setPreviewDisplay(holder);
-            mCamera.startPreview();
         } catch (IOException e) {
-            Log.d(TAG, "Error setting camera preview: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // empty. Take care of releasing the Camera preview in your activity.
+        // Surface will be destroyed when we return, so stop the preview.
+        // Because the CameraDevice object is not a shared resource, it's very
+        // important to release it when the activity is paused.
+        mCamera.stopPreview();
+        mCamera = null;
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-        // If your preview can change or rotate, take care of those events here.
-        // Make sure to stop the preview before resizing or reformatting it.
-
-        if (mHolder.getSurface() == null){
-            // preview surface does not exist
-            return;
+        // Now that the size is known, set up the camera parameters and begin the preview.
+         Camera.Parameters parameters = mCamera.getParameters();
+        // parameters.setPreviewSize(w, h);
+        // mCamera.setParameters(parameters);
+        List<Camera.Size> allSizes = parameters.getSupportedPictureSizes();
+        Camera.Size size = allSizes.get(0); // get top size
+        for (int i = 0; i < allSizes.size(); i++) {
+            if (allSizes.get(i).width > size.width)
+                size = allSizes.get(i);
         }
-
-        // stop preview before making changes
-        try {
-            mCamera.stopPreview();
-        } catch (Exception e){
-            // ignore: tried to stop a non-existent preview
-        }
-
-        // set preview size and make any resize, rotate or
-        // reformatting changes here
-
-        // start preview with new settings
-        try {
-            mCamera.setPreviewDisplay(mHolder);
-            mCamera.startPreview();
-
-        } catch (Exception e){
-            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
-        }
+        //set max Picture Size
+        parameters.setPictureSize(size.width, size.height);
+        mCamera.setDisplayOrientation(90);
+        mCamera.startPreview();
     }
 }

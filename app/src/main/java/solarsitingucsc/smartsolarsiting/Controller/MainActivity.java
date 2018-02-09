@@ -1,45 +1,51 @@
 package solarsitingucsc.smartsolarsiting.Controller;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Window;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 
-import solarsitingucsc.smartsolarsiting.R;
+import solarsitingucsc.smartsolarsiting.View.DrawOnTop;
 import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
-    private Camera mCamera;
-    private CameraPreview mPreview;
+    private CameraPreview mCameraPreview;
+    private DrawOnTop mDraw;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        //Remove title bar
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        //Remove notification bar
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        //Remove title and notification bars
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mCameraPreview = new CameraPreview(this);
+        mDraw = new DrawOnTop(this);
 
         checkForPermissions();
     }
 
+    /**
+     * Process the result from the asking of permissions
+     */
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[],
-                                           int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
         for (int result : grantResults) {
             if (result != PackageManager.PERMISSION_GRANTED) {
                 showAlert();
@@ -55,14 +61,9 @@ public class MainActivity extends AppCompatActivity {
      * Display the camera view
      */
     private void openCamera() {
-        if (checkCameraHardware(this)) {
-            mCamera = getCameraInstance();
-            //Make the display portrait mode
-            mCamera.setDisplayOrientation(90);
-            mPreview = new CameraPreview(this, mCamera);
-            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-            preview.addView(mPreview);
-        }
+        setContentView(mCameraPreview);
+        addContentView(mDraw,
+                new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
 
     /**
@@ -96,35 +97,5 @@ public class MainActivity extends AppCompatActivity {
             openCamera();
         }
         ActivityCompat.requestPermissions(this, permissions, 1);
-    }
-
-    /**
-     * Check if this device has a camera
-     */
-    private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            // this device has a camera
-            return true;
-        } else {
-            // no camera on this device
-            return false;
-        }
-    }
-
-    /**
-     * A safe way to get an instance of the Camera object.
-     */
-    public Camera getCameraInstance(){
-        Camera camera = null;
-        try {
-            // attempt to get a Camera instance
-            camera = Camera.open();
-        }
-        catch (Exception e){
-            // Camera is not available (in use or does not exist)
-        }
-
-        // returns null if camera is unavailable
-        return camera;
     }
 }

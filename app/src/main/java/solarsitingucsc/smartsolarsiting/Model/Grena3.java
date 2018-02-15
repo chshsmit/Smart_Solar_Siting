@@ -114,4 +114,94 @@ public final class Grena3 {
                 - (int) (0.01 * year) + day + 0.0416667 * hour - 21958;
     }
 
+    //---------------------------------------------------------------------------------------------------
+    //Averaging Grena3 Algorithm
+    //---------------------------------------------------------------------------------------------------
+
+    public static void calculateWholeMonth(){
+        GregorianCalendar currentDay = new GregorianCalendar(2018, 2, 1, 6, 0);
+        AzimuthZenithAngle position = new AzimuthZenithAngle(0,0);
+
+        //System.out.println(currentDay.get(Calendar.HOUR_OF_DAY));
+
+        System.out.println("The current day is: " +currentDay.get(Calendar.YEAR)+currentDay.get(Calendar.MONTH)+currentDay.get(Calendar.DAY_OF_MONTH));
+        while(true){
+            position = calculateSolarPosition(currentDay, 36.9, -122.03, 68);
+            System.out.println("SPA: "+position);
+
+            currentDay.add(Calendar.HOUR_OF_DAY, 1);
+
+            //System.out.println(currentDay.get(Calendar.HOUR_OF_DAY));
+
+            if(currentDay.get(Calendar.HOUR_OF_DAY) == 22){
+
+                currentDay.add(Calendar.DAY_OF_MONTH, 1);
+                currentDay.set(Calendar.HOUR_OF_DAY, 6);
+
+                if(isMonthOver(currentDay)) break;
+
+                System.out.println("The current day is: " +currentDay.get(Calendar.YEAR)+currentDay.get(Calendar.MONTH)+currentDay.get(Calendar.DAY_OF_MONTH));
+            }
+        }
+    }
+
+    public static boolean isMonthOver(GregorianCalendar date){
+        boolean isMonthOver = false;
+        switch(date.get(Calendar.MONTH)){
+
+            case 2:
+                if(date.get(Calendar.DAY_OF_MONTH) > 29) isMonthOver = true;
+                break;
+
+
+            case 4:
+                if(date.get(Calendar.DAY_OF_MONTH) > 30) isMonthOver = true;
+                break;
+
+
+            case 6:
+                if(date.get(Calendar.DAY_OF_MONTH) > 30) isMonthOver = true;
+                break;
+
+            case 8:
+                if(date.get(Calendar.DAY_OF_MONTH) > 30) isMonthOver = true;
+                break;
+
+            case 11:
+                if(date.get(Calendar.DAY_OF_MONTH) > 30) isMonthOver = true;
+                break;
+
+            default:
+                if(date.get(Calendar.DAY_OF_MONTH) == 1) isMonthOver = true;
+                break;
+        }
+
+        return isMonthOver;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

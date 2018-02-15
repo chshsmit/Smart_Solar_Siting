@@ -114,9 +114,18 @@ public final class Grena3 {
                 - (int) (0.01 * year) + day + 0.0416667 * hour - 21958;
     }
 
+    public static void calculateCurrentDay(){
+        GregorianCalendar currentDay = new GregorianCalendar();
+
+        AzimuthZenithAngle position = calculateSolarPosition(currentDay, 36.9, -122.03, 68);
+
+        System.out.println("SPA: " +position);
+    }
+
     //---------------------------------------------------------------------------------------------------
     //Averaging Grena3 Algorithm
     //---------------------------------------------------------------------------------------------------
+
 
     public static void calculateWholeMonth(){
         GregorianCalendar currentDay = new GregorianCalendar(2018, 2, 1, 6, 0);
@@ -145,7 +154,7 @@ public final class Grena3 {
         }
     }
 
-    public static boolean isMonthOver(GregorianCalendar date){
+    private static boolean isMonthOver(GregorianCalendar date){
         boolean isMonthOver = false;
         switch(date.get(Calendar.MONTH)){
 

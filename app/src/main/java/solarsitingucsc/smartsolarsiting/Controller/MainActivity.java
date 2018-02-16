@@ -13,29 +13,32 @@ import android.support.v7.app.AlertDialog;
 import android.view.Window;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 
+import solarsitingucsc.smartsolarsiting.R;
 import solarsitingucsc.smartsolarsiting.View.DrawOnTop;
 import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 
 public class MainActivity extends Activity {
 
-    private CameraPreview mCameraPreview;
-    private DrawOnTop mDraw;
+    CameraPreview mCameraPreview;
+    DrawOnTop mDraw;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+
         //Remove title and notification bars
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        mCameraPreview = new CameraPreview(this);
-        mDraw = new DrawOnTop(this);
+        openCamera();
 
-        checkForPermissions();
+//        checkForPermissions();
     }
 
     /**
@@ -59,9 +62,16 @@ public class MainActivity extends Activity {
      * Display the camera view
      */
     private void openCamera() {
-        setContentView(mCameraPreview);
-        addContentView(mDraw,
-                new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        setContentView(R.layout.activity_main);
+        FrameLayout cameraPreviewPane = (FrameLayout) findViewById(R.id.camera_preview_pane);
+
+
+        mCameraPreview = new CameraPreview(getApplicationContext(),this);
+        cameraPreviewPane.addView(mCameraPreview);
+
+
+        mDraw = new DrawOnTop(getApplicationContext());
+        cameraPreviewPane.addView(mDraw);
     }
 
     /**

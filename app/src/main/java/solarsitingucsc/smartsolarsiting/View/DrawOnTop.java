@@ -221,6 +221,17 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         canvas.restore();
     }
 
+    //This is a low pass filter used to smooth the position of the dot on the screen
+    static final float ALPHA = 0.1f;
+    protected float[] lowPass(float[] input, float[] output){
+        if(output == null) return input;
+
+        for(int i=0; i<input.length; i++){
+            output[i] = output[i] + ALPHA *(input[i] - output[i]);
+        }
+        return output;
+    }
+
 
     //------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------

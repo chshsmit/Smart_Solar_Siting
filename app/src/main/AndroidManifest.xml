@@ -6,7 +6,25 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature
+        android:required="true"
+        android:name="android.hardware.camera"></uses-feature>
+    <uses-feature
+        android:required="false"
+        android:name="android.hardware.camera.autofocus"></uses-feature>
+    <uses-feature
+        android:required="true"
+        android:name="android.hardware.location.gps"></uses-feature>
+    <uses-feature
+        android:required="true"
+        android:name="android.hardware.sensor.accelerometer"></uses-feature>
+    <uses-feature
+        android:required="true"
+        android:name="android.hardware.sensor.compass"></uses-feature>
+    <uses-feature
+        android:required="true"
+        android:name="android.hardware.sensor.gyroscope"></uses-feature>
+
 
     <application
         android:allowBackup="true"

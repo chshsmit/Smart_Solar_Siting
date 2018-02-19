@@ -22,23 +22,18 @@ import android.text.TextPaint;
 import android.util.Log;
 import android.view.View;
 
+import java.util.GregorianCalendar;
+
+import solarsitingucsc.smartsolarsiting.Model.AzimuthZenithAngle;
+import solarsitingucsc.smartsolarsiting.Model.DeltaT;
+import solarsitingucsc.smartsolarsiting.Model.Grena3;
+
 public class DrawOnTop extends View implements SensorEventListener, LocationListener {
 
     public static final String DEBUG_TAG = "DrawOnTop Log";
 
     private final Context context;
     private Handler handler;
-
-    // Mount Washington, NH: 44.27179, -71.3039, 6288 ft (highest peak
-    private final static Location mountWashington = new Location("manual");
-    static {
-        mountWashington.setLatitude(-15.5275d);
-        mountWashington.setLongitude(323.4542d);
-        //mountWashington.setLatitude(43.998d);
-        //mountWashington.setLongitude(-71.2d);
-        mountWashington.setAltitude(0.1d);
-    }
-
 
     String accelData = "Accelerometer Data";
     String compassData = "Compass Data";
@@ -48,11 +43,15 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     private SensorManager sensors = null;
 
     private Location lastLocation;
+    private double currLatitude;
+    private double currLongitude;
     private float[] lastAccelerometer;
     private float[] lastCompass;
 
     private float verticalFOV;
     private float horizontalFOV;
+    private AzimuthZenithAngle currSunPosition = null;
+    private boolean alreadyCalculated = false;
 
     private boolean isAccelAvailable;
     private boolean isCompassAvailable;
@@ -134,21 +133,18 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
         // Draw something fixed (for now) over the camera view
 
-
-        float curBearingToMW = 0.0f;
-
         StringBuilder text = new StringBuilder(accelData).append("\n");
         text.append(compassData).append("\n");
         text.append(gyroData).append("\n");
 
         if (lastLocation != null) {
+
             text.append(
                     String.format("GPS = (%.3f, %.3f) @ (%.2f meters up)",
                             lastLocation.getLatitude(),
                             lastLocation.getLongitude(),
                             lastLocation.getAltitude())).append("\n");
 
-            curBearingToMW = lastLocation.bearingTo(mountWashington);
 
             text.append(String.format("Bearing to MW: %.3f", 200.0f))
                     .append("\n");
@@ -157,7 +153,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         // compute rotation matrix
         float rotation[] = new float[9];
         float identity[] = new float[9];
-        if (lastAccelerometer != null && lastCompass != null) {
+        if (lastAccelerometer != null && lastCompass != null && lastLocation != null) {
             boolean gotRotation = SensorManager.getRotationMatrix(rotation,
                     identity, lastAccelerometer, lastCompass);
             if (gotRotation) {
@@ -178,20 +174,27 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                         .append("\n");
 
 
-                // draw horizon line (a nice sanity check piece) and the target (if it's on the screen)
+                // draw the target (if it's on the screen)
                 canvas.save();
                 // use roll for screen rotation
                 canvas.rotate((float)(0.0f- Math.toDegrees(orientation[2])));
 
+
+                if(!alreadyCalculated) {
+                    currSunPosition = calculateCurrentSunPosition();
+
+                    System.out.println(currSunPosition.toString());
+                    alreadyCalculated = true;
+                }
                 float dx, dy;
 
                 if(Math.toDegrees(orientation[0]) < 0){
-                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-(-160.0f)));   //AZIMUTH CORRECTION
-                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-(-30.0f))) ;    //PITCH/ELEVATION CORRECTION
+                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-(((float) currSunPosition.getNegativeAzimuth()))));   //AZIMUTH CORRECTION
+                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) currSunPosition.getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
 
                 } else{
-                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-(200.0f)));   //AZIMUTH CORRECTION
-                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-(-30.0f))) ;    //PITCH/ELEVATION CORRECTION
+                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-((float) currSunPosition.getAzimuth())));   //AZIMUTH CORRECTION
+                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) currSunPosition.getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
 
                 }
 
@@ -220,6 +223,19 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         textBox.draw(canvas);
         canvas.restore();
     }
+
+    public AzimuthZenithAngle calculateCurrentSunPosition(){
+        GregorianCalendar date = new GregorianCalendar();
+        double deltaT = DeltaT.estimate(date);
+        currLatitude = lastLocation.getLatitude();
+        currLongitude = lastLocation.getLongitude();
+        System.out.println(currLatitude);
+        System.out.println(currLongitude);
+
+        return Grena3.calculateSolarPosition(date, currLatitude, currLongitude, deltaT);
+    }
+
+
 
     //This is a low pass filter used to smooth the position of the dot on the screen
     static final float ALPHA = 0.1f;

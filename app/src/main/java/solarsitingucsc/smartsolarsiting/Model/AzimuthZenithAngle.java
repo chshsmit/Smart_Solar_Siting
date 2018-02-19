@@ -7,10 +7,14 @@ package solarsitingucsc.smartsolarsiting.Model;
 public class AzimuthZenithAngle {
     private final double azimuth;
     private final double zenithAngle;
+    private final double elevationFromTheHorizon;
+    private final double negativeAzimuth;
 
     public AzimuthZenithAngle(final double azimuth, final double zenithAngle) {
         this.zenithAngle = zenithAngle;
         this.azimuth = azimuth;
+        this.elevationFromTheHorizon = 90 - zenithAngle;
+        this.negativeAzimuth = azimuth - 360;
     }
 
     public final double getZenithAngle() {
@@ -19,6 +23,14 @@ public class AzimuthZenithAngle {
 
     public final double getAzimuth() {
         return azimuth;
+    }
+
+    public final double getNegativeAzimuth() {
+        return negativeAzimuth;
+    }
+
+    public final double getElevationFromTheHorizon(){
+        return elevationFromTheHorizon;
     }
 
     @Override

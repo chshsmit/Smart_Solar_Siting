@@ -125,6 +125,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     }
 
 
+    AzimuthZenithAngle[] averagePositionArray = new AzimuthZenithAngle[16];
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -153,7 +154,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         // compute rotation matrix
         float rotation[] = new float[9];
         float identity[] = new float[9];
-        if (lastAccelerometer != null && lastCompass != null && lastLocation != null) {
+        if (lastAccelerometer != null && lastCompass != null) {
             boolean gotRotation = SensorManager.getRotationMatrix(rotation,
                     identity, lastAccelerometer, lastCompass);
             if (gotRotation) {
@@ -181,37 +182,40 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
 
                 if(!alreadyCalculated) {
-                    currSunPosition = calculateCurrentSunPosition();
-
-                    System.out.println(currSunPosition.toString());
+                    //currSunPosition = calculateCurrentSunPosition();
+                    averagePositionArray = Grena3.calculateWholeMonth(2018, 2, 36.9, -122.03 );
+                    //System.out.println(currSunPosition.toString());
                     alreadyCalculated = true;
                 }
-                float dx, dy;
-
-                if(Math.toDegrees(orientation[0]) < 0){
-                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-(((float) currSunPosition.getNegativeAzimuth()))));   //AZIMUTH CORRECTION
-                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) currSunPosition.getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
-
-                } else{
-                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-((float) currSunPosition.getAzimuth())));   //AZIMUTH CORRECTION
-                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) currSunPosition.getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
-
-                }
-
-                // wait to translate the dx so the horizon doesn't get pushed off
-                canvas.translate(0.0f, 0.0f-dy);
+                drawMultipleCircles(canvas, averagePositionArray, orientation);
 
 
-                // make our line big enough to draw regardless of rotation and translation
-                //canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight()/2, canvas.getWidth()+canvas.getHeight(), canvas.getHeight()/2, targetPaint);
-
-                // now translate the dx
-                canvas.translate(0.0f-dx, 0.0f);
-
-                // draw our point -- we've rotated and translated this to the right spot already
-                canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 30.0f, targetPaint);
-
-                canvas.restore();
+//                float dx, dy;
+//
+//                if(Math.toDegrees(orientation[0]) < 0){
+//                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-(((float) currSunPosition.getNegativeAzimuth()))));   //AZIMUTH CORRECTION
+//                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) currSunPosition.getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
+//
+//                } else{
+//                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-((float) currSunPosition.getAzimuth())));   //AZIMUTH CORRECTION
+//                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) currSunPosition.getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
+//
+//                }
+//
+//                // wait to translate the dx so the horizon doesn't get pushed off
+//                canvas.translate(0.0f, 0.0f-dy);
+//
+//
+//                // make our line big enough to draw regardless of rotation and translation
+//                //canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight()/2, canvas.getWidth()+canvas.getHeight(), canvas.getHeight()/2, targetPaint);
+//
+//                // now translate the dx
+//                canvas.translate(0.0f-dx, 0.0f);
+//
+//                // draw our point -- we've rotated and translated this to the right spot already
+//                canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 30.0f, targetPaint);
+//
+//                canvas.restore();
 
             }
         }
@@ -222,6 +226,43 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                 480, Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
         textBox.draw(canvas);
         canvas.restore();
+    }
+
+    public void drawMultipleCircles(Canvas canvas, AzimuthZenithAngle[] averageArray, float[] orientation){
+        System.out.println("Drawing Multiple Circles");
+        //Grena3.printAngleArray(averageArray);
+        float dx, dy;
+
+        for(int i=0; i < averageArray.length; i++){
+            canvas.save();
+            if(Math.toDegrees(orientation[0]) < 0){
+                dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-(((float) averageArray[i].getNegativeAzimuth()))));   //AZIMUTH CORRECTION
+                dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) averageArray[i].getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
+
+            } else{
+                dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-((float) averageArray[i].getAzimuth())));   //AZIMUTH CORRECTION
+                dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) averageArray[i].getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
+
+            }
+
+            // wait to translate the dx so the horizon doesn't get pushed off
+            canvas.translate(0.0f, 0.0f-dy);
+
+
+            // make our line big enough to draw regardless of rotation and translation
+            canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight()/2, canvas.getWidth()+canvas.getHeight(), canvas.getHeight()/2, targetPaint);
+
+            // now translate the dx
+            canvas.translate(0.0f-dx, 0.0f);
+
+            // draw our point -- we've rotated and translated this to the right spot already
+            canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 30.0f, targetPaint);
+
+            canvas.restore();
+
+        }
+
+
     }
 
     public AzimuthZenithAngle calculateCurrentSunPosition(){
@@ -271,6 +312,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
                 lastAccelerometer = lowPass(event.values.clone(), lastAccelerometer);
+                //lastAccelerometer = event.values.clone();
                 accelData = msg.toString();
                 break;
             case Sensor.TYPE_GYROSCOPE:
@@ -278,6 +320,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                 break;
             case Sensor.TYPE_MAGNETIC_FIELD:
                 lastCompass = lowPass(event.values.clone(), lastCompass);
+                //lastCompass = event.values.clone();
                 compassData = msg.toString();
                 break;
         }

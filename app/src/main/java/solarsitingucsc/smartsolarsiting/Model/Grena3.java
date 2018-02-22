@@ -133,20 +133,22 @@ public final class Grena3 {
         return monthlyAverageForEntireYear;
     }
 
-
+    static int hourIndex = 0;
     //Calculate the average position of the sun over a day for a whole month
     public static AzimuthZenithAngle[] calculateWholeMonth(int year, int month, double latitude, double longitude){
         GregorianCalendar currentDay = new GregorianCalendar(year, month, 1, 6, 0);
         AzimuthZenithAngle position = new AzimuthZenithAngle(0,0);
         AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[16];
-        int hourIndex = 0;
+        hourIndex = 0;
 
         System.out.println("The current day is: " +currentDay.get(Calendar.YEAR)+currentDay.get(Calendar.MONTH)+currentDay.get(Calendar.DAY_OF_MONTH));
         while(true){
             position = calculateSolarPosition(currentDay, latitude, longitude, 68);
 
-            addAngleToAverageArray(position, averagePositionForMonth, hourIndex);
+            //if(hourIndex == averagePositionForMonth.length) break;
+            addAngleToAverageArray(position, averagePositionForMonth);
 
+            currentDay.add(Calendar.HOUR_OF_DAY, 1);
 
             hourIndex++;
             if(currentDay.get(Calendar.HOUR_OF_DAY) == 22){
@@ -162,17 +164,27 @@ public final class Grena3 {
         return averagePositionForMonth;
     }
 
-    public static void calculateCurrentDay(){
+
+    public static void calculateCurrentDay(double latitude, double longitude){
         GregorianCalendar currentDay = new GregorianCalendar();
 
-        AzimuthZenithAngle position = calculateSolarPosition(currentDay, 36.9, -122.03, 68);
+        AzimuthZenithAngle position = calculateSolarPosition(currentDay, latitude, longitude, 68);
 
         System.out.println("SPA: " +position);
     }
 
+    public static void printAngleArray(AzimuthZenithAngle[] averageArray){
+        System.out.println("Next Month");
+        for(int i=0; i < averageArray.length; i++){
+            System.out.println(i);
+            System.out.println(averageArray[i].toString());
+        }
+    }
 
 
-    public static void addAngleToAverageArray(AzimuthZenithAngle newAngle, AzimuthZenithAngle[] averageArray, int hourIndex){
+
+    public static void addAngleToAverageArray(AzimuthZenithAngle newAngle, AzimuthZenithAngle[] averageArray){
+        System.out.println(hourIndex);
         if(averageArray[hourIndex] == null){
             averageArray[hourIndex] = newAngle;
         }else{

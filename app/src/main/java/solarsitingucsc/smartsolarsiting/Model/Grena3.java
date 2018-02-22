@@ -4,6 +4,7 @@ package solarsitingucsc.smartsolarsiting.Model;
  * Created by chrissmith on 2/1/18.
  */
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -114,6 +115,53 @@ public final class Grena3 {
                 - (int) (0.01 * year) + day + 0.0416667 * hour - 21958;
     }
 
+    //---------------------------------------------------------------------------------------------------
+    //Averaging Grena3 Algorithm
+    //---------------------------------------------------------------------------------------------------
+
+    //static AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[16];
+
+
+    public static ArrayList<AzimuthZenithAngle[]> calculateWholeYear(GregorianCalendar currentDate, double latitude, double longitude){
+        ArrayList<AzimuthZenithAngle[]> monthlyAverageForEntireYear= new ArrayList<AzimuthZenithAngle[]>();
+        int currYear = currentDate.get(Calendar.YEAR);
+
+        for(int i=Calendar.JANUARY; i <= Calendar.DECEMBER; i++){
+            monthlyAverageForEntireYear.add(i, calculateWholeMonth(currYear, i, latitude, longitude));
+        }
+
+        return monthlyAverageForEntireYear;
+    }
+
+
+    //Calculate the average position of the sun over a day for a whole month
+    public static AzimuthZenithAngle[] calculateWholeMonth(int year, int month, double latitude, double longitude){
+        GregorianCalendar currentDay = new GregorianCalendar(year, month, 1, 6, 0);
+        AzimuthZenithAngle position = new AzimuthZenithAngle(0,0);
+        AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[16];
+        int hourIndex = 0;
+
+        System.out.println("The current day is: " +currentDay.get(Calendar.YEAR)+currentDay.get(Calendar.MONTH)+currentDay.get(Calendar.DAY_OF_MONTH));
+        while(true){
+            position = calculateSolarPosition(currentDay, latitude, longitude, 68);
+
+            addAngleToAverageArray(position, averagePositionForMonth, hourIndex);
+
+
+            hourIndex++;
+            if(currentDay.get(Calendar.HOUR_OF_DAY) == 22){
+
+                currentDay.add(Calendar.DAY_OF_MONTH, 1);
+                currentDay.set(Calendar.HOUR_OF_DAY, 6);
+                hourIndex = 0;
+
+                if(isMonthOver(currentDay)) break;
+
+            }
+        }
+        return averagePositionForMonth;
+    }
+
     public static void calculateCurrentDay(){
         GregorianCalendar currentDay = new GregorianCalendar();
 
@@ -122,44 +170,23 @@ public final class Grena3 {
         System.out.println("SPA: " +position);
     }
 
-    //---------------------------------------------------------------------------------------------------
-    //Averaging Grena3 Algorithm
-    //---------------------------------------------------------------------------------------------------
 
 
-    public static void calculateWholeMonth(){
-        GregorianCalendar currentDay = new GregorianCalendar(2018, 2, 1, 6, 0);
-        AzimuthZenithAngle position = new AzimuthZenithAngle(0,0);
-
-        //System.out.println(currentDay.get(Calendar.HOUR_OF_DAY));
-
-        System.out.println("The current day is: " +currentDay.get(Calendar.YEAR)+currentDay.get(Calendar.MONTH)+currentDay.get(Calendar.DAY_OF_MONTH));
-        while(true){
-            position = calculateSolarPosition(currentDay, 36.9, -122.03, 68);
-            System.out.println("SPA: "+position);
-
-            currentDay.add(Calendar.HOUR_OF_DAY, 1);
-
-            //System.out.println(currentDay.get(Calendar.HOUR_OF_DAY));
-
-            if(currentDay.get(Calendar.HOUR_OF_DAY) == 22){
-
-                currentDay.add(Calendar.DAY_OF_MONTH, 1);
-                currentDay.set(Calendar.HOUR_OF_DAY, 6);
-
-                if(isMonthOver(currentDay)) break;
-
-                System.out.println("The current day is: " +currentDay.get(Calendar.YEAR)+currentDay.get(Calendar.MONTH)+currentDay.get(Calendar.DAY_OF_MONTH));
-            }
+    public static void addAngleToAverageArray(AzimuthZenithAngle newAngle, AzimuthZenithAngle[] averageArray, int hourIndex){
+        if(averageArray[hourIndex] == null){
+            averageArray[hourIndex] = newAngle;
+        }else{
+            averageArray[hourIndex] = averageArray[hourIndex].twoAngleAverage(newAngle);
         }
     }
+
 
     private static boolean isMonthOver(GregorianCalendar date){
         boolean isMonthOver = false;
         switch(date.get(Calendar.MONTH)){
 
             case 2:
-                if(date.get(Calendar.DAY_OF_MONTH) > 29) isMonthOver = true;
+                if(date.get(Calendar.DAY_OF_MONTH) > 28) isMonthOver = true;
                 break;
 
 

@@ -33,6 +33,20 @@ public class AzimuthZenithAngle {
         return elevationFromTheHorizon;
     }
 
+    public AzimuthZenithAngle twoAngleAverage(AzimuthZenithAngle newPosition){
+
+        double newAzimuth = newPosition.getAzimuth();
+        double newZenith = newPosition.getZenithAngle();
+
+        newAzimuth = (this.getAzimuth() + newAzimuth)/2;
+        newZenith = (this.getZenithAngle() + newZenith)/2;
+
+        AzimuthZenithAngle averagedPosition = new AzimuthZenithAngle(newAzimuth, newZenith);
+
+        return averagedPosition;
+    }
+
+
     @Override
     public String toString() {
         return String.format("azimuth %.6f°, zenith angle %.6f°", azimuth, zenithAngle);

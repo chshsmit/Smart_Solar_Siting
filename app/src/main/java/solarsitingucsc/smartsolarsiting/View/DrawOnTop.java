@@ -73,31 +73,42 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         locationManager = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);
 
+        initializeSensors();
+        startSensors();
+        startGPS();
+
+        initializeCameraParamters();
+        initializePaints();
+    }
+
+    private void initializeSensors(){
         sensors = (SensorManager) context
                 .getSystemService(Context.SENSOR_SERVICE);
         accelSensor = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         compassSensor = sensors.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         gyroSensor = sensors.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+    }
 
-        startSensors();
-        startGPS();
-
+    private void initializeCameraParamters(){
         // get some camera parameters
         Camera camera = Camera.open();
         Camera.Parameters params = camera.getParameters();
         verticalFOV = params.getVerticalViewAngle();
         horizontalFOV = params.getHorizontalViewAngle();
         camera.release();
+    }
 
+    private void initializePaints(){
         // paint for text
         contentPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         contentPaint.setTextAlign(Align.LEFT);
-        contentPaint.setTextSize(20);
+        contentPaint.setTextSize(40);
         contentPaint.setColor(Color.RED);
 
         // paint for target
         targetPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         targetPaint.setColor(Color.GREEN);
+
     }
 
     private void startSensors() {
@@ -127,29 +138,15 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
     AzimuthZenithAngle[] averagePositionArray = new AzimuthZenithAngle[16];
 
+
     @Override
     protected void onDraw(Canvas canvas) {
         //Log.d(DEBUG_TAG, "onDraw");
         super.onDraw(canvas);
 
         // Draw something fixed (for now) over the camera view
+        StringBuilder text = buildDebugInformation();
 
-        StringBuilder text = new StringBuilder(accelData).append("\n");
-        text.append(compassData).append("\n");
-        text.append(gyroData).append("\n");
-
-        if (lastLocation != null) {
-
-            text.append(
-                    String.format("GPS = (%.3f, %.3f) @ (%.2f meters up)",
-                            lastLocation.getLatitude(),
-                            lastLocation.getLongitude(),
-                            lastLocation.getAltitude())).append("\n");
-
-
-            text.append(String.format("Bearing to MW: %.3f", 200.0f))
-                    .append("\n");
-        }
 
         // compute rotation matrix
         float rotation[] = new float[9];
@@ -159,6 +156,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                     identity, lastAccelerometer, lastCompass);
             if (gotRotation) {
                 float cameraRotation[] = new float[9];
+
                 // remap such that the camera is pointing straight down the Y
                 // axis
                 SensorManager.remapCoordinateSystem(rotation,
@@ -187,35 +185,9 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                     //System.out.println(currSunPosition.toString());
                     alreadyCalculated = true;
                 }
+
                 drawMultipleCircles(canvas, averagePositionArray, orientation);
 
-
-//                float dx, dy;
-//
-//                if(Math.toDegrees(orientation[0]) < 0){
-//                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-(((float) currSunPosition.getNegativeAzimuth()))));   //AZIMUTH CORRECTION
-//                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) currSunPosition.getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
-//
-//                } else{
-//                    dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-((float) currSunPosition.getAzimuth())));   //AZIMUTH CORRECTION
-//                    dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) currSunPosition.getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
-//
-//                }
-//
-//                // wait to translate the dx so the horizon doesn't get pushed off
-//                canvas.translate(0.0f, 0.0f-dy);
-//
-//
-//                // make our line big enough to draw regardless of rotation and translation
-//                //canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight()/2, canvas.getWidth()+canvas.getHeight(), canvas.getHeight()/2, targetPaint);
-//
-//                // now translate the dx
-//                canvas.translate(0.0f-dx, 0.0f);
-//
-//                // draw our point -- we've rotated and translated this to the right spot already
-//                canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 30.0f, targetPaint);
-//
-//                canvas.restore();
 
             }
         }
@@ -226,6 +198,24 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                 480, Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
         textBox.draw(canvas);
         canvas.restore();
+    }
+
+    public StringBuilder buildDebugInformation(){
+        StringBuilder text = new StringBuilder(accelData).append("\n");
+        text.append(compassData).append("\n");
+        text.append(gyroData).append("\n");
+
+        if (lastLocation != null) {
+
+            text.append(
+                    String.format("GPS = (%.3f, %.3f) @ (%.2f meters up)",
+                            lastLocation.getLatitude(),
+                            lastLocation.getLongitude(),
+                            lastLocation.getAltitude())).append("\n");
+
+
+        }
+        return text;
     }
 
     public void drawMultipleCircles(Canvas canvas, AzimuthZenithAngle[] averageArray, float[] orientation){

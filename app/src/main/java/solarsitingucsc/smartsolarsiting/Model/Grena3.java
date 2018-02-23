@@ -138,7 +138,7 @@ public final class Grena3 {
     public static AzimuthZenithAngle[] calculateWholeMonth(int year, int month, double latitude, double longitude){
         GregorianCalendar currentDay = new GregorianCalendar(year, month, 1, 6, 0);
         AzimuthZenithAngle position = new AzimuthZenithAngle(0,0);
-        AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[16];
+        AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[96];
         hourIndex = 0;
 
         System.out.println("The current day is: " +currentDay.get(Calendar.YEAR)+currentDay.get(Calendar.MONTH)+currentDay.get(Calendar.DAY_OF_MONTH));
@@ -148,7 +148,7 @@ public final class Grena3 {
             //if(hourIndex == averagePositionForMonth.length) break;
             addAngleToAverageArray(position, averagePositionForMonth);
 
-            currentDay.add(Calendar.HOUR_OF_DAY, 1);
+            currentDay.add(Calendar.MINUTE, 10);
 
             hourIndex++;
             if(currentDay.get(Calendar.HOUR_OF_DAY) == 22){

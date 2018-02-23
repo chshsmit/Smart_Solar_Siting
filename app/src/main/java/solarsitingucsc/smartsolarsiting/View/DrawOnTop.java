@@ -136,7 +136,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     }
 
 
-    AzimuthZenithAngle[] averagePositionArray = new AzimuthZenithAngle[16];
+    AzimuthZenithAngle[] averagePositionArray = new AzimuthZenithAngle[96];
 
 
     @Override
@@ -185,6 +185,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                     //System.out.println(currSunPosition.toString());
                     alreadyCalculated = true;
                 }
+
 
                 drawMultipleCircles(canvas, averagePositionArray, orientation);
 
@@ -240,13 +241,13 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
 
             // make our line big enough to draw regardless of rotation and translation
-            canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight()/2, canvas.getWidth()+canvas.getHeight(), canvas.getHeight()/2, targetPaint);
+            //canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight()/2, canvas.getWidth()+canvas.getHeight(), canvas.getHeight()/2, targetPaint);
 
             // now translate the dx
             canvas.translate(0.0f-dx, 0.0f);
 
             // draw our point -- we've rotated and translated this to the right spot already
-            canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 30.0f, targetPaint);
+            canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 15.0f, targetPaint);
 
             canvas.restore();
 
@@ -258,12 +259,12 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     public AzimuthZenithAngle calculateCurrentSunPosition(){
         GregorianCalendar date = new GregorianCalendar();
         double deltaT = DeltaT.estimate(date);
-        currLatitude = lastLocation.getLatitude();
-        currLongitude = lastLocation.getLongitude();
+        //currLatitude = lastLocation.getLatitude();
+        //currLongitude = lastLocation.getLongitude();
         System.out.println(currLatitude);
         System.out.println(currLongitude);
 
-        return Grena3.calculateSolarPosition(date, currLatitude, currLongitude, deltaT);
+        return Grena3.calculateSolarPosition(date, 36.9, -122.03, deltaT);
     }
 
 

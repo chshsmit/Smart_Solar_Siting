@@ -133,6 +133,7 @@ public final class Grena3 {
         return monthlyAverageForEntireYear;
     }
 
+
     static int hourIndex = 0;
     //Calculate the average position of the sun over a day for a whole month
     public static AzimuthZenithAngle[] calculateWholeMonth(int year, int month, double latitude, double longitude){

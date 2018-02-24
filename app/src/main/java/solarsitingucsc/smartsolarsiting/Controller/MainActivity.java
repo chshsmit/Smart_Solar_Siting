@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         openCamera();
-
+//
 //        checkForPermissions();
     }
 

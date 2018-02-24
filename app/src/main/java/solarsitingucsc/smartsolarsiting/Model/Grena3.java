@@ -6,6 +6,7 @@ package solarsitingucsc.smartsolarsiting.Model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static java.lang.Math.*;
@@ -122,15 +123,67 @@ public final class Grena3 {
     //static AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[16];
 
 
-    public static ArrayList<AzimuthZenithAngle[]> calculateWholeYear(GregorianCalendar currentDate, double latitude, double longitude){
-        ArrayList<AzimuthZenithAngle[]> monthlyAverageForEntireYear= new ArrayList<AzimuthZenithAngle[]>();
+    public static AzimuthZenithAngle[][] calculateWholeYear(double latitude,
+                                                            double longitude){
+//        ArrayList<AzimuthZenithAngle[]> monthlyAverageForEntireYear= new ArrayList<>();
+        AzimuthZenithAngle[][] a = new AzimuthZenithAngle[7][];
+        GregorianCalendar currentDate = new GregorianCalendar();
         int currYear = currentDate.get(Calendar.YEAR);
 
-        for(int i=Calendar.JANUARY; i <= Calendar.DECEMBER; i++){
-            monthlyAverageForEntireYear.add(i, calculateWholeMonth(currYear, i, latitude, longitude));
+        Calendar start = Calendar.getInstance();
+        start.setTime(currentDate.getTime());
+        Calendar end = Calendar.getInstance();
+        currentDate.add(Calendar.YEAR, 1);
+        end.setTime(currentDate.getTime());
+
+        for (Date date = start.getTime(); start.before(end); start.add(Calendar.MONTH, 1),
+                date = start.getTime()) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            switch (cal.get(Calendar.MONTH)) {
+                case Calendar.JANUARY:
+                case Calendar.NOVEMBER:
+                    a = addMonthAverage(a,
+                            Calendar.JANUARY, currYear, latitude, longitude);
+                    break;
+                case Calendar.FEBRUARY:
+                case Calendar.OCTOBER:
+                    a = addMonthAverage(a,
+                            Calendar.FEBRUARY, currYear, latitude, longitude);
+                    break;
+                case Calendar.MARCH:
+                case Calendar.SEPTEMBER:
+                    a = addMonthAverage(a,
+                            Calendar.MARCH, currYear, latitude, longitude);
+                    break;
+                case Calendar.APRIL:
+                case Calendar.AUGUST:
+                    a = addMonthAverage(a,
+                            Calendar.APRIL, currYear, latitude, longitude);
+                    break;
+                case Calendar.MAY:
+                case Calendar.JULY:
+                    a = addMonthAverage(a, Calendar.MAY, currYear, latitude, longitude);
+                    break;
+                case Calendar.JUNE:
+                    a = addMonthAverage(a, Calendar.JUNE, currYear, latitude, longitude);
+                    break;
+                case Calendar.DECEMBER:
+                    a = addMonthAverage(a, 6, currYear, latitude, longitude);
+                    break;
+            }
         }
 
-        return monthlyAverageForEntireYear;
+        return a;
+    }
+
+    private static AzimuthZenithAngle[][] addMonthAverage
+            (AzimuthZenithAngle[][] array, int month, int currYear, double latitude,
+             double longitude) {
+        if (array[month] == null) {
+            array[month] = calculateWholeMonth(currYear, month, latitude, longitude);
+        }
+        return array;
     }
 
 

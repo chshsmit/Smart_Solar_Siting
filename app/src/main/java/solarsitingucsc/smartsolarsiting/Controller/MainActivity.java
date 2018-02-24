@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
 
         openCamera();
 
-        checkForPermissions();
+//        checkForPermissions();
     }
 
     /**

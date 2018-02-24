@@ -136,7 +136,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     }
 
 
-    AzimuthZenithAngle[] averagePositionArray = new AzimuthZenithAngle[96];
+    AzimuthZenithAngle[][] yearAveragePositionArray = new AzimuthZenithAngle[7][];
 
 
     @Override
@@ -172,24 +172,21 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                                 Math.toDegrees(orientation[0]), Math.toDegrees(orientation[1]), Math.toDegrees(orientation[2])))
                         .append("\n");
 
-
                 // draw the target (if it's on the screen)
                 canvas.save();
                 // use roll for screen rotation
                 canvas.rotate((float)(0.0f- Math.toDegrees(orientation[2])));
 
-
                 if(!alreadyCalculated) {
                     //currSunPosition = calculateCurrentSunPosition();
-                    averagePositionArray = Grena3.calculateWholeMonth(2018, 2, 36.9, -122.03 );
+                    yearAveragePositionArray = Grena3.calculateWholeYear(36.9, -122.03);
                     //System.out.println(currSunPosition.toString());
                     alreadyCalculated = true;
                 }
 
-
-                drawMultipleCircles(canvas, averagePositionArray, orientation);
-
-
+                for (AzimuthZenithAngle[] azimuthZenithAngles: yearAveragePositionArray) {
+                    drawMultipleCircles(canvas, azimuthZenithAngles, orientation);
+                }
             }
         }
 

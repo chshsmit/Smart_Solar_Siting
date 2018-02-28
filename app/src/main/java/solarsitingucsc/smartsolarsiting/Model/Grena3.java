@@ -1,10 +1,5 @@
 package solarsitingucsc.smartsolarsiting.Model;
 
-/**
- * Created by chrissmith on 2/1/18.
- */
-
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;

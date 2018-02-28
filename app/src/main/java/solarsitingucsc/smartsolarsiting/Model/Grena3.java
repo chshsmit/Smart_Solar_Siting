@@ -126,7 +126,6 @@ public final class Grena3 {
     public static AzimuthZenithAngle[][] calculateWholeYear(double latitude, double longitude){
         AzimuthZenithAngle[][] a = new AzimuthZenithAngle[12][];
         GregorianCalendar currentDate = new GregorianCalendar();
-        int currYear = currentDate.get(Calendar.YEAR);
 
         Calendar start = Calendar.getInstance();
         start.setTime(currentDate.getTime());
@@ -139,7 +138,6 @@ public final class Grena3 {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             a = addMonthAverage(a, cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), latitude, longitude);
-//            System.out.println(cal.get(Calendar.YEAR) + " " + cal.get(Calendar.MONTH) + " " + cal.get(Calendar.DAY_OF_MONTH));
         }
 
 //        for (Date date = start.getTime(); start.before(end); start.add(Calendar.MONTH, 1),

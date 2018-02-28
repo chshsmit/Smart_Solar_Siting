@@ -227,7 +227,7 @@ public final class Grena3 {
         }
     }
 
-    public static void addAngleToAverageArray(AzimuthZenithAngle newAngle,
+    private static void addAngleToAverageArray(AzimuthZenithAngle newAngle,
                                               AzimuthZenithAngle[] averageArray, int hourIndex){
         if(averageArray[hourIndex] == null) {
             averageArray[hourIndex] = newAngle;

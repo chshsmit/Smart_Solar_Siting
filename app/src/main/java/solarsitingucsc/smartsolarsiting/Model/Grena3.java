@@ -138,7 +138,8 @@ public final class Grena3 {
                 date = start.getTime()) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
-            a = addMonthAverage(a, cal.get(Calendar.MONTH), currYear, latitude, longitude);
+            a = addMonthAverage(a, cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), latitude, longitude);
+//            System.out.println(cal.get(Calendar.YEAR) + " " + cal.get(Calendar.MONTH) + " " + cal.get(Calendar.DAY_OF_MONTH));
         }
 
 //        for (Date date = start.getTime(); start.before(end); start.add(Calendar.MONTH, 1),
@@ -183,11 +184,9 @@ public final class Grena3 {
     }
 
     private static AzimuthZenithAngle[][] addMonthAverage
-            (AzimuthZenithAngle[][] array, int month, int currYear, double latitude,
-             double longitude) {
-        if (array[month] == null) {
-            array[month] = calculateWholeMonth(currYear, month, latitude, longitude);
-        }
+            (AzimuthZenithAngle[][] array, int month, int year, double latitude, double longitude) {
+        if (array[month] == null)
+            array[month] = calculateWholeMonth(year, month, latitude, longitude);
         return array;
     }
 
@@ -201,13 +200,10 @@ public final class Grena3 {
 
         while(currentDay.get(Calendar.MONTH) == month) {
             position = calculateSolarPosition(currentDay, latitude, longitude, deltaT);
-
-            //if(hourIndex == averagePositionForMonth.length) break;
             addAngleToAverageArray(position, averagePositionForMonth, hourIndex);
-
             currentDay.add(Calendar.MINUTE, minuteIncrement);
-
             hourIndex++;
+
             if(currentDay.get(Calendar.HOUR_OF_DAY) == endTime){
                 currentDay.add(Calendar.DAY_OF_MONTH, startDay);
                 currentDay.set(Calendar.HOUR_OF_DAY, startTime);

@@ -22,6 +22,7 @@ import android.text.TextPaint;
 import android.util.Log;
 import android.view.View;
 
+import java.text.DateFormatSymbols;
 import java.util.GregorianCalendar;
 
 import solarsitingucsc.smartsolarsiting.Model.AzimuthZenithAngle;
@@ -41,7 +42,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
     private LocationManager locationManager = null;
     private SensorManager sensors = null;
-
+    private AzimuthZenithAngle[][] yearAveragePositionArray = new AzimuthZenithAngle[7][];
     private Location lastLocation;
     private double currLatitude;
     private double currLongitude;
@@ -108,6 +109,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         // paint for target
         targetPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         targetPaint.setColor(Color.GREEN);
+        targetPaint.setTextSize(100);
 
     }
 
@@ -134,10 +136,6 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
         locationManager.requestLocationUpdates(best, 50, 0, this);
     }
-
-
-    AzimuthZenithAngle[][] yearAveragePositionArray = new AzimuthZenithAngle[7][];
-
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -180,12 +178,11 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                 if(!alreadyCalculated) {
                     //currSunPosition = calculateCurrentSunPosition();
                     yearAveragePositionArray = Grena3.calculateWholeYear(36.9, -122.03);
-                    //System.out.println(currSunPosition.toString());
                     alreadyCalculated = true;
                 }
 
-                for (AzimuthZenithAngle[] azimuthZenithAngles: yearAveragePositionArray) {
-                    drawMultipleCircles(canvas, azimuthZenithAngles, orientation);
+                for (int i = 0; i < yearAveragePositionArray.length; i++) {
+                    drawMultipleCircles(canvas, yearAveragePositionArray[i], orientation, i);
                 }
             }
         }
@@ -216,41 +213,55 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         return text;
     }
 
-    public void drawMultipleCircles(Canvas canvas, AzimuthZenithAngle[] averageArray, float[] orientation){
-        System.out.println("Drawing Multiple Circles");
+    public void drawMultipleCircles(Canvas canvas, AzimuthZenithAngle[] averageArray,
+                                    float[] orientation, int month) {
         //Grena3.printAngleArray(averageArray);
         float dx, dy;
+        boolean foundHighestPoint = false;
 
-        for(int i=0; i < averageArray.length; i++){
+        for (int i = 0; i < averageArray.length; i++) {
             canvas.save();
-            if(Math.toDegrees(orientation[0]) < 0){
-                dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-(((float) averageArray[i].getNegativeAzimuth()))));   //AZIMUTH CORRECTION
-                dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) averageArray[i].getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
+            if(Math.toDegrees(orientation[0]) < 0) {
+                //AZIMUTH CORRECTION
+                dx = (float) ( (canvas.getWidth()/ horizontalFOV) *
+                        (Math.toDegrees(orientation[0])-(((float)
+                                averageArray[i].getNegativeAzimuth()))));
+                //PITCH/ELEVATION CORRECTION
+                dy = (float) ( (canvas.getHeight()/ verticalFOV) *
+                        (Math.toDegrees(orientation[1])-((float)
+                                averageArray[i].getElevationFromTheHorizon()*-1)));
 
-            } else{
-                dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-((float) averageArray[i].getAzimuth())));   //AZIMUTH CORRECTION
-                dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])-((float) averageArray[i].getElevationFromTheHorizon()*-1))) ;    //PITCH/ELEVATION CORRECTION
-
+            }
+            else {
+                //AZIMUTH CORRECTION
+                dx = (float) ( (canvas.getWidth()/ horizontalFOV) *
+                        (Math.toDegrees(orientation[0])-((float) averageArray[i].getAzimuth())));
+                //PITCH/ELEVATION CORRECTION
+                dy = (float) ( (canvas.getHeight()/ verticalFOV) *
+                        (Math.toDegrees(orientation[1])-((float)
+                                averageArray[i].getElevationFromTheHorizon()*-1)));
             }
 
             // wait to translate the dx so the horizon doesn't get pushed off
             canvas.translate(0.0f, 0.0f-dy);
 
-
-            // make our line big enough to draw regardless of rotation and translation
-            //canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight()/2, canvas.getWidth()+canvas.getHeight(), canvas.getHeight()/2, targetPaint);
-
             // now translate the dx
             canvas.translate(0.0f-dx, 0.0f);
 
             // draw our point -- we've rotated and translated this to the right spot already
-            canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 15.0f, targetPaint);
+            canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 15.0f,
+                    targetPaint);
+
+            //write the name of the month at the highest point of elevation on the arc
+            if (i != averageArray.length - 1 && averageArray[i].getElevationFromTheHorizon() >
+                    averageArray[i + 1].getElevationFromTheHorizon() && !foundHighestPoint) {
+                String text = new DateFormatSymbols().getMonths()[month];
+                canvas.drawText(text, canvas.getWidth()/2, canvas.getHeight()/2, targetPaint);
+                foundHighestPoint = true;
+            }
 
             canvas.restore();
-
         }
-
-
     }
 
     public AzimuthZenithAngle calculateCurrentSunPosition(){

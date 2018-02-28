@@ -123,10 +123,8 @@ public final class Grena3 {
     //static AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[16];
 
 
-    public static AzimuthZenithAngle[][] calculateWholeYear(double latitude,
-                                                            double longitude){
-//        ArrayList<AzimuthZenithAngle[]> monthlyAverageForEntireYear= new ArrayList<>();
-        AzimuthZenithAngle[][] a = new AzimuthZenithAngle[7][];
+    public static AzimuthZenithAngle[][] calculateWholeYear(double latitude, double longitude){
+        AzimuthZenithAngle[][] a = new AzimuthZenithAngle[12][];
         GregorianCalendar currentDate = new GregorianCalendar();
         int currYear = currentDate.get(Calendar.YEAR);
 
@@ -140,39 +138,46 @@ public final class Grena3 {
                 date = start.getTime()) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
-            switch (cal.get(Calendar.MONTH)) {
-                case Calendar.JANUARY:
-                case Calendar.NOVEMBER:
-                    a = addMonthAverage(a,
-                            Calendar.JANUARY, currYear, latitude, longitude);
-                    break;
-                case Calendar.FEBRUARY:
-                case Calendar.OCTOBER:
-                    a = addMonthAverage(a,
-                            Calendar.FEBRUARY, currYear, latitude, longitude);
-                    break;
-                case Calendar.MARCH:
-                case Calendar.SEPTEMBER:
-                    a = addMonthAverage(a,
-                            Calendar.MARCH, currYear, latitude, longitude);
-                    break;
-                case Calendar.APRIL:
-                case Calendar.AUGUST:
-                    a = addMonthAverage(a,
-                            Calendar.APRIL, currYear, latitude, longitude);
-                    break;
-                case Calendar.MAY:
-                case Calendar.JULY:
-                    a = addMonthAverage(a, Calendar.MAY, currYear, latitude, longitude);
-                    break;
-                case Calendar.JUNE:
-                    a = addMonthAverage(a, Calendar.JUNE, currYear, latitude, longitude);
-                    break;
-                case Calendar.DECEMBER:
-                    a = addMonthAverage(a, 6, currYear, latitude, longitude);
-                    break;
-            }
+            a = addMonthAverage(a, cal.get(Calendar.MONTH), currYear, latitude, longitude);
         }
+
+//        for (Date date = start.getTime(); start.before(end); start.add(Calendar.MONTH, 1),
+//                date = start.getTime()) {
+//            Calendar cal = Calendar.getInstance();
+//            cal.setTime(date);
+//            switch (cal.get(Calendar.MONTH)) {
+//                case Calendar.JANUARY:
+//                case Calendar.NOVEMBER:
+//                    a = addMonthAverage(a,
+//                            Calendar.JANUARY, currYear, latitude, longitude);
+//                    break;
+//                case Calendar.FEBRUARY:
+//                case Calendar.OCTOBER:
+//                    a = addMonthAverage(a,
+//                            Calendar.FEBRUARY, currYear, latitude, longitude);
+//                    break;
+//                case Calendar.MARCH:
+//                case Calendar.SEPTEMBER:
+//                    a = addMonthAverage(a,
+//                            Calendar.MARCH, currYear, latitude, longitude);
+//                    break;
+//                case Calendar.APRIL:
+//                case Calendar.AUGUST:
+//                    a = addMonthAverage(a,
+//                            Calendar.APRIL, currYear, latitude, longitude);
+//                    break;
+//                case Calendar.MAY:
+//                case Calendar.JULY:
+//                    a = addMonthAverage(a, Calendar.MAY, currYear, latitude, longitude);
+//                    break;
+//                case Calendar.JUNE:
+//                    a = addMonthAverage(a, Calendar.JUNE, currYear, latitude, longitude);
+//                    break;
+//                case Calendar.DECEMBER:
+//                    a = addMonthAverage(a, 6, currYear, latitude, longitude);
+//                    break;
+//            }
+//        }
 
         return a;
     }
@@ -187,37 +192,30 @@ public final class Grena3 {
     }
 
 
-    static int hourIndex = 0;
     //Calculate the average position of the sun over a day for a whole month
-    public static AzimuthZenithAngle[] calculateWholeMonth(int year, int month, double latitude, double longitude){
-        GregorianCalendar currentDay = new GregorianCalendar(year, month, 1, 6, 0);
-        AzimuthZenithAngle position = new AzimuthZenithAngle(0,0);
-        AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[96];
-        hourIndex = 0;
+    private static AzimuthZenithAngle[] calculateWholeMonth(int year, int month, double latitude, double longitude){
+        int hourIndex = 0, startTime = 6, endTime = 22, startDay = 1, deltaT = 68, minuteIncrement = 10;
+        GregorianCalendar currentDay = new GregorianCalendar(year, month, startDay, startTime, 0);
+        AzimuthZenithAngle position;
+        AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[(endTime - startTime) * 6];
 
-        System.out.println("The current day is: " +currentDay.get(Calendar.YEAR)+currentDay.get(Calendar.MONTH)+currentDay.get(Calendar.DAY_OF_MONTH));
-        while(true){
-            position = calculateSolarPosition(currentDay, latitude, longitude, 68);
+        while(currentDay.get(Calendar.MONTH) == month) {
+            position = calculateSolarPosition(currentDay, latitude, longitude, deltaT);
 
             //if(hourIndex == averagePositionForMonth.length) break;
-            addAngleToAverageArray(position, averagePositionForMonth);
+            addAngleToAverageArray(position, averagePositionForMonth, hourIndex);
 
-            currentDay.add(Calendar.MINUTE, 10);
+            currentDay.add(Calendar.MINUTE, minuteIncrement);
 
             hourIndex++;
-            if(currentDay.get(Calendar.HOUR_OF_DAY) == 22){
-
-                currentDay.add(Calendar.DAY_OF_MONTH, 1);
-                currentDay.set(Calendar.HOUR_OF_DAY, 6);
+            if(currentDay.get(Calendar.HOUR_OF_DAY) == endTime){
+                currentDay.add(Calendar.DAY_OF_MONTH, startDay);
+                currentDay.set(Calendar.HOUR_OF_DAY, startTime);
                 hourIndex = 0;
-
-                if(isMonthOver(currentDay)) break;
-
             }
         }
         return averagePositionForMonth;
     }
-
 
     public static void calculateCurrentDay(double latitude, double longitude){
         GregorianCalendar currentDay = new GregorianCalendar();
@@ -235,75 +233,12 @@ public final class Grena3 {
         }
     }
 
-
-
-    public static void addAngleToAverageArray(AzimuthZenithAngle newAngle, AzimuthZenithAngle[] averageArray){
-        System.out.println(hourIndex);
-        if(averageArray[hourIndex] == null){
+    public static void addAngleToAverageArray(AzimuthZenithAngle newAngle,
+                                              AzimuthZenithAngle[] averageArray, int hourIndex){
+        if(averageArray[hourIndex] == null) {
             averageArray[hourIndex] = newAngle;
-        }else{
+        } else {
             averageArray[hourIndex] = averageArray[hourIndex].twoAngleAverage(newAngle);
         }
     }
-
-
-    private static boolean isMonthOver(GregorianCalendar date){
-        boolean isMonthOver = false;
-        switch(date.get(Calendar.MONTH)){
-
-            case 2:
-                if(date.get(Calendar.DAY_OF_MONTH) > 28) isMonthOver = true;
-                break;
-
-
-            case 4:
-                if(date.get(Calendar.DAY_OF_MONTH) > 30) isMonthOver = true;
-                break;
-
-
-            case 6:
-                if(date.get(Calendar.DAY_OF_MONTH) > 30) isMonthOver = true;
-                break;
-
-            case 8:
-                if(date.get(Calendar.DAY_OF_MONTH) > 30) isMonthOver = true;
-                break;
-
-            case 11:
-                if(date.get(Calendar.DAY_OF_MONTH) > 30) isMonthOver = true;
-                break;
-
-            default:
-                if(date.get(Calendar.DAY_OF_MONTH) == 1) isMonthOver = true;
-                break;
-        }
-
-        return isMonthOver;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

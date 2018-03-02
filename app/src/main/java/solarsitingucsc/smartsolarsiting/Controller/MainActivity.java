@@ -99,7 +99,8 @@ public class MainActivity extends Activity {
     private void checkForPermissions() {
         String[] permissions = {Manifest.permission.CAMERA,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION};
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.INTERNET};
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             openCamera();

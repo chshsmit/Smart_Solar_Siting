@@ -32,11 +32,8 @@ public class SolarEnergyCalculations extends AppCompatActivity {
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
-
-        String lat = String.valueOf(latitude);
-        String lon = String.valueOf(longitude);
         String url ="https://developer.nrel.gov/api/solar/solar_resource/v1.json?" +
-                "api_key=" +API_KEY+ "&lat="+lat+  "&lon="+lon;
+                "api_key=" +API_KEY+ "&lat="+latitude+  "&lon="+longitude;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {

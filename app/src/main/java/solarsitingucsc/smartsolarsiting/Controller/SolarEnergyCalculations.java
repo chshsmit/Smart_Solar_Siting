@@ -8,8 +8,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import solarsitingucsc.smartsolarsiting.R;
 
@@ -22,36 +24,39 @@ public class SolarEnergyCalculations extends AppCompatActivity {
     }
 
 
-    
+
     private String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
 
     public void makeRequest(double latitude, double longitude){
+        System.out.println("We are making a JSONObject Request");
+        //Instantiate the request queue
+        RequestQueue queue = Volley.newRequestQueue(this);
+
 
         String lat = String.valueOf(latitude);
         String lon = String.valueOf(longitude);
-
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
         String url ="https://developer.nrel.gov/api/solar/solar_resource/v1.json?" +
                 "api_key=" +API_KEY+ "&lat="+lat+  "&lon="+lon;
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
                     @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        System.out.println("Response is: "+ response.toString());
+                    public void onResponse(JSONObject response) {
+                        System.out.println("Response: " + response.toString());
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("That didn't work!");
-            }
-        });
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        System.out.println("That didn't work!");
 
+
+                    }
+                });
+
+        // Add the request to the request queue
+        queue.add(jsObjRequest);
     }
 }

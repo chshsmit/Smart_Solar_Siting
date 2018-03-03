@@ -1,10 +1,13 @@
 package solarsitingucsc.smartsolarsiting.View;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -16,6 +19,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -44,8 +48,6 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     private SensorManager sensors = null;
     private AzimuthZenithAngle[][] yearAveragePositionArray = new AzimuthZenithAngle[7][];
     private Location lastLocation;
-    private double currLatitude;
-    private double currLongitude;
     private float[] lastAccelerometer;
     private float[] lastCompass;
 
@@ -64,8 +66,9 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     private TextPaint contentPaint;
 
     private Paint targetPaint;
+    private Criteria criteria;
 
-
+    private Rect r = new Rect();
 
     public DrawOnTop(Context context) {
         super(context);
@@ -74,15 +77,19 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         locationManager = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);
 
+        criteria = new Criteria();
+        criteria.setAccuracy(Criteria.NO_REQUIREMENT);
+        criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
+
         initializeSensors();
         startSensors();
-        startGPS();
+        startGPS(locationManager.getBestProvider(criteria, true));
 
         initializeCameraParamters();
         initializePaints();
     }
 
-    private void initializeSensors(){
+    private void initializeSensors() {
         sensors = (SensorManager) context
                 .getSystemService(Context.SENSOR_SERVICE);
         accelSensor = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -90,7 +97,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         gyroSensor = sensors.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
     }
 
-    private void initializeCameraParamters(){
+    private void initializeCameraParamters() {
         // get some camera parameters
         Camera camera = Camera.open();
         Camera.Parameters params = camera.getParameters();
@@ -99,7 +106,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         camera.release();
     }
 
-    private void initializePaints(){
+    private void initializePaints() {
         // paint for text
         contentPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         contentPaint.setTextAlign(Align.LEFT);
@@ -110,7 +117,6 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         targetPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         targetPaint.setColor(Color.GREEN);
         targetPaint.setTextSize(100);
-
     }
 
     private void startSensors() {
@@ -122,19 +128,15 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    private void startGPS() {
-        Criteria criteria = new Criteria();
-        // criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        // while we want fine accuracy, it's unlikely to work indoors where we
-        // do our testing. :)
-        criteria.setAccuracy(Criteria.NO_REQUIREMENT);
-        criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
-
-        String best = locationManager.getBestProvider(criteria, true);
-
-        Log.v(DEBUG_TAG, "Best provider: " + best);
-
-        locationManager.requestLocationUpdates(best, 50, 0, this);
+    private void startGPS(String bestProvider) {
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(bestProvider, 50, 0, this);
+        lastLocation = locationManager.getLastKnownLocation(bestProvider);
     }
 
     @Override
@@ -144,7 +146,6 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
         // Draw something fixed (for now) over the camera view
         StringBuilder text = buildDebugInformation();
-
 
         // compute rotation matrix
         float rotation[] = new float[9];
@@ -165,34 +166,56 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(cameraRotation, orientation);
 
-                text.append(
-                        String.format("Orientation (%.3f, %.3f, %.3f)",
-                                Math.toDegrees(orientation[0]), Math.toDegrees(orientation[1]), Math.toDegrees(orientation[2])))
-                        .append("\n");
+                text.append(String.format("Orientation (%.3f, %.3f, %.3f)",
+                            Math.toDegrees(orientation[0]), Math.toDegrees(orientation[1]),
+                            Math.toDegrees(orientation[2]))).append("\n");
 
                 // draw the target (if it's on the screen)
                 canvas.save();
-                // use roll for screen rotation
-                canvas.rotate((float)(0.0f- Math.toDegrees(orientation[2])));
 
-                if(!alreadyCalculated) {
+                if (lastLocation == null)
+                    startGPS(LocationManager.GPS_PROVIDER);
+                if (lastLocation == null)
+                    startGPS(LocationManager.NETWORK_PROVIDER);
+
+                if(!alreadyCalculated && lastLocation != null) {
                     //currSunPosition = calculateCurrentSunPosition();
-                    yearAveragePositionArray = Grena3.calculateWholeYear(36.9, -122.03);
+                    yearAveragePositionArray = Grena3.calculateWholeYear(lastLocation.getLatitude(),
+                            lastLocation.getLongitude());
                     alreadyCalculated = true;
                 }
 
-                for (int i = 0; i < yearAveragePositionArray.length; i++) {
-                    drawMultipleCircles(canvas, yearAveragePositionArray[i], orientation, i);
+                if (alreadyCalculated && yearAveragePositionArray[0] != null) {
+                    for (int i = 0; i < yearAveragePositionArray.length; i++) {
+                        drawMultipleCircles(canvas, yearAveragePositionArray[i], orientation, i);
+                    }
                 }
             }
         }
 
         canvas.save();
         canvas.translate(15.0f, 15.0f);
-        StaticLayout textBox = new StaticLayout(text.toString(), contentPaint,
-                480, Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
-        textBox.draw(canvas);
+        if (lastLocation == null) {
+            String msg = "Searching for your location...";
+            drawCenter(canvas, targetPaint, msg);
+        }
+        else {
+            StaticLayout textBox = new StaticLayout(text.toString(), contentPaint,
+                    480, Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+            textBox.draw(canvas);
+        }
         canvas.restore();
+    }
+
+    private void drawCenter(Canvas canvas, Paint paint, String text) {
+        canvas.getClipBounds(r);
+        int cHeight = r.height();
+        int cWidth = r.width();
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.getTextBounds(text, 0, text.length(), r);
+        float x = cWidth / 2f - r.width() / 2f - r.left;
+        float y = cHeight / 2f + r.height() / 2f - r.bottom;
+        canvas.drawText(text, x, y, paint);
     }
 
     public StringBuilder buildDebugInformation(){
@@ -269,8 +292,6 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         double deltaT = DeltaT.estimate(date);
         //currLatitude = lastLocation.getLatitude();
         //currLongitude = lastLocation.getLongitude();
-        System.out.println(currLatitude);
-        System.out.println(currLongitude);
 
         return Grena3.calculateSolarPosition(date, 36.9, -122.03, deltaT);
     }
@@ -353,7 +374,6 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     // this is not an override
     public void onResume() {
         startSensors();
-        startGPS();
+        startGPS(locationManager.getBestProvider(criteria, true));
     }
-
 }

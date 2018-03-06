@@ -3,12 +3,19 @@ package solarsitingucsc.smartsolarsiting.Controller;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.view.Window;
+import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import solarsitingucsc.smartsolarsiting.R;
@@ -24,7 +31,21 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         checkForPermissionsAndOpenCamera();
+
+
+
+        //Remove title and notification bars
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        openCamera();
+        //function to change camera view to calculations view
+        configureSeeCalcButton();
+//
+//        checkForPermissions();
     }
 
     /**
@@ -95,4 +116,20 @@ public class MainActivity extends Activity {
         else
             ActivityCompat.requestPermissions(this, permissions, 1);
     }
+
+    /**
+     *  Button to change camera view to calculations view
+     */
+    private void configureSeeCalcButton(){
+        Button seeCalcButton = (Button) findViewById(R.id.seeCalcButton);
+        seeCalcButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, Display_calc.class));
+            }
+        } );
+
+    }
+
+
 }

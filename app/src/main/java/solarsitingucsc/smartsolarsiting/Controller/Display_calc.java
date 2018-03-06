@@ -53,9 +53,8 @@ public class Display_calc extends AppCompatActivity {
             }
         });
     }
-
-
-    private String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
+    
+    final private String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
 
     public void makeRequest(double latitude, double longitude){
         System.out.println("We are making a JSONObject Request");

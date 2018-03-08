@@ -1,23 +1,12 @@
 package solarsitingucsc.smartsolarsiting.Controller;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.view.View;
-import android.view.Window;
-import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.util.Log;
+import android.widget.ImageView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,33 +17,55 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import solarsitingucsc.smartsolarsiting.R;
-import solarsitingucsc.smartsolarsiting.View.DrawOnTop;
-import solarsitingucsc.smartsolarsiting.View.CameraPreview;
+
+import static android.content.ContentValues.TAG;
 
 
+public class DisplayCalculationsActivity extends AppCompatActivity {
 
-public class Display_calc extends AppCompatActivity {
+    private final String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
-
-        configureCamButton();
-    }
-
-    private void configureCamButton() {
-        Button camButton = (Button) findViewById(R.id.cam_button);
-        camButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+//        configureCamButton();
+        findViewById(R.id.display_calc_view).setOnTouchListener(
+                new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
+            public void onSwipeRight() {
                 finish();
             }
         });
+        String imageName = getIntent().getStringExtra("imageName");
+        FileInputStream fis = null;
+        try {
+            fis = openFileInput(imageName);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        }
+        Bitmap bitmap = BitmapFactory.decodeStream(fis);
+        ImageView imageView = findViewById(R.id.imageView);
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setImageBitmap(resizedBitmap);
     }
-    
-    final private String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
+
+//    private void configureCamButton() {
+//        Button camButton = (Button) findViewById(R.id.cam_button);
+//        camButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                finish();
+//            }
+//        });
+//    }
 
     public void makeRequest(double latitude, double longitude){
         System.out.println("We are making a JSONObject Request");

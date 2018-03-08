@@ -13,7 +13,7 @@
         />
 
     <Button
-        android:id="@+id/seeCalcButton"
+        android:id="@+id/button_see_calculations"
         android:layout_width="142dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"

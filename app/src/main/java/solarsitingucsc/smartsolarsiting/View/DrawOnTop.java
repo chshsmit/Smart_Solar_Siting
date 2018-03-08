@@ -3,6 +3,7 @@ package solarsitingucsc.smartsolarsiting.View;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -216,6 +217,14 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         float x = cWidth / 2f - r.width() / 2f - r.left;
         float y = cHeight / 2f + r.height() / 2f - r.bottom;
         canvas.drawText(text, x, y, paint);
+    }
+
+    // Calling this method will doDraw Draw the patterns drawn on their own canvas upper
+    public Bitmap getBitmap() {
+        Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        draw(canvas);
+        return bitmap;
     }
 
     public StringBuilder buildDebugInformation(){

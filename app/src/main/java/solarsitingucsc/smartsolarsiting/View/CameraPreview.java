@@ -1,17 +1,36 @@
 package solarsitingucsc.smartsolarsiting.View;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Size;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import solarsitingucsc.smartsolarsiting.Controller.DisplayCalculationsActivity;
+import solarsitingucsc.smartsolarsiting.Model.ScreenshotUtils;
+import solarsitingucsc.smartsolarsiting.R;
+
+import static android.content.ContentValues.TAG;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -46,6 +65,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             case Surface.ROTATION_180: degrees = 180; break;
             case Surface.ROTATION_270: degrees = 270; break;
         }
+        int rotate = (info.orientation - degrees + 360) % 360;
+
+        //STEP #2: Set the 'rotation' parameter
+        Camera.Parameters params = mCamera.getParameters();
+        params.setRotation(rotate);
+        mCamera.setParameters(params);
+
         mCamera.setDisplayOrientation((info.orientation - degrees + 360) % 360);
 
         try {
@@ -60,7 +86,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // Because the CameraDevice object is not a shared resource, it's very
         // important to release it when the activity is paused.
         Log.d(DEBUG_TAG, "surfaceDestroyed");
-
         mCamera.stopPreview();
         mCamera.release();
     }
@@ -80,4 +105,117 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.setParameters(params);
         mCamera.startPreview();
     }
+
+//    private void configureCaptureButton() {
+//        Button captureButton = (Button) mActivity.findViewById(R.id.button_capture);
+//        captureButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // get an image from the camera
+//                mCamera.takePicture(null, null, mPicture);
+//                takeScreenshot();
+//            }
+//        });
+//    }
+
+    public void takePicture() {
+        mCamera.takePicture(null, null, mPicture);
+    }
+
+    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+
+        final Context finalContext = getContext();
+
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            File pictureFile = getInternalOutputMediaFile(MEDIA_TYPE_IMAGE, finalContext);
+            if (pictureFile == null){
+                Log.d(TAG, "Error creating media file, check storage permissions: ");
+                return;
+            }
+
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(data);
+                fos.close();
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            }
+
+            Intent intent = new Intent(finalContext, DisplayCalculationsActivity.class);
+            intent.putExtra("imageName", pictureFile.getName());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            finalContext.startActivity(intent);
+        }
+    };
+
+    /**
+     * Create a File for saving an image or video in internal memory
+     */
+    private static File getInternalOutputMediaFile(int type, Context context) {
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File file = new File(context.getFilesDir(), timeStamp);
+        return file;
+    }
+
+    /**
+     * Create a File for saving an image or video in external storage
+     */
+    private static File getExternalOutputMediaFile(int type){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "Smart Solar Siting");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.d("Smart Solar Siting", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_"+ timeStamp + ".jpg");
+        } else if(type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "VID_"+ timeStamp + ".mp4");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
+//    private void takeScreenshot() {
+//        try {
+//            File cacheDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+//                    "Smart Solar Siting");
+//
+//            if (!cacheDir.exists()) {
+//                cacheDir.mkdirs();
+//            }
+//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//
+//            String path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+//                    "Smart Solar Siting") + "/" + timeStamp + ".jpg";
+//
+//            ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), path);
+//
+//            Toast.makeText(getContext(), "Screenshot saved", Toast.LENGTH_LONG).show();
+//        } catch (NullPointerException ignored) {
+//            ignored.printStackTrace();
+//        }
+//    }
 }

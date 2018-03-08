@@ -3,21 +3,24 @@ package solarsitingucsc.smartsolarsiting.Controller;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.view.Window;
-import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import solarsitingucsc.smartsolarsiting.Model.ScreenshotUtils;
 import solarsitingucsc.smartsolarsiting.R;
 import solarsitingucsc.smartsolarsiting.View.DrawOnTop;
 import solarsitingucsc.smartsolarsiting.View.CameraPreview;
@@ -26,13 +29,13 @@ public class MainActivity extends Activity {
 
     private CameraPreview mCameraPreview;
     private DrawOnTop mDraw;
+    private FrameLayout cameraPreviewPane;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         checkForPermissionsAndOpenCamera();
-        configureSeeCalcButton();
     }
 
     /**
@@ -57,11 +60,21 @@ public class MainActivity extends Activity {
      */
     private void openCamera() {
         setContentView(R.layout.activity_main);
-        FrameLayout cameraPreviewPane = (FrameLayout) findViewById(R.id.camera_preview_pane);
+        cameraPreviewPane = (FrameLayout) findViewById(R.id.camera_preview_pane);
         mCameraPreview = new CameraPreview(getApplicationContext(), this);
         cameraPreviewPane.addView(mCameraPreview);
         mDraw = new DrawOnTop(getApplicationContext());
         cameraPreviewPane.addView(mDraw);
+
+        cameraPreviewPane.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            public void onSwipeLeft() {
+                startActivity(new Intent(MainActivity.this,
+                        DisplayCalculationsActivity.class));
+            }
+        });
+
+        configureSeeCalcButton();
+        configureCaptureButton();
     }
 
     /**
@@ -86,7 +99,8 @@ public class MainActivity extends Activity {
         String[] permissions = {Manifest.permission.CAMERA,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.INTERNET};
+                Manifest.permission.INTERNET,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         Boolean permissionsGranted = true;
 
@@ -107,16 +121,62 @@ public class MainActivity extends Activity {
     /**
      *  Button to change camera view to calculations view
      */
-    private void configureSeeCalcButton(){
-        Button seeCalcButton = (Button) findViewById(R.id.seeCalcButton);
+    private void configureSeeCalcButton() {
+        Button seeCalcButton = (Button) findViewById(R.id.button_see_calculations);
         seeCalcButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, Display_calc.class));
+                startActivity(new Intent(MainActivity.this,
+                        DisplayCalculationsActivity.class));
             }
         } );
-
     }
 
+    private void configureCaptureButton() {
+        Button captureButton = (Button) findViewById(R.id.button_capture);
+        captureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                takeScreenshot();
+                mCameraPreview.takePicture();
+            }
+        });
+    }
 
+    private void takeScreenshot() {
+        try {
+            File cacheDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    "Smart Solar Siting");
+
+            if (!cacheDir.exists()) {
+                cacheDir.mkdirs();
+            }
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+            String path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    "Smart Solar Siting") + "/" + timeStamp + ".jpg";
+
+            ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), path);
+
+            Toast.makeText(this, "Screenshot saved", Toast.LENGTH_LONG).show();
+        } catch (NullPointerException ignored) {
+            ignored.printStackTrace();
+        }
+    }
+
+//    private void configureCaptureButton() {
+//        Button captureButton = (Button) findViewById(R.id.button_capture);
+//        captureButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+////                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+////                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+////                }
+//
+//                // get an image from the camera
+//                camera.takePicture(null, null, mPicture);
+//            }
+//        });
+//    }
 }

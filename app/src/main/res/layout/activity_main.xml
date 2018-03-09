@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/camera_preview_pane"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <Button
-        android:id="@+id/button_capture"
-        android:text="Capture"
+    <!--<Button-->
+        <!--android:id="@+id/button_capture"-->
+        <!--android:text="Capture"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|left"-->
+
+        <!--/>-->
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button_capture1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clickable="true"
         android:layout_gravity="bottom|center"
+        app:backgroundTint="@android:color/background_dark"
+        app:srcCompat="@android:drawable/ic_menu_camera"
         />
 
-    <Button
-        android:id="@+id/button_see_calculations"
-        android:layout_width="142dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:text="See Calculations" />
+    <!--<Button-->
+        <!--android:id="@+id/button_see_calculations"-->
+        <!--android:layout_width="142dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|right"-->
+        <!--android:text="See Calculations" />-->
 
 
 </FrameLayout>

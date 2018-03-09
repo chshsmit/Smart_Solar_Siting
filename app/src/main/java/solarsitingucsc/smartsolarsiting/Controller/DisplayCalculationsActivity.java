@@ -65,7 +65,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //        imageView.setImageBitmap(rotatedImage);
 
         //Use this to set the screenshot (with just the lines) as background in the new activity
-//        imageView.setImageBitmap(screenshot);
+          imageView.setImageBitmap(screenshot);
     }
 
 //    private void configureCamButton() {

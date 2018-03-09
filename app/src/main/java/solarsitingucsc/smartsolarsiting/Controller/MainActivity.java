@@ -25,6 +25,10 @@ import solarsitingucsc.smartsolarsiting.R;
 import solarsitingucsc.smartsolarsiting.View.DrawOnTop;
 import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 
+import android.support.design.widget.FloatingActionButton;
+
+
+
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class MainActivity extends Activity {
@@ -75,7 +79,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        configureSeeCalcButton();
+        //configureSeeCalcButton();
         configureCaptureButton();
     }
 
@@ -123,19 +127,19 @@ public class MainActivity extends Activity {
     /**
      *  Button to change camera view to calculations view
      */
-    private void configureSeeCalcButton() {
-        Button seeCalcButton = (Button) findViewById(R.id.button_see_calculations);
-        seeCalcButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,
-                        DisplayCalculationsActivity.class));
-            }
-        } );
-    }
+//    private void configureSeeCalcButton() {
+//        Button seeCalcButton = (Button) findViewById(R.id.button_see_calculations);
+//        seeCalcButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(MainActivity.this,
+//                        DisplayCalculationsActivity.class));
+//            }
+//        } );
+//    }
 
     private void configureCaptureButton() {
-        Button captureButton = (Button) findViewById(R.id.button_capture);
+        FloatingActionButton captureButton = (FloatingActionButton) findViewById(R.id.button_capture1);
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

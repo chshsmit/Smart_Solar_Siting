@@ -41,8 +41,7 @@ public class Display_calc extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
-
-        makeRequest(36.9, -122.03);
+        //makeRequest(36.9, -122.03);
         configureCamButton();
     }
 
@@ -60,6 +59,7 @@ public class Display_calc extends AppCompatActivity {
 
     public void makeRequest(double latitude, double longitude){
         System.out.println("We are making a JSONObject Request");
+
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -67,7 +67,7 @@ public class Display_calc extends AppCompatActivity {
 //                "api_key=" +API_KEY+ "&lat="+latitude+  "&lon="+longitude;
 
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
-        "api_key=" +API_KEY+"&lat=36.9&lon=-122.03&system_capacity=4&azimuth=180&" +
+        "api_key=" +API_KEY+"&lat=" +latitude+ "&lon="+longitude+ "&system_capacity=4&azimuth=180&" +
                 "tilt=40&array_type=1&module_type=1&losses=10&timeframe=hourly";
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -76,11 +76,6 @@ public class Display_calc extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         System.out.println("Response: " + response.toString());
-                        try {
-                            System.out.println("Hourly Size: " + response.get("ac"));
-                        }catch(JSONException e){
-                            System.out.println(e);
-                        }
                     }
                 }, new Response.ErrorListener() {
 

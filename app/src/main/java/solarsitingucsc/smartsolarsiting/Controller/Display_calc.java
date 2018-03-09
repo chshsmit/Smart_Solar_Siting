@@ -26,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import solarsitingucsc.smartsolarsiting.R;
@@ -41,6 +42,7 @@ public class Display_calc extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
 
+        makeRequest(36.9, -122.03);
         configureCamButton();
     }
 
@@ -53,7 +55,7 @@ public class Display_calc extends AppCompatActivity {
             }
         });
     }
-    
+
     final private String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
 
     public void makeRequest(double latitude, double longitude){
@@ -61,8 +63,12 @@ public class Display_calc extends AppCompatActivity {
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String url ="https://developer.nrel.gov/api/solar/solar_resource/v1.json?" +
-                "api_key=" +API_KEY+ "&lat="+latitude+  "&lon="+longitude;
+//        String url ="https://developer.nrel.gov/api/solar/solar_resource/v1.json?" +
+//                "api_key=" +API_KEY+ "&lat="+latitude+  "&lon="+longitude;
+
+        String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
+        "api_key=" +API_KEY+"&lat=36.9&lon=-122.03&system_capacity=4&azimuth=180&" +
+                "tilt=40&array_type=1&module_type=1&losses=10&timeframe=hourly";
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -70,6 +76,11 @@ public class Display_calc extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         System.out.println("Response: " + response.toString());
+                        try {
+                            System.out.println("Hourly Size: " + response.get("ac"));
+                        }catch(JSONException e){
+                            System.out.println(e);
+                        }
                     }
                 }, new Response.ErrorListener() {
 

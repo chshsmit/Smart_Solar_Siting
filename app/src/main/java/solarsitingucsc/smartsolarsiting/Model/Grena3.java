@@ -135,44 +135,6 @@ public final class Grena3 {
             a = addMonthAverage(a, cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), latitude, longitude);
         }
 
-//        for (Date date = start.getTime(); start.before(end); start.add(Calendar.MONTH, 1),
-//                date = start.getTime()) {
-//            Calendar cal = Calendar.getInstance();
-//            cal.setTime(date);
-//            switch (cal.get(Calendar.MONTH)) {
-//                case Calendar.JANUARY:
-//                case Calendar.NOVEMBER:
-//                    a = addMonthAverage(a,
-//                            Calendar.JANUARY, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.FEBRUARY:
-//                case Calendar.OCTOBER:
-//                    a = addMonthAverage(a,
-//                            Calendar.FEBRUARY, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.MARCH:
-//                case Calendar.SEPTEMBER:
-//                    a = addMonthAverage(a,
-//                            Calendar.MARCH, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.APRIL:
-//                case Calendar.AUGUST:
-//                    a = addMonthAverage(a,
-//                            Calendar.APRIL, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.MAY:
-//                case Calendar.JULY:
-//                    a = addMonthAverage(a, Calendar.MAY, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.JUNE:
-//                    a = addMonthAverage(a, Calendar.JUNE, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.DECEMBER:
-//                    a = addMonthAverage(a, 6, currYear, latitude, longitude);
-//                    break;
-//            }
-//        }
-
         return a;
     }
 
@@ -193,6 +155,7 @@ public final class Grena3 {
 
         while(currentDay.get(Calendar.MONTH) == month) {
             position = calculateSolarPosition(currentDay, latitude, longitude, deltaT);
+
             addAngleToAverageArray(position, averagePositionForMonth, hourIndex);
             currentDay.add(Calendar.MINUTE, minuteIncrement);
             hourIndex++;
@@ -203,8 +166,13 @@ public final class Grena3 {
                 hourIndex = 0;
             }
         }
+
+
+
+
         return averagePositionForMonth;
     }
+
 
     public static void calculateCurrentDay(double latitude, double longitude){
         GregorianCalendar currentDay = new GregorianCalendar();

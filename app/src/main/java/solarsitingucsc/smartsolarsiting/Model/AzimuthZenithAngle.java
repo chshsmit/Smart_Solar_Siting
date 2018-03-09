@@ -1,5 +1,7 @@
 package solarsitingucsc.smartsolarsiting.Model;
 
+import android.graphics.Color;
+
 /**
  * Created by chrissmith on 2/1/18.
  */
@@ -9,13 +11,18 @@ public class AzimuthZenithAngle {
     private final double zenithAngle;
     private final double elevationFromTheHorizon;
     private final double negativeAzimuth;
+    private int percentageAvailable;
+    private Color color;
 
     public AzimuthZenithAngle(final double azimuth, final double zenithAngle) {
         this.zenithAngle = zenithAngle;
         this.azimuth = azimuth;
         this.elevationFromTheHorizon = 90 - zenithAngle;
         this.negativeAzimuth = azimuth - 360;
+        this.color = null;
     }
+
+
 
     public final double getZenithAngle() {
         return zenithAngle;
@@ -31,6 +38,11 @@ public class AzimuthZenithAngle {
 
     public final double getElevationFromTheHorizon(){
         return elevationFromTheHorizon;
+    }
+
+    public void setPositionColor(int month, int hour){
+
+
     }
 
     public AzimuthZenithAngle twoAngleAverage(AzimuthZenithAngle newPosition){

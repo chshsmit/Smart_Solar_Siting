@@ -271,6 +271,8 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
             // now translate the dx
             canvas.translate(0.0f-dx, 0.0f);
 
+            targetPaint.setColor(getDotColor(i));
+
             // draw our point -- we've rotated and translated this to the right spot already
             canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 15.0f,
                     targetPaint);
@@ -285,6 +287,18 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
             canvas.restore();
         }
+    }
+
+    public static int getDotColor(int hourIndex){
+
+        if( (0 <= hourIndex && hourIndex <= 11) || (60 <= hourIndex) ){
+            return Color.BLUE;
+        } else if( (12 <= hourIndex && hourIndex <= 23) || (48<= hourIndex && hourIndex <= 59) ){
+            return Color.YELLOW;
+        } else {
+            return Color.RED;
+        }
+
     }
 
     public AzimuthZenithAngle calculateCurrentSunPosition(){

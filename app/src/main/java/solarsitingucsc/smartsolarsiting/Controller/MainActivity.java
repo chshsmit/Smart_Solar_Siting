@@ -3,6 +3,7 @@ package solarsitingucsc.smartsolarsiting.Controller;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -14,7 +15,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -24,6 +24,8 @@ import solarsitingucsc.smartsolarsiting.Model.ScreenshotUtils;
 import solarsitingucsc.smartsolarsiting.R;
 import solarsitingucsc.smartsolarsiting.View.DrawOnTop;
 import solarsitingucsc.smartsolarsiting.View.CameraPreview;
+
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class MainActivity extends Activity {
 
@@ -137,13 +139,14 @@ public class MainActivity extends Activity {
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                takeScreenshot();
+                String path = takeScreenshot();
+                mCameraPreview.setScreenshotName(path);
                 mCameraPreview.takePicture();
             }
         });
     }
 
-    private void takeScreenshot() {
+    private String takeScreenshot() {
         try {
             File cacheDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                     "Smart Solar Siting");
@@ -151,17 +154,26 @@ public class MainActivity extends Activity {
             if (!cacheDir.exists()) {
                 cacheDir.mkdirs();
             }
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-            String path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                    "Smart Solar Siting") + "/" + timeStamp + ".jpg";
+            File screenshotFile = getInternalOutputMediaFile(MEDIA_TYPE_IMAGE, this);
+            ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), screenshotFile);
 
-            ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), path);
-
-            Toast.makeText(this, "Screenshot saved", Toast.LENGTH_LONG).show();
+            return screenshotFile.getName();
         } catch (NullPointerException ignored) {
             ignored.printStackTrace();
         }
+        return "";
+    }
+
+    /**
+     * Create a File for saving an image or video in internal memory
+     */
+    private static File getInternalOutputMediaFile(int type, Context context) {
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) +
+                "SCREENSHOT";
+        File file = new File(context.getFilesDir(), timeStamp);
+        return file;
     }
 
 //    private void configureCaptureButton() {

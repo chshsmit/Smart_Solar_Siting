@@ -1,9 +1,7 @@
 package solarsitingucsc.smartsolarsiting.View;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
@@ -12,9 +10,6 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,8 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 import solarsitingucsc.smartsolarsiting.Controller.DisplayCalculationsActivity;
-import solarsitingucsc.smartsolarsiting.Model.ScreenshotUtils;
-import solarsitingucsc.smartsolarsiting.R;
 
 import static android.content.ContentValues.TAG;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -35,9 +28,10 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
     public static final String DEBUG_TAG = "CameraPreview Log";
-    SurfaceHolder mHolder;
-    Camera mCamera;
-    Activity mActivity;
+    private SurfaceHolder mHolder;
+    private Camera mCamera;
+    private String screenshotName;
+    private Activity mActivity;
 
     public CameraPreview(Context context, Activity activity) {
         super(context);
@@ -48,6 +42,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder = getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        screenshotName = "";
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
@@ -122,6 +117,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.takePicture(null, null, mPicture);
     }
 
+    public void setScreenshotName(String screenshotName) {
+        this.screenshotName = screenshotName;
+    }
+
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
 
         final Context finalContext = getContext();
@@ -146,6 +145,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
             Intent intent = new Intent(finalContext, DisplayCalculationsActivity.class);
             intent.putExtra("imageName", pictureFile.getName());
+            intent.putExtra("screenshotName", screenshotName);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             finalContext.startActivity(intent);
         }

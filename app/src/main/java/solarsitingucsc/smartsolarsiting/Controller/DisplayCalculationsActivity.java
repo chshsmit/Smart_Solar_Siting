@@ -41,20 +41,31 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             }
         });
         String imageName = getIntent().getStringExtra("imageName");
-        FileInputStream fis = null;
+        String screenshotName = getIntent().getStringExtra("screenshotName");
+        FileInputStream imageFis = null;
+        FileInputStream screenshotFis = null;
         try {
-            fis = openFileInput(imageName);
+            imageFis = openFileInput(imageName);
+            screenshotFis = openFileInput(screenshotName);
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
         }
-        Bitmap bitmap = BitmapFactory.decodeStream(fis);
-        ImageView imageView = findViewById(R.id.imageView);
-
+        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
-        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        imageView.setImageBitmap(resizedBitmap);
+
+        Bitmap rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
+                originalImage.getHeight(), matrix, true);
+        Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
+
+        ImageView imageView = findViewById(R.id.imageView);
+
+        //Use this to set image as background in the new activity
+//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//        imageView.setImageBitmap(rotatedImage);
+
+        //Use this to set the screenshot (with just the lines) as background in the new activity
+//        imageView.setImageBitmap(screenshot);
     }
 
 //    private void configureCamButton() {

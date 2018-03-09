@@ -12,14 +12,12 @@ public class AzimuthZenithAngle {
     private final double elevationFromTheHorizon;
     private final double negativeAzimuth;
     private int percentageAvailable;
-    private Color color;
 
     public AzimuthZenithAngle(final double azimuth, final double zenithAngle) {
         this.zenithAngle = zenithAngle;
         this.azimuth = azimuth;
         this.elevationFromTheHorizon = 90 - zenithAngle;
         this.negativeAzimuth = azimuth - 360;
-        this.color = null;
     }
 
 
@@ -40,10 +38,7 @@ public class AzimuthZenithAngle {
         return elevationFromTheHorizon;
     }
 
-    public void setPositionColor(int month, int hour){
-
-
-    }
+    
 
     public AzimuthZenithAngle twoAngleAverage(AzimuthZenithAngle newPosition){
 

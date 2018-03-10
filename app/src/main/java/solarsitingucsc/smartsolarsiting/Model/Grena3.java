@@ -87,7 +87,8 @@ public final class Grena3 {
 
         final double ZENITH = PI / 2 - parallaxCorrectedElevation - refractionCorrection;
 
-        return new AzimuthZenithAngle(toDegrees(AZIMUTH + PI) % 360.0, toDegrees(ZENITH));
+        return new AzimuthZenithAngle(toDegrees(AZIMUTH + PI) % 360.0, toDegrees(ZENITH),
+                makeTimeString(date.get(Calendar.HOUR_OF_DAY), date.get(Calendar.MINUTE)));
     }
 
     //Returns time t
@@ -119,7 +120,7 @@ public final class Grena3 {
 
 
     public static AzimuthZenithAngle[][] calculateWholeYear(double latitude, double longitude){
-        AzimuthZenithAngle[][] a = new AzimuthZenithAngle[12][];
+        AzimuthZenithAngle[][] anglesForYear = new AzimuthZenithAngle[12][];
         GregorianCalendar currentDate = new GregorianCalendar();
 
         Calendar start = Calendar.getInstance();
@@ -132,68 +133,37 @@ public final class Grena3 {
                 date = start.getTime()) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
-            a = addMonthAverage(a, cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), latitude, longitude);
+            anglesForYear = addMonthAverage(anglesForYear, cal.get(Calendar.MONTH),
+                    cal.get(Calendar.YEAR), latitude, longitude);
         }
 
-//        for (Date date = start.getTime(); start.before(end); start.add(Calendar.MONTH, 1),
-//                date = start.getTime()) {
-//            Calendar cal = Calendar.getInstance();
-//            cal.setTime(date);
-//            switch (cal.get(Calendar.MONTH)) {
-//                case Calendar.JANUARY:
-//                case Calendar.NOVEMBER:
-//                    a = addMonthAverage(a,
-//                            Calendar.JANUARY, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.FEBRUARY:
-//                case Calendar.OCTOBER:
-//                    a = addMonthAverage(a,
-//                            Calendar.FEBRUARY, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.MARCH:
-//                case Calendar.SEPTEMBER:
-//                    a = addMonthAverage(a,
-//                            Calendar.MARCH, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.APRIL:
-//                case Calendar.AUGUST:
-//                    a = addMonthAverage(a,
-//                            Calendar.APRIL, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.MAY:
-//                case Calendar.JULY:
-//                    a = addMonthAverage(a, Calendar.MAY, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.JUNE:
-//                    a = addMonthAverage(a, Calendar.JUNE, currYear, latitude, longitude);
-//                    break;
-//                case Calendar.DECEMBER:
-//                    a = addMonthAverage(a, 6, currYear, latitude, longitude);
-//                    break;
-//            }
-//        }
-
-        return a;
+        return anglesForYear;
     }
 
     private static AzimuthZenithAngle[][] addMonthAverage
             (AzimuthZenithAngle[][] array, int month, int year, double latitude, double longitude) {
-        if (array[month] == null)
+        if (array[month] == null) {
             array[month] = calculateWholeMonth(year, month, latitude, longitude);
+        }
         return array;
     }
 
 
     //Calculate the average position of the sun over a day for a whole month
-    private static AzimuthZenithAngle[] calculateWholeMonth(int year, int month, double latitude, double longitude){
-        int hourIndex = 0, startTime = 6, endTime = 22, startDay = 1, deltaT = 68, minuteIncrement = 10;
+    private static AzimuthZenithAngle[] calculateWholeMonth(int year, int month, double latitude,
+                                                            double longitude){
+        int hourIndex = 0, startTime = 6, endTime = 22, startDay = 1, deltaT = 68,
+                minuteIncrement = 10;
         GregorianCalendar currentDay = new GregorianCalendar(year, month, startDay, startTime, 0);
         AzimuthZenithAngle position;
         AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[(endTime - startTime) * 6];
 
         while(currentDay.get(Calendar.MONTH) == month) {
+
             position = calculateSolarPosition(currentDay, latitude, longitude, deltaT);
-            addAngleToAverageArray(position, averagePositionForMonth, hourIndex);
+            addAngleToAverageArray(position, averagePositionForMonth, hourIndex,
+                    currentDay.get(Calendar.HOUR_OF_DAY), currentDay.get(Calendar.MINUTE));
+
             currentDay.add(Calendar.MINUTE, minuteIncrement);
             hourIndex++;
 
@@ -204,6 +174,20 @@ public final class Grena3 {
             }
         }
         return averagePositionForMonth;
+    }
+
+    public static String makeTimeString(int hour, int minutes) {
+        String convertedHour, convertedMins;
+        if (hour < 10)
+            convertedHour = "0" + hour;
+        else
+            convertedHour = hour + "";
+//        if (minutes < 10)
+//            convertedMins = "0" + minutes;
+//        else
+//            convertedMins = minutes + "";
+//        return convertedHour + ":" + convertedMins;
+        return convertedHour;
     }
 
     public static void calculateCurrentDay(double latitude, double longitude){
@@ -223,11 +207,13 @@ public final class Grena3 {
     }
 
     private static void addAngleToAverageArray(AzimuthZenithAngle newAngle,
-                                              AzimuthZenithAngle[] averageArray, int hourIndex){
+                                               AzimuthZenithAngle[] averageArray,
+                                               int hourIndex, int hour, int mins){
         if(averageArray[hourIndex] == null) {
             averageArray[hourIndex] = newAngle;
         } else {
-            averageArray[hourIndex] = averageArray[hourIndex].twoAngleAverage(newAngle);
+            averageArray[hourIndex] = averageArray[hourIndex].twoAngleAverage(newAngle,
+                    makeTimeString(hour, mins));
         }
     }
 }

@@ -47,7 +47,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
     private LocationManager locationManager = null;
     private SensorManager sensors = null;
-    private AzimuthZenithAngle[][] yearAveragePositionArray = new AzimuthZenithAngle[7][];
+    private AzimuthZenithAngle[][] yearAveragePositionArray;
     private Location lastLocation;
     private float[] lastAccelerometer;
     private float[] lastCompass;
@@ -67,6 +67,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     private TextPaint contentPaint;
 
     private Paint targetPaint;
+    private Paint timePaint;
     private Criteria criteria;
 
     private Rect r = new Rect();
@@ -81,6 +82,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         criteria = new Criteria();
         criteria.setAccuracy(Criteria.NO_REQUIREMENT);
         criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
+        yearAveragePositionArray = new AzimuthZenithAngle[12][];
 
         initializeSensors();
         startSensors();
@@ -118,6 +120,11 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         targetPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         targetPaint.setColor(Color.GREEN);
         targetPaint.setTextSize(100);
+
+        //paint for times
+        timePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        timePaint.setColor(Color.BLACK);
+        timePaint.setTextSize(20);
     }
 
     private void startSensors() {
@@ -284,6 +291,9 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
             canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 15.0f,
                     targetPaint);
 
+            canvas.drawText(averageArray[i].getTime(), canvas.getWidth()/2 - 10f,
+                    canvas.getHeight()/2 + 7.5f, timePaint);
+
             //write the name of the month at the highest point of elevation on the arc
             if (i != averageArray.length - 1 && averageArray[i].getElevationFromTheHorizon() >
                     averageArray[i + 1].getElevationFromTheHorizon() && !foundHighestPoint) {
@@ -299,13 +309,8 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     public AzimuthZenithAngle calculateCurrentSunPosition(){
         GregorianCalendar date = new GregorianCalendar();
         double deltaT = DeltaT.estimate(date);
-        //currLatitude = lastLocation.getLatitude();
-        //currLongitude = lastLocation.getLongitude();
-
         return Grena3.calculateSolarPosition(date, 36.9, -122.03, deltaT);
     }
-
-
 
     //This is a low pass filter used to smooth the position of the dot on the screen
     static final float ALPHA = 0.1f;
@@ -317,12 +322,6 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         }
         return output;
     }
-
-
-    //------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------
-    //------------------------------------------------------------------------------------------------
 
     public void onAccuracyChanged(Sensor arg0, int arg1) {
         Log.d(DEBUG_TAG, "onAccuracyChanged");

@@ -1,20 +1,18 @@
 package solarsitingucsc.smartsolarsiting.Model;
 
-/**
- * Created by chrissmith on 2/1/18.
- */
-
 public class AzimuthZenithAngle {
     private final double azimuth;
     private final double zenithAngle;
     private final double elevationFromTheHorizon;
     private final double negativeAzimuth;
+    private String time;
 
-    public AzimuthZenithAngle(final double azimuth, final double zenithAngle) {
+    public AzimuthZenithAngle(final double azimuth, final double zenithAngle, String time) {
         this.zenithAngle = zenithAngle;
         this.azimuth = azimuth;
         this.elevationFromTheHorizon = 90 - zenithAngle;
         this.negativeAzimuth = azimuth - 360;
+        this.time = time;
     }
 
     public final double getZenithAngle() {
@@ -33,7 +31,11 @@ public class AzimuthZenithAngle {
         return elevationFromTheHorizon;
     }
 
-    public AzimuthZenithAngle twoAngleAverage(AzimuthZenithAngle newPosition){
+    public String getTime() {
+        return time;
+    }
+
+    public AzimuthZenithAngle twoAngleAverage(AzimuthZenithAngle newPosition, String time){
 
         double newAzimuth = newPosition.getAzimuth();
         double newZenith = newPosition.getZenithAngle();
@@ -41,7 +43,7 @@ public class AzimuthZenithAngle {
         newAzimuth = (this.getAzimuth() + newAzimuth)/2;
         newZenith = (this.getZenithAngle() + newZenith)/2;
 
-        AzimuthZenithAngle averagedPosition = new AzimuthZenithAngle(newAzimuth, newZenith);
+        AzimuthZenithAngle averagedPosition = new AzimuthZenithAngle(newAzimuth, newZenith, time);
 
         return averagedPosition;
     }

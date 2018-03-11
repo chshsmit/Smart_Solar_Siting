@@ -38,6 +38,7 @@ import solarsitingucsc.smartsolarsiting.Model.Grena3;
 public class DrawOnTop extends View implements SensorEventListener, LocationListener {
 
     public static final String DEBUG_TAG = "DrawOnTop Log";
+    private static final float CIRCLE_RADIUS = 25.0f;
 
     private final Context context;
     private Handler handler;
@@ -290,11 +291,18 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
             canvas.translate(0.0f-dx, 0.0f);
 
             // draw our point -- we've rotated and translated this to the right spot already
-            canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 15.0f,
+            canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, CIRCLE_RADIUS,
                     targetPaint);
 
-            canvas.drawText(averageArray[i].getTime(), canvas.getWidth()/2 - 10f,
-                    canvas.getHeight()/2 + 7.5f, timePaint);
+            //write the hour of the point in the middle of the circle
+            canvas.drawText(averageArray[i].getTime(),
+                    canvas.getWidth()/2 - (CIRCLE_RADIUS - 10f),
+                    canvas.getHeight()/2 + (CIRCLE_RADIUS - 5f), timePaint);
+
+            //write the month of the point in the middle of the circle
+            canvas.drawText(new DateFormatSymbols().getMonths()[month].substring(0, 3),
+                    canvas.getWidth()/2 - (CIRCLE_RADIUS - 10f),
+                    canvas.getHeight()/2 + (CIRCLE_RADIUS/8f), timePaint);
 
             //write the name of the month at the highest point of elevation on the arc
             if (i != averageArray.length - 1 && averageArray[i].getElevationFromTheHorizon() >

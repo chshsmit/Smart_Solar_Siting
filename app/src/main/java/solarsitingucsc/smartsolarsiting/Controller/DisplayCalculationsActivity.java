@@ -6,6 +6,7 @@ import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -90,7 +91,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //        imageView.setImageBitmap(rotatedImage);
 
         //Use this to set the screenshot (with just the lines) as background in the new activity
-//        imageView.setImageBitmap(screenshot);
+        imageView.setImageBitmap(screenshot);
     }
 
 //    private void configureCamButton() {
@@ -136,15 +137,21 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     public void makeGoogleVisionRequest(Bitmap screenshot) {
         String response = "";
         try {
-            response = new MakeGoogleRequest()
-                            .execute(screenshot)
-                            .get();
+            response = new MakeGoogleRequest().execute(screenshot).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        String[] lines = response.split("\\r?\\n");
+        //remove newlines
+        String[] newline_lines = response.split("\\r?\\n");
+        //reassemble to remove commas and spaces
+        String joined_newlines = TextUtils.join(",", newline_lines);
+        //remove commas to remove spaces
+        String[] comma_lines = joined_newlines.split(",");
+        String joined_comma = TextUtils.join(" ", comma_lines);
+        //remove spaces
+        String[] lines = joined_comma.split(" ");
         Map<String, Integer> result = new HashMap<>();
         for (String line : lines) {
             Integer count = result.get(line);
@@ -159,15 +166,21 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             Map.Entry pair = (Map.Entry)it.next();
             String key = (String) pair.getKey();
             int x;
-            try {
-                x = Integer.parseInt(key);
-                if (x < 23 && x > 5 && key.length() == 2) {
-                    Toast.makeText(this, key + " = " + pair.getValue() + " occurrences.",
+            System.out.println(key + " = " + pair.getValue() + " occurrences.");
+            Toast.makeText(this, key + " = " + pair.getValue() + " occurrences.",
                             Toast.LENGTH_SHORT).show();
-                }
-            } catch(NumberFormatException e) {
-                //ignore
-            }
+//            try {
+//                x = Integer.parseInt(key);
+//                if (x < 23 && x > 5 && key.length() == 2) {
+//                    System.out.println(key + " = " + pair.getValue() + " occurrences.");
+//                    Toast.makeText(this, key + " = " + pair.getValue() + " occurrences.",
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            } catch(NumberFormatException e) {
+//                System.out.println(key + " = " + pair.getValue() + " occurrences.");
+//                Toast.makeText(this, key + " = " + pair.getValue() + " occurrences.",
+//                        Toast.LENGTH_SHORT).show();
+//            }
             it.remove(); // avoids a ConcurrentModificationException
         }
     }

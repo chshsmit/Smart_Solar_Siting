@@ -93,8 +93,9 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //                "api_key=" +API_KEY+ "&lat="+latitude+  "&lon="+longitude;
 
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
-                "api_key=" +API_KEY+"&lat=36.9&lon=-122.03&system_capacity=4&azimuth=180&" +
-                "tilt=40&array_type=1&module_type=1&losses=10&timeframe=hourly";
+                "api_key=" +API_KEY+ "&lat=" +latitude+ "&lon=" +longitude+
+                "&system_capacity=4" + "&azimuth=180" + "&tilt=40" + "&array_type=1" +
+                "&module_type=1" + "&losses=10" + "&timeframe=hourly";
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -105,7 +106,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                         try {
                             JSONObject outputs = response.getJSONObject("outputs");
                             JSONArray arr = outputs.getJSONArray("ac");
-                           
+
                             //Adding objects to our hourlyArray to be split
                             for(int i=0; i<arr.length(); i++){
                                 hourlyArray[i] = arr.getDouble(i);
@@ -131,8 +132,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     }
 
 
-    int TWENTY_FOUR_HOURS = 24;
     public double getPowerForHourAndMonth(int hour, int month){
+        final int TWENTY_FOUR_HOURS = 24;
         double[] arrayForMonth = splitForMonth(month);
         double totalAcWatts = 0;
 

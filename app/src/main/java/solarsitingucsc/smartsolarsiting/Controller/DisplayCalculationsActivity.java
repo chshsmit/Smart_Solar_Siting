@@ -3,10 +3,12 @@ package solarsitingucsc.smartsolarsiting.Controller;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -14,11 +16,31 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.services.vision.v1.Vision;
+import com.google.api.services.vision.v1.VisionRequestInitializer;
+import com.google.api.services.vision.v1.model.AnnotateImageRequest;
+import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
+import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
+import com.google.api.services.vision.v1.model.EntityAnnotation;
+import com.google.api.services.vision.v1.model.Feature;
+import com.google.api.services.vision.v1.model.Image;
+import com.google.api.services.vision.v1.model.TextAnnotation;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import solarsitingucsc.smartsolarsiting.R;
 
@@ -27,7 +49,8 @@ import static android.content.ContentValues.TAG;
 
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
-    private final String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
+    private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
+    private final String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +83,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         ImageView imageView = findViewById(R.id.imageView);
 
+        makeGoogleVisionRequest(screenshot);
+
         //Use this to set image as background in the new activity
 //        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 //        imageView.setImageBitmap(rotatedImage);
@@ -78,13 +103,13 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //        });
 //    }
 
-    public void makeRequest(double latitude, double longitude){
+    public void makeDatasetRequest(double latitude, double longitude){
         System.out.println("We are making a JSONObject Request");
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
         String url ="https://developer.nrel.gov/api/solar/solar_resource/v1.json?" +
-                "api_key=" +API_KEY+ "&lat="+latitude+  "&lon="+longitude;
+                "api_key=" + DATASET_API_KEY + "&lat="+latitude+  "&lon="+longitude;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -107,5 +132,105 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         // Add the request to the request queue
         queue.add(jsObjRequest);
     }
+
+    public void makeGoogleVisionRequest(Bitmap screenshot) {
+        String response = "";
+        try {
+            response = new MakeGoogleRequest()
+                            .execute(screenshot)
+                            .get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        String[] lines = response.split("\\r?\\n");
+        Map<String, Integer> result = new HashMap<>();
+        for (String line : lines) {
+            Integer count = result.get(line);
+            if (count != null) {
+                result.put(line, count + 1);
+            } else {
+                result.put(line, 1);
+            }
+        }
+        Iterator it = result.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String key = (String) pair.getKey();
+            int x;
+            try {
+                x = Integer.parseInt(key);
+                if (x < 23 && x > 5 && key.length() == 2) {
+                    Toast.makeText(this, key + " = " + pair.getValue() + " occurrences.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            } catch(NumberFormatException e) {
+                //ignore
+            }
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+    }
+
+    private Image bitmapToImage(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        Image inputImage = new Image();
+        inputImage.encodeContent(byteArray);
+        return inputImage;
+    }
+
+    class MakeGoogleRequest extends AsyncTask<Bitmap, Void, String> {
+
+        protected String doInBackground(Bitmap... bitmaps) {
+            Image inputScreenshot = bitmapToImage(bitmaps[0]);
+            //Use text_detection
+            Feature desiredFeature = new Feature();
+            desiredFeature.setType("TEXT_DETECTION");
+
+            //Setup requests
+            Vision.Builder visionBuilder = new Vision.Builder(
+                    new NetHttpTransport(),
+                    new AndroidJsonFactory(),
+                    null);
+            visionBuilder.setVisionRequestInitializer(
+                    new VisionRequestInitializer(GOOGLE_VISION_API_KEY));
+
+            Vision vision = visionBuilder.build();
+
+            AnnotateImageRequest requestScreenshot = new AnnotateImageRequest();
+            requestScreenshot.setImage(inputScreenshot);
+            requestScreenshot.setFeatures(Arrays.asList(desiredFeature));
+
+            BatchAnnotateImagesRequest batchRequest = new BatchAnnotateImagesRequest();
+            batchRequest.setRequests(Arrays.asList(requestScreenshot));
+
+            //Make requests
+            BatchAnnotateImagesResponse batchResponse = null;
+            try {
+                batchResponse = vision.images().annotate(batchRequest).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //Get response
+            if (batchResponse != null) {
+                TextAnnotation fullTextAnnotation = batchResponse.getResponses().get(0).getFullTextAnnotation();
+                //This contains the coordinates for each -- to be used later
+                List<EntityAnnotation> textAnnotations = batchResponse.getResponses().get(0)
+                        .getTextAnnotations();
+                String text = fullTextAnnotation.getText();
+                return text;
+            }
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+        }
+    }
+
 
 }

@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -26,6 +27,7 @@ import solarsitingucsc.smartsolarsiting.View.DrawOnTop;
 import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 public class MainActivity extends Activity {
 
@@ -75,7 +77,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        configureSeeCalcButton();
+//        configureSeeCalcButton();
         configureCaptureButton();
     }
 
@@ -120,19 +122,19 @@ public class MainActivity extends Activity {
             ActivityCompat.requestPermissions(this, permissions, 1);
     }
 
-    /**
-     *  Button to change camera view to calculations view
-     */
-    private void configureSeeCalcButton() {
-        Button seeCalcButton = (Button) findViewById(R.id.button_see_calculations);
-        seeCalcButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,
-                        DisplayCalculationsActivity.class));
-            }
-        } );
-    }
+//    /**
+//     *  Button to change camera view to calculations view
+//     */
+//    private void configureSeeCalcButton() {
+//        Button seeCalcButton = (Button) findViewById(R.id.button_see_calculations);
+//        seeCalcButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(MainActivity.this,
+//                        DisplayCalculationsActivity.class));
+//            }
+//        } );
+//    }
 
     private void configureCaptureButton() {
         Button captureButton = (Button) findViewById(R.id.button_capture);
@@ -148,15 +150,12 @@ public class MainActivity extends Activity {
 
     private String takeScreenshot() {
         try {
-            File cacheDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                    "Smart Solar Siting");
-
-            if (!cacheDir.exists()) {
-                cacheDir.mkdirs();
-            }
-
-            File screenshotFile = getInternalOutputMediaFile(MEDIA_TYPE_IMAGE, this);
+            File screenshotFile = getInternalOutputMediaFile(this);
             ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), screenshotFile);
+
+            //Save screenshot to phone's images
+//            File screenshotFile2 = getExternalOutputMediaFile(MEDIA_TYPE_IMAGE);
+//            ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), screenshotFile2);
 
             return screenshotFile.getName();
         } catch (NullPointerException ignored) {
@@ -168,7 +167,7 @@ public class MainActivity extends Activity {
     /**
      * Create a File for saving an image or video in internal memory
      */
-    private static File getInternalOutputMediaFile(int type, Context context) {
+    private static File getInternalOutputMediaFile(Context context) {
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) +
                 "SCREENSHOT";
@@ -176,19 +175,39 @@ public class MainActivity extends Activity {
         return file;
     }
 
-//    private void configureCaptureButton() {
-//        Button captureButton = (Button) findViewById(R.id.button_capture);
-//        captureButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-////                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-////                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-////                }
-//
-//                // get an image from the camera
-//                camera.takePicture(null, null, mPicture);
-//            }
-//        });
-//    }
+    /**
+     * Create a File for saving an image or video in external storage
+     */
+    private static File getExternalOutputMediaFile(int type){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "Smart Solar Siting");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.d("Smart Solar Siting", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_"+ timeStamp + ".jpg");
+        } else if(type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "VID_"+ timeStamp + ".mp4");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
 }

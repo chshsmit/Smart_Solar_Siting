@@ -12,12 +12,12 @@
         android:layout_gravity="bottom|center"
         />
 
-    <Button
-        android:id="@+id/button_see_calculations"
-        android:layout_width="142dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:text="See Calculations" />
+    <!--<Button-->
+        <!--android:id="@+id/button_see_calculations"-->
+        <!--android:layout_width="142dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|right"-->
+        <!--android:text="See Calculations" />-->
 
 
 </FrameLayout>

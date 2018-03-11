@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -125,6 +126,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         timePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         timePaint.setColor(Color.BLACK);
         timePaint.setTextSize(20);
+        timePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
     }
 
     private void startSensors() {
@@ -207,11 +209,11 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
             String msg = "Searching for your location...";
             drawCenter(canvas, targetPaint, msg);
         }
-        else {
-            StaticLayout textBox = new StaticLayout(text.toString(), contentPaint,
-                    480, Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
-            textBox.draw(canvas);
-        }
+//        else {
+//            StaticLayout textBox = new StaticLayout(text.toString(), contentPaint,
+//                    480, Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+//            textBox.draw(canvas);
+//        }
         canvas.restore();
     }
 

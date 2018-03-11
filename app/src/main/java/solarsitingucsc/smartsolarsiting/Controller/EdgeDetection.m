@@ -1,15 +1,13 @@
 %% Edge Detection
 % Integrated: Matlab Cell Segmentation Example
 
-%% Input
-
-OGimg = 'cell.tif'; % image file, change later (from example)
-
 %% Read Image
 
-I = imread(OGimg);
+I = imread('tidel2.JPG');
+I = rgb2gray(I);
+I = I>50;  %values greater than 50 are white
 
-% figure, imshow(I), title('original image');
+figure, imshow(I), title('original image');
 % text(size(I,2),size(I,1)+15, ...
 %     'Image courtesy of Alan Partin', ...
 %     'FontSize',7,'HorizontalAlignment','right');
@@ -89,3 +87,5 @@ BWoutline = bwperim(BWfinal);
 Segout = I; 
 Segout(BWoutline) = 255; 
 figure, imshow(Segout), title('outlined original image');
+
+%% What's next?

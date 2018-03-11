@@ -82,21 +82,23 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //        });
 //    }
 
+
+    
     public double[] hourlyArray = new double[8760];
 
     public void makeRequest(double latitude, double longitude){
         System.out.println("We are making a JSONObject Request");
+
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
-//        String url ="https://developer.nrel.gov/api/solar/solar_resource/v1.json?" +
-//                "api_key=" +API_KEY+ "&lat="+latitude+  "&lon="+longitude;
-
+        //This is the link that we are making our Volley call to
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
                 "api_key=" +API_KEY+ "&lat=" +latitude+ "&lon=" +longitude+
                 "&system_capacity=4" + "&azimuth=180" + "&tilt=40" + "&array_type=1" +
                 "&module_type=1" + "&losses=10" + "&timeframe=hourly";
 
+        //JSONObject Response Listener
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
@@ -133,15 +135,19 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
 
     public double getPowerForHourAndMonth(int hour, int month){
+        //We increment by 24 hour time periods
         final int TWENTY_FOUR_HOURS = 24;
         double[] arrayForMonth = splitForMonth(month);
         double totalAcWatts = 0;
 
+        //Add up the total amount of Watts we will be receiving at the indicated hour
+        //for the indicated month
         for(int index = hour - 1; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
             totalAcWatts += arrayForMonth[index];
         }
 
-        return totalAcWatts/1000;
+
+        return totalAcWatts/1000;   //Converting from Watts to Kilowatts
     }
 
 

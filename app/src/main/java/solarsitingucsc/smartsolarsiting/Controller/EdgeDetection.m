@@ -5,7 +5,7 @@
 
 I = imread('tidel2.JPG');
 I = rgb2gray(I);
-I = I>50;  %values greater than 50 are white
+I = I>100;  %values greater than 50 are white
 
 figure, imshow(I), title('original image');
 % text(size(I,2),size(I,1)+15, ...

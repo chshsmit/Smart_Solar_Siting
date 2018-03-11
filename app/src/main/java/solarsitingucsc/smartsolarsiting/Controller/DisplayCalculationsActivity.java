@@ -15,10 +15,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.Calendar;
 
 import solarsitingucsc.smartsolarsiting.R;
 
@@ -78,13 +82,19 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //        });
 //    }
 
+    public double[] hourlyArray = new double[8760];
+
     public void makeRequest(double latitude, double longitude){
         System.out.println("We are making a JSONObject Request");
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String url ="https://developer.nrel.gov/api/solar/solar_resource/v1.json?" +
-                "api_key=" +API_KEY+ "&lat="+latitude+  "&lon="+longitude;
+//        String url ="https://developer.nrel.gov/api/solar/solar_resource/v1.json?" +
+//                "api_key=" +API_KEY+ "&lat="+latitude+  "&lon="+longitude;
+
+        String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
+                "api_key=" +API_KEY+"&lat=36.9&lon=-122.03&system_capacity=4&azimuth=180&" +
+                "tilt=40&array_type=1&module_type=1&losses=10&timeframe=hourly";
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -92,6 +102,18 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         System.out.println("Response: " + response.toString());
+                        try {
+                            JSONObject outputs = response.getJSONObject("outputs");
+                            JSONArray arr = outputs.getJSONArray("ac");
+                           
+                            //Adding objects to our hourlyArray to be split
+                            for(int i=0; i<arr.length(); i++){
+                                hourlyArray[i] = arr.getDouble(i);
+                            }
+
+                        }catch(JSONException e){
+                            System.out.println(e);
+                        }
                     }
                 }, new Response.ErrorListener() {
 
@@ -106,6 +128,76 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         // Add the request to the request queue
         queue.add(jsObjRequest);
+    }
+
+
+    int TWENTY_FOUR_HOURS = 24;
+    public double getPowerForHourAndMonth(int hour, int month){
+        double[] arrayForMonth = splitForMonth(month);
+        double totalAcWatts = 0;
+
+        for(int index = hour - 1; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
+            totalAcWatts += arrayForMonth[index];
+        }
+
+        return totalAcWatts/1000;
+    }
+
+
+    //This function gets only the indexes for the month we are working with
+    public double[] splitForMonth(int month){
+        double[] monthlyArray = null;
+        switch(month){
+            case Calendar.JANUARY:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 0, 744);
+                break;
+
+            case Calendar.FEBRUARY:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 744, 1416);
+                break;
+
+            case Calendar.MARCH:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 1416, 2161);
+                break;
+
+            case Calendar.APRIL:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 2161, 2881);
+                break;
+
+            case Calendar.MAY:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 2881, 3625);
+                break;
+
+            case Calendar.JUNE:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 3625, 4345);
+                break;
+
+            case Calendar.JULY:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 4345, 5089);
+                break;
+
+            case Calendar.AUGUST:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 5089, 5833);
+                break;
+
+            case Calendar.SEPTEMBER:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 5833, 6553);
+                break;
+
+            case Calendar.OCTOBER:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 6553, 7297);
+                break;
+
+            case Calendar.NOVEMBER:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 7297, 8017);
+                break;
+
+            case Calendar.DECEMBER:
+                monthlyArray = Arrays.copyOfRange(hourlyArray, 8017, 8760);
+                break;
+
+        }
+        return monthlyArray;
     }
 
 }

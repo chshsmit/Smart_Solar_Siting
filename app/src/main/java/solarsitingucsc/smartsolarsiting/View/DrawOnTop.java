@@ -38,7 +38,7 @@ import solarsitingucsc.smartsolarsiting.Model.Grena3;
 public class DrawOnTop extends View implements SensorEventListener, LocationListener {
 
     public static final String DEBUG_TAG = "DrawOnTop Log";
-    private static final float CIRCLE_RADIUS = 25.0f;
+    private static final float CIRCLE_RADIUS = 18.0f;
 
     private final Context context;
     private Handler handler;
@@ -126,7 +126,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         //paint for times
         timePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         timePaint.setColor(Color.BLACK);
-        timePaint.setTextSize(20);
+        timePaint.setTextSize(9);
         timePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
     }
 
@@ -294,15 +294,11 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
             canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, CIRCLE_RADIUS,
                     targetPaint);
 
-            //write the hour of the point in the middle of the circle
-            canvas.drawText(averageArray[i].getTime(),
-                    canvas.getWidth()/2 - (CIRCLE_RADIUS - 10f),
-                    canvas.getHeight()/2 + (CIRCLE_RADIUS - 5f), timePaint);
-
-            //write the month of the point in the middle of the circle
-            canvas.drawText(new DateFormatSymbols().getMonths()[month].substring(0, 3),
-                    canvas.getWidth()/2 - (CIRCLE_RADIUS - 10f),
-                    canvas.getHeight()/2 + (CIRCLE_RADIUS/8f), timePaint);
+            //write the month and the hour of the point in the middle of the circle
+            canvas.drawText(new DateFormatSymbols().getMonths()[month].substring(0, 3).toUpperCase()
+                            + averageArray[i].getTime(),
+                    canvas.getWidth()/2 - (CIRCLE_RADIUS - 3f),
+                    canvas.getHeight()/2 + (CIRCLE_RADIUS - ((2*CIRCLE_RADIUS)/3)), timePaint);
 
             //write the name of the month at the highest point of elevation on the arc
             if (i != averageArray.length - 1 && averageArray[i].getElevationFromTheHorizon() >

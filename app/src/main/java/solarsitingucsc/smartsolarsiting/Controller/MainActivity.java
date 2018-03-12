@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -34,12 +35,18 @@ public class MainActivity extends Activity {
     private CameraPreview mCameraPreview;
     private DrawOnTop mDraw;
     private FrameLayout cameraPreviewPane;
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         checkForPermissionsAndOpenCamera();
+        if (progressBar == null ) {
+            progressBar = findViewById(R.id.progressBar);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -57,6 +64,13 @@ public class MainActivity extends Activity {
             }
             openCamera();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (progressBar != null )
+            progressBar.setVisibility(View.GONE);
     }
 
     /**
@@ -77,7 +91,6 @@ public class MainActivity extends Activity {
             }
         });
 
-//        configureSeeCalcButton();
         configureCaptureButton();
     }
 
@@ -122,25 +135,12 @@ public class MainActivity extends Activity {
             ActivityCompat.requestPermissions(this, permissions, 1);
     }
 
-//    /**
-//     *  Button to change camera view to calculations view
-//     */
-//    private void configureSeeCalcButton() {
-//        Button seeCalcButton = (Button) findViewById(R.id.button_see_calculations);
-//        seeCalcButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startActivity(new Intent(MainActivity.this,
-//                        DisplayCalculationsActivity.class));
-//            }
-//        } );
-//    }
-
     private void configureCaptureButton() {
         Button captureButton = (Button) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
                 String path = takeScreenshot();
                 mCameraPreview.setScreenshotName(path);
                 mCameraPreview.takePicture();

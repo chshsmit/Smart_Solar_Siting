@@ -12,6 +12,17 @@
         android:layout_gravity="bottom|center"
         />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:layout_centerInParent="true"
+        android:translationZ="2dp"
+        android:visibility="gone"/>
+
     <!--<Button-->
         <!--android:id="@+id/button_see_calculations"-->
         <!--android:layout_width="142dp"-->

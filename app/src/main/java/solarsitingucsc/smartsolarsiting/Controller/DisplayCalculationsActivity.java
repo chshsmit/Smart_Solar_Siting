@@ -117,11 +117,12 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                         try {
                             JSONObject outputs = response.getJSONObject("outputs");
                             JSONArray arr = outputs.getJSONArray("ac");
-                            System.out.println(arr.toString());
+
                             //Adding objects to our hourlyArray to be split
                             for(int i=0; i<arr.length(); i++){
                                 hourlyArray[i] = arr.getDouble(i);
                             }
+
 
                         }catch(JSONException e){
                             System.out.println(e);

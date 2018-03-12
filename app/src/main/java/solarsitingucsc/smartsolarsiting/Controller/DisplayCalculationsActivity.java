@@ -15,12 +15,20 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+
+
+
+
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import solarsitingucsc.smartsolarsiting.R;
+import solarsitingucsc.smartsolarsiting.View.DrawingView;
 
 import static android.content.ContentValues.TAG;
 
@@ -28,6 +36,11 @@ import static android.content.ContentValues.TAG;
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
     private final String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
+
+    // variables for drawing
+    private DrawingView drawView;
+    private ImageButton currPaint;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +79,13 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //Use this to set the screenshot (with just the lines) as background in the new activity
           imageView.setImageBitmap(screenshot);
+
+        drawView = (DrawingView)findViewById(R.id.drawing);
+        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
+        currPaint = (ImageButton)paintLayout.getChildAt(0);
+        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+
+
     }
 
 //    private void configureCamButton() {
@@ -107,5 +127,26 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         // Add the request to the request queue
         queue.add(jsObjRequest);
     }
+
+    public void paintClicked(View view){
+        //use chosen color
+        String color = null;
+        ImageButton imgView = null;
+
+        if(view!=currPaint){
+        //update color
+            imgView = (ImageButton)view;
+            color = view.getTag().toString();
+        }
+
+        drawView.setColor(color);
+
+        imgView.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
+        currPaint=(ImageButton)view;
+    }
+
+
+
 
 }

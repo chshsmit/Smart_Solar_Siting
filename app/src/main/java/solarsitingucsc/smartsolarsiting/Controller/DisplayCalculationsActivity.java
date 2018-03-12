@@ -9,8 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -56,13 +58,13 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
     private final  String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
     private ProgressBar progressBar;
-    public double[] hourlyArray = new double[8760];
+    private double[] hourlyArray = new double[8760];
+    private TextView[] textViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
-//        configureCamButton();
         findViewById(R.id.display_calc_view).setOnTouchListener(
                 new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
             public void onSwipeRight() {
@@ -70,6 +72,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             }
         });
         progressBar = findViewById(R.id.progressBar);
+        latitude = getIntent().getDoubleExtra("latitude", 0.0);
+        longitude = getIntent().getDoubleExtra("longitude", 0.0);
         String imageName = getIntent().getStringExtra("imageName");
         String screenshotName = getIntent().getStringExtra("screenshotName");
         FileInputStream imageFis = null;
@@ -88,38 +92,27 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 originalImage.getHeight(), matrix, true);
         Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
 
-        ImageView imageView = findViewById(R.id.imageView);
+        textViews = new TextView[13];
+        int[] months = {R.id.janKwTxt, R.id.febKwTxt, R.id.marKwTxt, R.id.aprKwTxt, R.id.mayKwTxt,
+                R.id.junKwTxt, R.id.julKwTxt, R.id.augKwTxt, R.id.sepKwTxt, R.id.octKwTxt,
+                R.id.novKwTxt, R.id.decKwTxt, R.id.annualKwTxt};
+        for (int i = 0; i < textViews.length; i++) {
+            textViews[i] = findViewById(months[i]);
+        }
 
         new MakeGoogleRequest().execute(screenshot);
+
+//        ImageView imageView = findViewById(R.id.imageView);
 
         //Use this to set image as background in the new activity
 //        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 //        imageView.setImageBitmap(rotatedImage);
 
         //Use this to set the screenshot (with just the lines) as background in the new activity
-        imageView.setImageBitmap(screenshot);
-
-        latitude = getIntent().getDoubleExtra("latitude", 0.0);
-        longitude = getIntent().getDoubleExtra("longitude", 0.0);
-
-        makeDatasetRequest(latitude, longitude);
-
-        System.out.println("Latitude: "+latitude);
-        System.out.println("Longitude: "+longitude);
+//        imageView.setImageBitmap(screenshot);
     }
 
-//    private void configureCamButton() {
-//        Button camButton = (Button) findViewById(R.id.cam_button);
-//        camButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                finish();
-//            }
-//        });
-//    }
-
     private void makeDatasetRequest(double latitude, double longitude) {
-
         System.out.println("We are making a JSONObject Request");
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -133,7 +126,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         //JSONObject Response Listener
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
                     @Override
                     public void onResponse(JSONObject response) {
                         System.out.println("Response: " + response.toString());
@@ -145,23 +137,17 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                             for(int i=0; i<arr.length(); i++){
                                 hourlyArray[i] = arr.getDouble(i);
                             }
-
-
-                        }catch(JSONException e){
+                        } catch(JSONException e){
                             System.out.println(e);
                         }
                     }
                 }, new Response.ErrorListener() {
-
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO Auto-generated method stub
                         System.out.println("That didn't work!");
-
-
                     }
                 });
-
         // Add the request to the request queue
         queue.add(jsObjRequest);
     }
@@ -259,9 +245,9 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         Map<String, Integer> finalResult = new HashMap<>();
         for (int i = 1; i < hours.length + 1; i++) {
             if (i < 10)
-                hours[i] = "0" + i;
+                hours[i - 1] = "0" + i;
             else
-                hours[i] = i + "";
+                hours[i - 1] = i + "";
         }
         Map<String, Integer> result = new HashMap<>();
         for (String s : response) {
@@ -276,30 +262,37 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             String key = (String) pair.getKey();
-            int monthInt, hourInt, dashIndex = key.indexOf("-"), lastDashIndex = key.lastIndexOf("-");
+            int monthInt, hourInt, dashIndex = key.indexOf("-"), previousIndex = 0;
             String month = "", hour = "";
-            if (dashIndex != -1) {
-//                if (lastDashIndex != dashIndex) {
-//
-//                }
-                month = key.substring(0, dashIndex);
+            while(dashIndex >= 0) {
+                //Get the month and hour strings from the key
+                month = key.substring(previousIndex, dashIndex);
                 hour = key.substring(dashIndex + 1, key.length());
+
+                //Try and match the month and hour strings to the closest possibility
                 month = getClosestString(months, month);
                 hour = getClosestString(hours, hour);
-            }
-            try {
-                //Check if month and hour can be integers
-                monthInt = Integer.parseInt(month);
-                hourInt = Integer.parseInt(hour);
-                String finalString = month + "-" + hour;
-                Integer count = finalResult.get(finalString);
-                if (count != null) {
-                    finalResult.put(finalString, count + 1);
-                } else {
-                    finalResult.put(finalString, 1);
+
+                try {
+                    //Check if month and hour can be integers
+                    monthInt = Integer.parseInt(month);
+                    hourInt = Integer.parseInt(hour);
+
+                    //If so, add the concatenation of the two to the final hashmap
+                    String finalString = month + "-" + hour;
+                    Integer count = finalResult.get(finalString);
+                    if (count != null) {
+                        finalResult.put(finalString, count + 1);
+                    } else {
+                        finalResult.put(finalString, 1);
+                    }
+                } catch (NumberFormatException e) {
+                    //ignored
                 }
-            } catch (NumberFormatException e) {
-                //ignored
+
+                //Move on to next dash if it exists
+                previousIndex = dashIndex;
+                dashIndex = key.indexOf("-", dashIndex + 1);
             }
             it.remove(); // avoids a ConcurrentModificationException
         }
@@ -316,7 +309,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 minIndex = i;
             }
         }
-        return selection[minIndex];
+        if (min > 3)
+            return stringToMatch;
+        else
+            return selection[minIndex];
     }
 
     private int getLevenshteinDistance(String a, String b) {
@@ -349,6 +345,12 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     }
 
     private class MakeGoogleRequest extends AsyncTask<Bitmap, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+            makeDatasetRequest(latitude, longitude);
+        }
 
         protected String doInBackground(Bitmap... bitmaps) {
             Image inputScreenshot = bitmapToImage(bitmaps[0]);
@@ -397,7 +399,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         protected void onPostExecute(String response) {
             Map<String, Integer> result = translateResponseToMap(response);
             Iterator it = result.entrySet().iterator();
-            int totalPower = 0;
+            int annualPower = 0;
+            int[] monthlyPower = new int[12];
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
                 String key = (String) pair.getKey();
@@ -411,14 +414,22 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 for (int i = 0; i < value; i++) {
                     try {
                         int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
-                        totalPower += getPowerForMonthAndHour(monthInt, hourInt)/6;
+                        double power = getPowerForMonthAndHour(monthInt, hourInt)/6;;
+                        annualPower += power;
+                        monthlyPower[monthInt] += power;
                     } catch (NumberFormatException e) {
                         break;
                     }
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
-            Toast.makeText(getBaseContext(), totalPower + " kiloWatts.", Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.GONE);
+            String text = annualPower + " kW";
+            textViews[12].setText(text);
+            for (int i = 0; i < monthlyPower.length; i++) {
+                text = monthlyPower[i] + " kW";
+                textViews[i].setText(text);
+            }
         }
     }
 }

@@ -190,7 +190,7 @@ public final class Grena3 {
         else
             convertedMonth = month + "";
 
-        return convertedMonth + convertedHour;
+        return convertedMonth + "-" + convertedHour;
     }
 
     public static void calculateCurrentDay(double latitude, double longitude){

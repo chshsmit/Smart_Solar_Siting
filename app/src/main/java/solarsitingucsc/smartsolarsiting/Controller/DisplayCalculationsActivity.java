@@ -50,20 +50,18 @@ import solarsitingucsc.smartsolarsiting.R;
 
 import static android.content.ContentValues.TAG;
 
-
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
-    private final static String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
+    private final  String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
     private ProgressBar progressBar;
-    private static Context mContext;
+    public double[] hourlyArray = new double[8760];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
-        mContext = getBaseContext();
 //        configureCamButton();
         findViewById(R.id.display_calc_view).setOnTouchListener(
                 new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
@@ -120,9 +118,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //        });
 //    }
 
-    public double[] hourlyArray = new double[8760];
-
-    public void makeDatasetRequest(double latitude, double longitude){
+    private void makeDatasetRequest(double latitude, double longitude) {
 
         System.out.println("We are making a JSONObject Request");
         //Instantiate the request queue
@@ -130,7 +126,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //This is the link that we are making our Volley call to
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
-                "api_key=" + DATASET_API_KEY+ "&lat=" +latitude+ "&lon=" +longitude+
+                "api_key=" + DATASET_API_KEY + "&lat=" +latitude+ "&lon=" +longitude+
                 "&system_capacity=4" + "&azimuth=180" + "&tilt=40" + "&array_type=1" +
                 "&module_type=1" + "&losses=10" + "&timeframe=hourly";
 
@@ -170,8 +166,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         queue.add(jsObjRequest);
     }
 
-
-    public double getPowerForHourAndMonth(int hour, int month){
+    private double getPowerForMonthAndHour(int month, int hour) {
         //We increment by 24 hour time periods
         final int TWENTY_FOUR_HOURS = 24;
         double[] arrayForMonth = splitForMonth(month);
@@ -187,9 +182,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return totalAcWatts/1000;   //Converting from Watts to Kilowatts
     }
 
-
     //This function gets only the indexes for the month we are working with
-    public double[] splitForMonth(int month){
+    private double[] splitForMonth(int month) {
         double[] monthlyArray = null;
         switch(month){
             case Calendar.JANUARY:
@@ -244,32 +238,108 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return monthlyArray;
     }
 
-    private static Map<String, Integer> translateResponseToMap(String response) {
+    private Map<String, Integer> translateResponseToMap(String response) {
+        //Sometimes 8s are confused with Bs by Google's API -- there should be no Bs so change to 8s
+        response = response.replace("B", "8");
         //remove newlines
         String[] newline_lines = response.split("\\r?\\n");
-        System.out.println(Arrays.toString(newline_lines));
         //reassemble to remove commas and spaces
         String joined_newlines = TextUtils.join(",", newline_lines);
         //remove commas to remove spaces
         String[] comma_lines = joined_newlines.split(",");
-        System.out.println(Arrays.toString(comma_lines));
         String joined_comma = TextUtils.join(" ", comma_lines);
         //remove spaces
         String[] lines = joined_comma.split(" ");
-        System.out.println(Arrays.toString(lines));
-        Map<String, Integer> result = new HashMap<>();
-        for (String line : lines) {
-            Integer count = result.get(line);
-            if (count != null) {
-                result.put(line, count + 1);
-            } else {
-                result.put(line, 1);
-            }
-        }
-        return result;
+        return analyseResponse(lines);
     }
 
-    private static Image bitmapToImage(Bitmap bitmap) {
+    private Map<String, Integer> analyseResponse(String[] response) {
+        String[] months = {"00", "01", "02", "03", "04", "06", "07", "08", "09", "10", "11"};
+        String[] hours = new String[24];
+        Map<String, Integer> finalResult = new HashMap<>();
+        for (int i = 1; i < hours.length + 1; i++) {
+            if (i < 10)
+                hours[i] = "0" + i;
+            else
+                hours[i] = i + "";
+        }
+        Map<String, Integer> result = new HashMap<>();
+        for (String s : response) {
+            Integer count = result.get(s);
+            if (count != null) {
+                result.put(s, count + 1);
+            } else {
+                result.put(s, 1);
+            }
+        }
+        Iterator it = result.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String key = (String) pair.getKey();
+            int monthInt, hourInt, dashIndex = key.indexOf("-"), lastDashIndex = key.lastIndexOf("-");
+            String month = "", hour = "";
+            if (dashIndex != -1) {
+//                if (lastDashIndex != dashIndex) {
+//
+//                }
+                month = key.substring(0, dashIndex);
+                hour = key.substring(dashIndex + 1, key.length());
+                month = getClosestString(months, month);
+                hour = getClosestString(hours, hour);
+            }
+            try {
+                //Check if month and hour can be integers
+                monthInt = Integer.parseInt(month);
+                hourInt = Integer.parseInt(hour);
+                String finalString = month + "-" + hour;
+                Integer count = finalResult.get(finalString);
+                if (count != null) {
+                    finalResult.put(finalString, count + 1);
+                } else {
+                    finalResult.put(finalString, 1);
+                }
+            } catch (NumberFormatException e) {
+                //ignored
+            }
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        return finalResult;
+    }
+
+    private String getClosestString(String[] selection, String stringToMatch) {
+        int min = Integer.MAX_VALUE;
+        int minIndex = 0;
+        for (int i = 0; i < selection.length; i++) {
+            int distance = getLevenshteinDistance(stringToMatch, selection[i]);
+            if (min > distance) {
+                min = distance;
+                minIndex = i;
+            }
+        }
+        return selection[minIndex];
+    }
+
+    private int getLevenshteinDistance(String a, String b) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+        // i == 0
+        int [] costs = new int [b.length() + 1];
+        for (int j = 0; j < costs.length; j++)
+            costs[j] = j;
+        for (int i = 1; i <= a.length(); i++) {
+            // j == 0; nw = lev(i - 1, j)
+            costs[0] = i;
+            int nw = i - 1;
+            for (int j = 1; j <= b.length(); j++) {
+                int cj = Math.min(1 + Math.min(costs[j], costs[j - 1]), a.charAt(i - 1) == b.charAt(j - 1) ? nw : nw + 1);
+                nw = costs[j];
+                costs[j] = cj;
+            }
+        }
+        return costs[b.length()];
+    }
+
+    private Image bitmapToImage(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
@@ -278,7 +348,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return inputImage;
     }
 
-    private static class MakeGoogleRequest extends AsyncTask<Bitmap, Void, String> {
+    private class MakeGoogleRequest extends AsyncTask<Bitmap, Void, String> {
 
         protected String doInBackground(Bitmap... bitmaps) {
             Image inputScreenshot = bitmapToImage(bitmaps[0]);
@@ -325,32 +395,30 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String response) {
-//            super.onPostExecute(response);
             Map<String, Integer> result = translateResponseToMap(response);
             Iterator it = result.entrySet().iterator();
+            int totalPower = 0;
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
                 String key = (String) pair.getKey();
-                int x;
-                System.out.println(key + " = " + pair.getValue() + " occurrences.");
-                if (mContext != null)
-                    Toast.makeText(mContext, key + " = " + pair.getValue() + " occurrences.",
-                            Toast.LENGTH_SHORT).show();
-//                try {
-//                    x = Integer.parseInt(key);
-//                    if (x < 23 && x > 5 && key.length() == 2) {
-//                        System.out.println(key + " = " + pair.getValue() + " occurrences.");
-//                        Toast.makeText(mContext, key + " = " + pair.getValue() + " occurrences.",
-//                                Toast.LENGTH_SHORT).show();
-//                    }
-//                } catch(NumberFormatException e) {
-//                    //ignored
-//                }
+                int value = (int) pair.getValue();
+                int dashIndex = key.indexOf("-");
+                String month = "", hour = "";
+                if (dashIndex != -1) {
+                    month = key.substring(0, dashIndex);
+                    hour = key.substring(dashIndex + 1, key.length());
+                }
+                for (int i = 0; i < value; i++) {
+                    try {
+                        int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
+                        totalPower += getPowerForMonthAndHour(monthInt, hourInt)/6;
+                    } catch (NumberFormatException e) {
+                        break;
+                    }
+                }
                 it.remove(); // avoids a ConcurrentModificationException
             }
+            Toast.makeText(getBaseContext(), totalPower + " kiloWatts.", Toast.LENGTH_LONG).show();
         }
     }
-
-
-
 }

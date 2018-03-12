@@ -414,7 +414,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 for (int i = 0; i < value; i++) {
                     try {
                         int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
-                        double power = getPowerForMonthAndHour(monthInt, hourInt)/6;;
+                        double power = getPowerForMonthAndHour(monthInt, hourInt)/6;
                         annualPower += power;
                         monthlyPower[monthInt] += power;
                     } catch (NumberFormatException e) {
@@ -424,10 +424,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 it.remove(); // avoids a ConcurrentModificationException
             }
             progressBar.setVisibility(View.GONE);
-            String text = annualPower + " kW";
+            String text = annualPower + "kW";
             textViews[12].setText(text);
             for (int i = 0; i < monthlyPower.length; i++) {
-                text = monthlyPower[i] + " kW";
+                text = monthlyPower[i] + "kW";
                 textViews[i].setText(text);
             }
         }

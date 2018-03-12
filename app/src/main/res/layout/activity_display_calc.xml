@@ -179,44 +179,47 @@
         android:id="@+id/janKwTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/janTxt"
-        android:layout_marginLeft="13dp"
-        android:layout_marginStart="13dp"
-        android:layout_toEndOf="@+id/mayTxt"
-        android:layout_toRightOf="@+id/mayTxt" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/janTxt"
+        android:layout_toRightOf="@+id/janTxt"
+        android:layout_alignBottom="@+id/janTxt" />
 
     <TextView
         android:id="@+id/febKwTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/febTxt"
-        android:layout_alignBottom="@+id/febTxt"
         android:layout_alignLeft="@+id/janKwTxt"
-        android:layout_alignStart="@+id/janKwTxt" />
+        android:layout_alignStart="@+id/janKwTxt"
+        android:layout_below="@+id/janKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/marKwTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/febKwTxt"
-        android:layout_alignRight="@+id/febKwTxt"
-        android:layout_alignTop="@+id/marTxt" />
+        android:layout_alignLeft="@+id/febKwTxt"
+        android:layout_alignStart="@+id/febKwTxt"
+        android:layout_below="@+id/febKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/aprKwTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/marKwTxt"
-        android:layout_alignRight="@+id/marKwTxt"
-        android:layout_alignTop="@+id/aprTxt" />
+        android:layout_alignLeft="@+id/marKwTxt"
+        android:layout_alignStart="@+id/marKwTxt"
+        android:layout_below="@+id/marKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/mayKwTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/aprKwTxt"
-        android:layout_alignRight="@+id/aprKwTxt"
-        android:layout_alignTop="@+id/mayTxt" />
+        android:layout_alignLeft="@+id/aprKwTxt"
+        android:layout_alignStart="@+id/aprKwTxt"
+        android:layout_below="@+id/aprKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/junKwTxt"
@@ -224,15 +227,17 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/mayKwTxt"
         android:layout_alignStart="@+id/mayKwTxt"
-        android:layout_alignTop="@+id/junTxt" />
+        android:layout_below="@+id/mayKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/julKwTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/junKwTxt"
-        android:layout_alignRight="@+id/junKwTxt"
-        android:layout_alignTop="@+id/julTxt" />
+        android:layout_alignLeft="@+id/junKwTxt"
+        android:layout_alignStart="@+id/junKwTxt"
+        android:layout_below="@+id/junKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/augKwTxt"
@@ -240,7 +245,8 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/julKwTxt"
         android:layout_alignStart="@+id/julKwTxt"
-        android:layout_alignTop="@+id/augTxt" />
+        android:layout_below="@+id/julKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/sepKwTxt"
@@ -248,15 +254,17 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/augKwTxt"
         android:layout_alignStart="@+id/augKwTxt"
-        android:layout_alignTop="@+id/sepTxt" />
+        android:layout_below="@+id/augKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/octKwTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/sepKwTxt"
-        android:layout_alignRight="@+id/sepKwTxt"
-        android:layout_alignTop="@+id/octTxt" />
+        android:layout_alignLeft="@+id/sepKwTxt"
+        android:layout_alignStart="@+id/sepKwTxt"
+        android:layout_below="@+id/sepKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/novKwTxt"
@@ -264,24 +272,26 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/octKwTxt"
         android:layout_alignStart="@+id/octKwTxt"
-        android:layout_alignTop="@+id/novTxt" />
+        android:layout_below="@+id/octKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/decKwTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/novKwTxt"
-        android:layout_alignRight="@+id/novKwTxt"
-        android:layout_alignTop="@+id/decTxt" />
+        android:layout_alignLeft="@+id/novKwTxt"
+        android:layout_alignStart="@+id/novKwTxt"
+        android:layout_below="@+id/novKwTxt"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/annualKwTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/annualTxt"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/annualTxt"
-        android:layout_toRightOf="@+id/annualTxt" />
+        android:layout_toRightOf="@+id/annualTxt"
+        android:layout_alignBottom="@+id/annualTxt"  />
 
 </RelativeLayout>

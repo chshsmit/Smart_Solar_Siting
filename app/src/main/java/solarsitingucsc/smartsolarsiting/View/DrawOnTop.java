@@ -295,9 +295,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                     targetPaint);
 
             //write the month and the hour of the point in the middle of the circle
-            canvas.drawText(new DateFormatSymbols().getMonths()[month].substring(0, 3).toUpperCase()
-                            + averageArray[i].getTime(),
-                    canvas.getWidth()/2 - (CIRCLE_RADIUS - 3f),
+            canvas.drawText(averageArray[i].getTime(), canvas.getWidth()/2 - (CIRCLE_RADIUS - 3f),
                     canvas.getHeight()/2 + (CIRCLE_RADIUS - ((2*CIRCLE_RADIUS)/3)), timePaint);
 
             //write the name of the month at the highest point of elevation on the arc

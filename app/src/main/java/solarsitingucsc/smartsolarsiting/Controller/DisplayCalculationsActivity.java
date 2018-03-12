@@ -336,21 +336,17 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 if (mContext != null)
                     Toast.makeText(mContext, key + " = " + pair.getValue() + " occurrences.",
                             Toast.LENGTH_SHORT).show();
-//            try {
-//                x = Integer.parseInt(key);
-//                if (x < 23 && x > 5 && key.length() == 2) {
-//                    System.out.println(key + " = " + pair.getValue() + " occurrences.");
-//                    Toast.makeText(this, key + " = " + pair.getValue() + " occurrences.",
-//                            Toast.LENGTH_SHORT).show();
+//                try {
+//                    x = Integer.parseInt(key);
+//                    if (x < 23 && x > 5 && key.length() == 2) {
+//                        System.out.println(key + " = " + pair.getValue() + " occurrences.");
+//                        Toast.makeText(mContext, key + " = " + pair.getValue() + " occurrences.",
+//                                Toast.LENGTH_SHORT).show();
+//                    }
+//                } catch(NumberFormatException e) {
+//                    //ignored
 //                }
-//            } catch(NumberFormatException e) {
-//                System.out.println(key + " = " + pair.getValue() + " occurrences.");
-//                Toast.makeText(this, key + " = " + pair.getValue() + " occurrences.",
-//                        Toast.LENGTH_SHORT).show();
-//            }
-                {
-                    it.remove(); // avoids a ConcurrentModificationException
-                }
+                it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }

@@ -88,7 +88,7 @@ public final class Grena3 {
         final double ZENITH = PI / 2 - parallaxCorrectedElevation - refractionCorrection;
 
         return new AzimuthZenithAngle(toDegrees(AZIMUTH + PI) % 360.0, toDegrees(ZENITH),
-                makeTimeString(date.get(Calendar.HOUR_OF_DAY), date.get(Calendar.MINUTE)));
+                makeTimeString(date.get(Calendar.MONTH), date.get(Calendar.HOUR_OF_DAY)));
     }
 
     //Returns time t
@@ -162,7 +162,7 @@ public final class Grena3 {
 
             position = calculateSolarPosition(currentDay, latitude, longitude, deltaT);
             addAngleToAverageArray(position, averagePositionForMonth, hourIndex,
-                    currentDay.get(Calendar.HOUR_OF_DAY), currentDay.get(Calendar.MINUTE));
+                    currentDay.get(Calendar.MONTH), currentDay.get(Calendar.HOUR_OF_DAY));
 
             currentDay.add(Calendar.MINUTE, minuteIncrement);
             hourIndex++;
@@ -176,18 +176,21 @@ public final class Grena3 {
         return averagePositionForMonth;
     }
 
-    public static String makeTimeString(int hour, int minutes) {
-        String convertedHour, convertedMins;
+    private static String makeTimeString(int month, int hour) {
+        String convertedHour;
+        String convertedMonth;
+
         if (hour < 10)
             convertedHour = "0" + hour;
         else
             convertedHour = hour + "";
-//        if (minutes < 10)
-//            convertedMins = "0" + minutes;
-//        else
-//            convertedMins = minutes + "";
-//        return convertedHour + ":" + convertedMins;
-        return convertedHour;
+
+        if (month < 10)
+            convertedMonth = "0" + month;
+        else
+            convertedMonth = month + "";
+
+        return convertedMonth + convertedHour;
     }
 
     public static void calculateCurrentDay(double latitude, double longitude){
@@ -208,12 +211,12 @@ public final class Grena3 {
 
     private static void addAngleToAverageArray(AzimuthZenithAngle newAngle,
                                                AzimuthZenithAngle[] averageArray,
-                                               int hourIndex, int hour, int mins){
+                                               int hourIndex, int month, int hour){
         if(averageArray[hourIndex] == null) {
             averageArray[hourIndex] = newAngle;
         } else {
             averageArray[hourIndex] = averageArray[hourIndex].twoAngleAverage(newAngle,
-                    makeTimeString(hour, mins));
+                    makeTimeString(month, hour));
         }
     }
 }

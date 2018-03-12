@@ -32,6 +32,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private Camera mCamera;
     private String screenshotName;
     private Activity mActivity;
+    public double latitude, longitude;
 
     public CameraPreview(Context context, Activity activity) {
         super(context);
@@ -146,6 +147,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             Intent intent = new Intent(finalContext, DisplayCalculationsActivity.class);
             intent.putExtra("imageName", pictureFile.getName());
             intent.putExtra("screenshotName", screenshotName);
+            intent.putExtra("latitude", latitude);
+            intent.putExtra("longitude", longitude);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             finalContext.startActivity(intent);
         }

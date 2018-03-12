@@ -48,7 +48,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     private LocationManager locationManager = null;
     private SensorManager sensors = null;
     private AzimuthZenithAngle[][] yearAveragePositionArray = new AzimuthZenithAngle[7][];
-    private Location lastLocation;
+    public Location lastLocation;
     private float[] lastAccelerometer;
     private float[] lastCompass;
 

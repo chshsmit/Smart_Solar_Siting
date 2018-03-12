@@ -32,6 +32,7 @@ import static android.content.ContentValues.TAG;
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
     private final String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
+    private double latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +66,19 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.imageView);
 
         //Use this to set image as background in the new activity
-//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-//        imageView.setImageBitmap(rotatedImage);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setImageBitmap(rotatedImage);
 
         //Use this to set the screenshot (with just the lines) as background in the new activity
-//        imageView.setImageBitmap(screenshot);
+        imageView.setImageBitmap(screenshot);
+
+        latitude = getIntent().getDoubleExtra("latitude", 0.0);
+        longitude = getIntent().getDoubleExtra("longitude", 0.0);
+
+        makeRequest(latitude, longitude);
+
+        System.out.println("Latitude: "+latitude);
+        System.out.println("Longitude: "+longitude);
     }
 
 //    private void configureCamButton() {
@@ -108,7 +117,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                         try {
                             JSONObject outputs = response.getJSONObject("outputs");
                             JSONArray arr = outputs.getJSONArray("ac");
-
+                            System.out.println(arr.toString());
                             //Adding objects to our hourlyArray to be split
                             for(int i=0; i<arr.length(); i++){
                                 hourlyArray[i] = arr.getDouble(i);
@@ -142,7 +151,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //Add up the total amount of Watts we will be receiving at the indicated hour
         //for the indicated month
-        for(int index = hour - 1; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
+        for(int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
             totalAcWatts += arrayForMonth[index];
         }
 

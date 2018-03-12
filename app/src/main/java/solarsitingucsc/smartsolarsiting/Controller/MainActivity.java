@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -140,6 +141,11 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 String path = takeScreenshot();
+                Location userLocation = mDraw.lastLocation;
+
+                mCameraPreview.latitude = userLocation.getLatitude();
+                mCameraPreview.longitude = userLocation.getLongitude();
+
                 mCameraPreview.setScreenshotName(path);
                 mCameraPreview.takePicture();
             }

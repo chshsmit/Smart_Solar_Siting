@@ -31,14 +31,14 @@ public class DrawingView extends View {
     }
 
     private void setupDrawing(){
-    //get drawing area setup for interaction
+        //get drawing area setup for interaction
         drawPath = new Path();
         drawPaint = new Paint();
 
         drawPaint.setColor(paintColor);
 
         drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(30);
+        drawPaint.setStrokeWidth(60);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);

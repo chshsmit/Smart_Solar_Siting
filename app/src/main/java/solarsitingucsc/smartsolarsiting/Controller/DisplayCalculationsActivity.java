@@ -151,7 +151,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
                         System.out.println("That didn't work!");
                     }
                 });
@@ -247,7 +246,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     }
 
     private Map<String, Integer> analyseResponse(String[] response) {
-        String[] months = {"00", "01", "02", "03", "04", "06", "07", "08", "09", "10", "11"};
+        String[] months = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
         String[] hours = new String[24];
         Map<String, Integer> finalResult = new HashMap<>();
         for (int i = 1; i < hours.length + 1; i++) {

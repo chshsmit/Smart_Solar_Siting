@@ -7,20 +7,16 @@
     android:layout_height="match_parent"
     tools:context="solarsitingucsc.smartsolarsiting.Controller.DisplayCalculationsActivity">
 
-    <!--<Button-->
-        <!--android:id="@+id/cam_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Button"-->
-        <!--tools:layout_editor_absoluteX="278dp"-->
-        <!--tools:layout_editor_absoluteY="16dp" />-->
-
-    <!--<ImageView-->
-        <!--android:id="@+id/imageView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:adjustViewBounds="true"-->
-        <!--android:src="@android:drawable/ic_menu_camera" />-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button_capture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom|center"
+        android:clickable="true"
+        app:backgroundTint="@android:color/background_dark"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <ProgressBar
         android:id="@+id/progressBar"

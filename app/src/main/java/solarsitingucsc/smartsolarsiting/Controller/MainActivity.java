@@ -88,13 +88,6 @@ public class MainActivity extends Activity {
         mDraw = new DrawOnTop(getApplicationContext());
         cameraPreviewPane.addView(mDraw);
 
-//        cameraPreviewPane.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
-//            public void onSwipeLeft() {
-//                startActivity(new Intent(MainActivity.this,
-//                        DrawObstructionsActivity.class));
-//            }
-//        });
-
         configureCaptureButton();
     }
 
@@ -140,7 +133,7 @@ public class MainActivity extends Activity {
     }
 
     private void configureCaptureButton() {
-        FloatingActionButton captureButton = (FloatingActionButton) findViewById(R.id.button_capture1);
+        FloatingActionButton captureButton = (FloatingActionButton) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

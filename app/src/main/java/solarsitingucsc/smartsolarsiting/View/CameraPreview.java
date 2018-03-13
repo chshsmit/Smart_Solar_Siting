@@ -102,18 +102,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.startPreview();
     }
 
-//    private void configureCaptureButton() {
-//        Button captureButton = (Button) mActivity.findViewById(R.id.button_capture);
-//        captureButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // get an image from the camera
-//                mCamera.takePicture(null, null, mPicture);
-//                takeScreenshot();
-//            }
-//        });
-//    }
-
     public void takePicture() {
         mCamera.takePicture(null, null, mPicture);
     }
@@ -200,25 +188,4 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         return mediaFile;
     }
-
-//    private void takeScreenshot() {
-//        try {
-//            File cacheDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-//                    "Smart Solar Siting");
-//
-//            if (!cacheDir.exists()) {
-//                cacheDir.mkdirs();
-//            }
-//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//
-//            String path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-//                    "Smart Solar Siting") + "/" + timeStamp + ".jpg";
-//
-//            ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), path);
-//
-//            Toast.makeText(getContext(), "Screenshot saved", Toast.LENGTH_LONG).show();
-//        } catch (NullPointerException ignored) {
-//            ignored.printStackTrace();
-//        }
-//    }
 }

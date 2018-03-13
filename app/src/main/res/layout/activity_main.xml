@@ -17,11 +17,10 @@
         android:id="@+id/button_capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:layout_gravity="bottom|center"
+        android:clickable="true"
         app:backgroundTint="@android:color/background_dark"
-        app:srcCompat="@android:drawable/ic_menu_camera"
-        />
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
 
     <ProgressBar

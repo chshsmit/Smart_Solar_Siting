@@ -46,6 +46,8 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     String accelData = "Accelerometer Data";
     String compassData = "Compass Data";
     String gyroData = "Gyro Data";
+    String degrees = "";
+    String direction="";
 
     private LocationManager locationManager = null;
     private SensorManager sensors = null;
@@ -62,15 +64,18 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
     private boolean isAccelAvailable;
     private boolean isCompassAvailable;
     private boolean isGyroAvailable;
+    private boolean isCompAvailable;
     private Sensor accelSensor;
     private Sensor compassSensor;
     private Sensor gyroSensor;
+    private Sensor compSensor;
 
     private TextPaint contentPaint;
 
     private Paint targetPaint;
     private Paint timePaint;
     private Criteria criteria;
+    private Paint compassPaint;
 
     private Rect r = new Rect();
 
@@ -100,6 +105,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         accelSensor = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         compassSensor = sensors.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         gyroSensor = sensors.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        compSensor = sensors.getDefaultSensor(Sensor.TYPE_ORIENTATION);
     }
 
     private void initializeCameraParamters() {
@@ -128,6 +134,12 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         timePaint.setColor(Color.BLACK);
         timePaint.setTextSize(9);
         timePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+
+        //compassPaint
+        compassPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        compassPaint.setColor(Color.WHITE);
+        compassPaint.setTextSize(50);
+        compassPaint.setTextAlign(Align.CENTER);
     }
 
     private void startSensors() {
@@ -136,6 +148,8 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         isCompassAvailable = sensors.registerListener(this, compassSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
         isGyroAvailable = sensors.registerListener(this, gyroSensor,
+                SensorManager.SENSOR_DELAY_NORMAL);
+        isCompAvailable = sensors.registerListener(this, compSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 
@@ -215,6 +229,8 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 //                    480, Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
 //            textBox.draw(canvas);
 //        }
+        canvas.drawText(degrees, canvas.getWidth()/2, 50, compassPaint);
+        canvas.drawText(direction,canvas.getWidth()/2,100,compassPaint);
         canvas.restore();
     }
 
@@ -355,6 +371,18 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                 //lastCompass = event.values.clone();
                 compassData = msg.toString();
                 break;
+            case Sensor.TYPE_ORIENTATION:
+                float degree = Math.round(event.values[0]);
+
+                if(degree>=0.0&&degree<45.0) direction = "N";
+                else if(degree>=45.0&&degree<90.0) direction = "NW";
+                else if(degree>=90.0&&degree<135.0) direction = "W";
+                else if(degree>=135.0&&degree<180.0) direction = "SW";
+                else if(degree>=180.0&&degree<225.0) direction = "S";
+                else if(degree>=225.0&&degree<270.0) direction = "SE";
+                else if(degree>=270.0&&degree<315.0) direction = "E";
+                else if(degree>=315.0&&degree<360.0) direction = "NE";
+                degrees = Float.toString(degree);
         }
 
         this.invalidate();

@@ -3,6 +3,7 @@ package solarsitingucsc.smartsolarsiting.Controller;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,9 +20,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-
-
-
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
@@ -33,26 +31,19 @@ import solarsitingucsc.smartsolarsiting.View.DrawingView;
 import static android.content.ContentValues.TAG;
 
 
-public class DisplayCalculationsActivity extends AppCompatActivity {
+public class DrawObstructionsActivity extends AppCompatActivity {
 
     private final String API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
 
     // variables for drawing
     private DrawingView drawView;
-    private ImageButton currPaint;
+//    private ImageButton currPaint;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_calc);
-//        configureCamButton();
-        findViewById(R.id.display_calc_view).setOnTouchListener(
-                new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
-            public void onSwipeRight() {
-                finish();
-            }
-        });
+        setContentView(R.layout.activity_draw_obstructions);
         String imageName = getIntent().getStringExtra("imageName");
         String screenshotName = getIntent().getStringExtra("screenshotName");
         FileInputStream imageFis = null;
@@ -74,29 +65,33 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.imageView);
 
         //Use this to set image as background in the new activity
-//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-//        imageView.setImageBitmap(rotatedImage);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setImageBitmap(rotatedImage);
 
         //Use this to set the screenshot (with just the lines) as background in the new activity
-          imageView.setImageBitmap(screenshot);
+//          imageView.setImageBitmap(screenshot);
 
         drawView = (DrawingView)findViewById(R.id.drawing);
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
-        currPaint = (ImageButton)paintLayout.getChildAt(0);
-        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+//        paintClicked(this);
+//        currPaint = (ImageButton)paintLayout.getChildAt(0);
+//        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
 
-
+        FloatingActionButton fabDelete = findViewById(R.id.fabDelete);
+        FloatingActionButton fabConfirm = findViewById(R.id.fabConfirm);
+        fabDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        fabConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Go to DrawObstructionsActivity
+            }
+        });
     }
-
-//    private void configureCamButton() {
-//        Button camButton = (Button) findViewById(R.id.cam_button);
-//        camButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                finish();
-//            }
-//        });
-//    }
 
     public void makeRequest(double latitude, double longitude){
         System.out.println("We are making a JSONObject Request");
@@ -133,17 +128,17 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         String color = null;
         ImageButton imgView = null;
 
-        if(view!=currPaint){
-        //update color
-            imgView = (ImageButton)view;
-            color = view.getTag().toString();
-        }
+//        if(view != currPaint) {
+//        //update color
+//            imgView = (ImageButton)view;
+//            color = view.getTag().toString();
+//        }
 
         drawView.setColor(color);
 
         imgView.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
-        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
-        currPaint=(ImageButton)view;
+//        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
+//        currPaint=(ImageButton)view;
     }
 
 

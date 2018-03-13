@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
 import java.io.File;
@@ -72,12 +71,12 @@ public class MainActivity extends Activity {
         mDraw = new DrawOnTop(getApplicationContext());
         cameraPreviewPane.addView(mDraw);
 
-        cameraPreviewPane.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
-            public void onSwipeLeft() {
-                startActivity(new Intent(MainActivity.this,
-                        DisplayCalculationsActivity.class));
-            }
-        });
+//        cameraPreviewPane.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+//            public void onSwipeLeft() {
+//                startActivity(new Intent(MainActivity.this,
+//                        DrawObstructionsActivity.class));
+//            }
+//        });
 
         //configureSeeCalcButton();
         configureCaptureButton();
@@ -133,7 +132,7 @@ public class MainActivity extends Activity {
 //            @Override
 //            public void onClick(View view) {
 //                startActivity(new Intent(MainActivity.this,
-//                        DisplayCalculationsActivity.class));
+//                        DrawObstructionsActivity.class));
 //            }
 //        } );
 //    }

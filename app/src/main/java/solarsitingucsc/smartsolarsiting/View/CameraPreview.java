@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import solarsitingucsc.smartsolarsiting.Controller.DisplayCalculationsActivity;
+import solarsitingucsc.smartsolarsiting.Controller.DrawObstructionsActivity;
 
 import static android.content.ContentValues.TAG;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -144,7 +144,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 Log.d(TAG, "Error accessing file: " + e.getMessage());
             }
 
-            Intent intent = new Intent(finalContext, DisplayCalculationsActivity.class);
+            Intent intent = new Intent(finalContext, DrawObstructionsActivity.class);
             intent.putExtra("imageName", pictureFile.getName());
             intent.putExtra("screenshotName", screenshotName);
             intent.putExtra("latitude", latitude);

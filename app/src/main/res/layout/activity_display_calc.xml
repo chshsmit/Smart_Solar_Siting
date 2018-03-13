@@ -37,6 +37,8 @@
         android:layout_marginStart="14dp"
         android:layout_marginTop="11dp"
         android:text="@string/results"
+        android:textStyle="bold"
+        android:textSize="50sp"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
 
@@ -48,7 +50,8 @@
         android:layout_alignStart="@+id/resultsTxt"
         android:layout_below="@+id/resultsTxt"
         android:layout_marginTop="30dp"
-        android:text="@string/jan" />
+        android:text="@string/jan"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/febTxt"
@@ -58,7 +61,8 @@
         android:layout_alignStart="@+id/janTxt"
         android:layout_below="@+id/janTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/feb" />
+        android:text="@string/feb"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/marTxt"
@@ -68,7 +72,8 @@
         android:layout_alignStart="@+id/febTxt"
         android:layout_below="@+id/febTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/mar" />
+        android:text="@string/mar"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/aprTxt"
@@ -78,7 +83,8 @@
         android:layout_alignStart="@+id/marTxt"
         android:layout_below="@+id/marTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/apr" />
+        android:text="@string/apr"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/mayTxt"
@@ -88,7 +94,8 @@
         android:layout_alignStart="@+id/aprTxt"
         android:layout_below="@+id/aprTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/may" />
+        android:text="@string/may"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/junTxt"
@@ -98,7 +105,8 @@
         android:layout_alignStart="@+id/mayTxt"
         android:layout_below="@+id/mayTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/jun" />
+        android:text="@string/jun"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/julTxt"
@@ -108,7 +116,8 @@
         android:layout_alignStart="@+id/junTxt"
         android:layout_below="@+id/junTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/jul" />
+        android:text="@string/jul"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/augTxt"
@@ -118,7 +127,8 @@
         android:layout_alignRight="@+id/julTxt"
         android:layout_below="@+id/julTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/aug" />
+        android:text="@string/aug"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/sepTxt"
@@ -128,7 +138,8 @@
         android:layout_alignStart="@+id/augTxt"
         android:layout_below="@+id/augTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/sep" />
+        android:text="@string/sep"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/octTxt"
@@ -138,7 +149,8 @@
         android:layout_alignStart="@+id/sepTxt"
         android:layout_below="@+id/sepTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/oct" />
+        android:text="@string/oct"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/novTxt"
@@ -148,7 +160,8 @@
         android:layout_alignStart="@+id/octTxt"
         android:layout_below="@+id/octTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/nov" />
+        android:text="@string/nov"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/decTxt"
@@ -158,18 +171,20 @@
         android:layout_alignStart="@+id/novTxt"
         android:layout_below="@+id/novTxt"
         android:layout_marginTop="20dp"
-        android:text="@string/dec" />
+        android:text="@string/dec"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/annualTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/janTxt"
-        android:layout_marginLeft="89dp"
-        android:layout_marginStart="89dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_toEndOf="@+id/resultsTxt"
         android:layout_toRightOf="@+id/resultsTxt"
-        android:text="@string/annual" />
+        android:text="@string/annual"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/janKwTxt"

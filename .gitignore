@@ -11,3 +11,11 @@ local.properties
 .idea/modules.xml
 .idea
 .idea/vcs.xml
+.idea/workspace.xml
+/.gradle
+/.idea/libraries
+/.DS_Store
+/.externalNativeBuild
+/.idea/modules.xml
+/.idea
+/.idea/vcs.xml

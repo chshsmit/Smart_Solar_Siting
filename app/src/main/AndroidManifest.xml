@@ -47,8 +47,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controller.DrawObstructionsActivity"></activity>
+        <activity android:name=".Controller.DrawObstructionsActivity" />
         <activity android:name=".Controller.DisplayCalculationsActivity" />
+        <activity android:name=".Controller.LoginActivity"></activity>
     </application>
 
 </manifest>

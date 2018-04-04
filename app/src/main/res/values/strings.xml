@@ -16,4 +16,12 @@
     <string name="nov">Nov:</string>
     <string name="dec">Dec:</string>
     <string name="annual">Annual:</string>
+
+    <!--Login Screen Strings-->
+    <string name="login">Log In</string>
+    <string name="username">Username/Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="new_user">New user? Create an account here!</string>
 </resources>
+

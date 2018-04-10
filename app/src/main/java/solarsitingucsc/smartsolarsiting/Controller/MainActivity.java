@@ -28,7 +28,7 @@ import solarsitingucsc.smartsolarsiting.View.DrawOnTop;
 import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 
 import android.support.design.widget.FloatingActionButton;
-
+import static android.content.ContentValues.TAG;
 
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -139,6 +139,7 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
                 String path = takeScreenshot();
+                Log.d(TAG, path);
                 Location userLocation = mDraw.lastLocation;
 
                 mCameraPreview.latitude = userLocation.getLatitude();

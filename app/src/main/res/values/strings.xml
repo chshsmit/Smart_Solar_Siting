@@ -22,6 +22,7 @@
     <string name="username">Username/Email</string>
     <string name="password">Password</string>
     <string name="sign_in">Sign In</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
     <string name="new_user">New user? Create an account here!</string>
 </resources>
 

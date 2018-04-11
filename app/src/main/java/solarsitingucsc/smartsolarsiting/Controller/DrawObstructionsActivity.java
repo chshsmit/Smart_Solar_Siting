@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -94,11 +95,13 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.imageView);
         //Set image as background in the new activity
         Mat img = Imgcodecs.imread(screenshotName);
-        Utils.bitmapToMat(originalImage,img, true);
+        Mat gray_mat=new Mat();
+        Utils.bitmapToMat(rotatedImage, gray_mat, true);
+        Utils.bitmapToMat(rotatedImage,img, true);
         Log.d(TAG, "hihihihih" + imageName);
-        result = steptowatershed(img);
-//        Utils.matToBitmap(result, rotatedImage, true);
-//        Log.i(TAG, "all okay");
+        result = steptowatershed(img, gray_mat);
+        Utils.matToBitmap(result, rotatedImage, true);
+        Log.i(TAG, "all okay");
         imageView.setImageBitmap(rotatedImage);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         imageView.setImageBitmap(rotatedImage);
@@ -127,9 +130,11 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         });
     }
 
-    public Mat steptowatershed(Mat img)
+    public Mat steptowatershed(Mat img, Mat gray_mat)
     {
         Mat threeChannel = new Mat();
+//        Mat gray_mat=new Mat();
+        Imgproc.cvtColor(gray_mat,img,Imgproc.COLOR_RGBA2RGB);
         Log.d(TAG, "hihihihih" + Integer.toString(img.width()));
         Imgproc.cvtColor(img, threeChannel, Imgproc.COLOR_BGR2GRAY);
         Imgproc.threshold(threeChannel, threeChannel, 100, 255, Imgproc.THRESH_BINARY);
@@ -157,7 +162,7 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         public void setMarkers(Mat markerImage)
         {
 
-            markerImage.convertTo(markers, CvType.CV_32SC1);
+            markerImage.convertTo(markers, CvType.CV_32S);
         }
 
         public Mat process(Mat image)

@@ -24,5 +24,9 @@
     <string name="sign_in">Sign In</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="new_user">New user? Create an account here!</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_account">Create Account</string>
 </resources>
 

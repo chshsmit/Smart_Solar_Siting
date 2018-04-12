@@ -61,22 +61,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
 
-    <TextView
-        android:id="@+id/newUserButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:text="@string/new_user"
+
+    <Button
+        android:id="@+id/createAccount"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="167dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="7dp"
+        android:text="@string/create_account"
+    android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/googleSignInButton" />
+
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/newUserButton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="36dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:clickable="true"-->
+        <!--android:onClick="onClick"-->
+        <!--android:focusable="true"-->
+        <!--android:text="@string/new_user"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.503"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/googleSignInButton" />-->
 
     <Button
         android:id="@+id/googleSignInButton"

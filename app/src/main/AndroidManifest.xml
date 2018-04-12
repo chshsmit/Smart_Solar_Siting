@@ -45,6 +45,7 @@
         </activity>
         <activity android:name=".Controller.DrawObstructionsActivity" />
         <activity android:name=".Controller.DisplayCalculationsActivity" />
+        <activity android:name=".Controller.EmailSignUpActivity" />
         <activity android:name=".Controller.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "706401577345",
+    "firebase_url": "https://smartsolarsiting.firebaseio.com",
+    "project_id": "smartsolarsiting",
+    "storage_bucket": "smartsolarsiting.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706401577345:android:b6d7778ef35b7aa1",
+        "android_client_info": {
+          "package_name": "solarsitingucsc.smartsolarsiting"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "706401577345-p734ivc0la3e2dbe3cs1h8stmtvfjvip.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "solarsitingucsc.smartsolarsiting",
+            "certificate_hash": "ede084a57df325def457472f38c36a5b0251d13a"
+          }
+        },
+        {
+          "client_id": "706401577345-tu7dn00682d3fsqq6hfccvdsk5c1jvjl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7oqBtWrmeic2LxEpCGKauo9TkHoMhoP0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "706401577345-tu7dn00682d3fsqq6hfccvdsk5c1jvjl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

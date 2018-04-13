@@ -40,7 +40,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
             android:name=".Controller.MainActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
         <activity android:name=".Controller.DrawObstructionsActivity" />
         <activity android:name=".Controller.DisplayCalculationsActivity" />
         <activity android:name=".Controller.EmailSignUpActivity" />
@@ -51,9 +51,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Controller.HomePageActivity">
-        </activity>
+        <activity android:name=".Controller.HomePageActivity"></activity>
+        <activity android:name=".Controller.SettingsActivity"></activity>
     </application>
 
 </manifest>

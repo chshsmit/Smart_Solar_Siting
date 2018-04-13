@@ -46,10 +46,6 @@ public class HomePageActivity extends AppCompatActivity {
 
     }
 
-    private void changeToMainActivity(){
-        Intent next_activity = new Intent(HomePageActivity.this, MainActivity.class);
-        startActivity(next_activity);
-    }
 
 //    //ToolBar function to setup res/menu
     @Override
@@ -58,6 +54,33 @@ public class HomePageActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.tool_bar_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.Settings)
+        {
+            changeToSettings();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void changeToSettings(){
+        Intent settings = new Intent(HomePageActivity.this, SettingsActivity.class);
+        startActivity(settings);
+    }
+
+
+    private void changeToMainActivity(){
+        Intent next_activity = new Intent(HomePageActivity.this, MainActivity.class);
+        startActivity(next_activity);
     }
 
 

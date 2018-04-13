@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +35,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //Toolbar setup
+        Toolbar topToolBar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(topToolBar);
+
         //Views
         mEmailField = (EditText) findViewById(R.id.emailEditText);
         mPasswordField = (EditText) findViewById(R.id.passwordEditText);
@@ -61,13 +66,15 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+        signIn("chshsmit@gmail.com", "WhatTheFuck");
     }
 
     private void signIn(String email, String passsword) {
         Log.d(TAG, "signIn:" + email);
-        if(!validateForm()){
-            return;
-        }
+//        if(!validateForm()){
+//            return;
+//        }
 
         //Start sign in with email
         mAuth.signInWithEmailAndPassword(email, passsword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -77,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                     //Sign in success
                     Log.d(TAG, "signInWithEmail:success");
                     changeToHomePage();
-                    
+
                 } else {
                     //If sign in fails, display a message to the user
                     Log.w(TAG, "signInWithEmail:FAILED", task.getException());
@@ -113,8 +120,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void changeToHomePage(){
-        Intent intent = new Intent(getApplication(), MainActivity
-                .class);
+        Intent intent = new Intent(getApplication(),
+                HomePageActivity.class);
         startActivity(intent);
     }
 

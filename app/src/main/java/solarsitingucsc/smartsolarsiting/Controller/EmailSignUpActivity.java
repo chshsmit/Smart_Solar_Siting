@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,10 @@ public class EmailSignUpActivity extends AppCompatActivity {
         mPasswordField = (EditText) findViewById(R.id.InputPassword);
         mName = (EditText) findViewById(R.id.InputName);
         mAuth = FirebaseAuth.getInstance();
+
+        //Toolbar setup
+        Toolbar topToolBar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(topToolBar);
 
         Button createAccount = (Button) findViewById(R.id.SignUp);
         createAccount.setOnClickListener(new View.OnClickListener() {

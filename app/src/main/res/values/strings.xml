@@ -17,6 +17,9 @@
     <string name="dec">Dec:</string>
     <string name="annual">Annual:</string>
 
+    <!--Toolbar Strings-->
+    <string name="app_title">Smart Solar Siting</string>
+
     <!--Login Screen Strings-->
     <string name="login">Log In</string>
     <string name="username">Username/Email</string>
@@ -28,5 +31,10 @@
     <string name="email">Email</string>
     <string name="sign_up">Sign Up</string>
     <string name="create_account">Create Account</string>
+
+
+    <!--HomePageStrings-->
+    <string name="new_site">New Solar Site</string>
+    <string name="settings">Settings</string>
 </resources>
 

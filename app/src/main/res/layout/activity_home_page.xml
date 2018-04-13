@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="solarsitingucsc.smartsolarsiting.Controller.HomePageActivity">
 
     <android.support.v7.widget.Toolbar
@@ -20,7 +21,7 @@
 
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/previous_site_list_view"
         android:layout_width="411dp"
         android:layout_height="544dp"
         android:layout_below="@+id/my_toolbar"
@@ -43,10 +44,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listView"
+        app:layout_constraintTop_toBottomOf="@+id/previous_site_list_view"
         app:menu="@menu/bottom_nav_items">
 
     </android.support.design.widget.BottomNavigationView>
 
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

@@ -91,7 +91,9 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
         }
+        System.out.println("HERE");
         Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
+        System.out.println("HERE");
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 

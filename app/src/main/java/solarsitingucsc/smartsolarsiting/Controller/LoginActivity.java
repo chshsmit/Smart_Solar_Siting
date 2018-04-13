@@ -66,15 +66,17 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
-
-        signIn("chshsmit@gmail.com", "WhatTheFuck");
     }
+
+    //--------------------------------------------------------------------------------------------
+    //Fucntions for signin
+    //--------------------------------------------------------------------------------------------
 
     private void signIn(String email, String passsword) {
         Log.d(TAG, "signIn:" + email);
-//        if(!validateForm()){
-//            return;
-//        }
+        if(!validateForm()){
+            return;
+        }
 
         //Start sign in with email
         mAuth.signInWithEmailAndPassword(email, passsword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -94,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    //Ensuring all necessary fields are filled out
     private boolean validateForm() {
         boolean valid = true;
 
@@ -118,6 +121,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    //--------------------------------------------------------------------------------------------
+    //Functions to change activities
+    //--------------------------------------------------------------------------------------------
 
     private void changeToHomePage(){
         Intent intent = new Intent(getApplication(),

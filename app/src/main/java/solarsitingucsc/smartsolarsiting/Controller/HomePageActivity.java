@@ -28,6 +28,7 @@ public class HomePageActivity extends AppCompatActivity {
         instantiateBottomNavigation();
     }
 
+
     private void instantiateBottomNavigation(){
         BottomNavigationView bottomNavigation = findViewById(R.id.newSolarSite);
 
@@ -46,8 +47,11 @@ public class HomePageActivity extends AppCompatActivity {
 
     }
 
+    //--------------------------------------------------------------------------------------------
+    //Toolbar functions
+    //--------------------------------------------------------------------------------------------
 
-//    //ToolBar function to setup res/menu
+    //ToolBar function to setup res/menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -56,6 +60,7 @@ public class HomePageActivity extends AppCompatActivity {
         return true;
     }
 
+    //Toolbar function for when the settings button is selected
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -71,6 +76,10 @@ public class HomePageActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    //--------------------------------------------------------------------------------------------
+    //Functions to change activities
+    //--------------------------------------------------------------------------------------------
 
     private void changeToSettings(){
         Intent settings = new Intent(HomePageActivity.this, SettingsActivity.class);

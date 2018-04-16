@@ -41,6 +41,7 @@ public class DrawObstructionsActivity extends AppCompatActivity {
 
     public Mat img=new Mat();
     public Mat result = new Mat();
+    Bitmap rotatedI;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -105,6 +106,7 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         imageView.setImageBitmap(rotatedImage);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         imageView.setImageBitmap(rotatedImage);
+        rotatedI = rotatedImage;
 
         FloatingActionButton fabDelete = findViewById(R.id.fabDelete);
         FloatingActionButton fabConfirm = findViewById(R.id.fabConfirm);
@@ -128,6 +130,22 @@ public class DrawObstructionsActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    public int ispixelsky(int x, int y) {
+        // get image, verify existence
+        if (rotatedI == null) {
+            // handle error
+            return 0;
+        }
+
+        //byte[] intensity = new byte[2];
+        //result.get(y,x,intensity);
+        int argb = rotatedI.getPixel(x,y);
+        int bw = (argb) & 0xFF;
+
+        if(bw < 128) {return 0;}
+        else {return 1;}
     }
 
     public Mat steptowatershed(Mat img, Mat gray_mat)

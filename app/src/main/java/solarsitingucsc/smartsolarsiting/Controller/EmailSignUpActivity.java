@@ -87,7 +87,7 @@ public class EmailSignUpActivity extends AppCompatActivity {
                             Toast.makeText(EmailSignUpActivity.this,
                                     "Verification email sent to " + user.getEmail(),
                                     Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplication(), MainActivity
+                            Intent intent = new Intent(getApplication(), HomePageActivity
                                     .class);
                             startActivity(intent);
                         } else {

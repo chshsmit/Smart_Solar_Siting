@@ -154,6 +154,7 @@ public class HomePageActivity extends AppCompatActivity {
 
     public void addSiteToListView(){
         siteList.add(new ListElement("This is a test Element!"));
+        siteList.add(new ListElement("This is the second test element"));
         siteAdapter.notifyDataSetChanged();
 
     }

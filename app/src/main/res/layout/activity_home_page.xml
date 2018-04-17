@@ -37,7 +37,7 @@
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/newSolarSite"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="@dimen/bottom_nav_height"
         android:layout_gravity="bottom"
         app:itemIconTint="@color/common_google_signin_btn_text_light"
         app:itemTextColor="@color/common_google_signin_btn_text_light"

@@ -12,5 +12,6 @@
 
     <!--Homepage-->
     <dimen name="previous_site_list_height">75dp</dimen>
+    <dimen name="bottom_nav_height">56dp</dimen>
 
 </resources>

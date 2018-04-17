@@ -181,7 +181,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/janTxt"
         android:layout_marginLeft="30dp"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="@dimen/login_top_margin"
         android:layout_toEndOf="@+id/resultsTxt"
         android:layout_toRightOf="@+id/resultsTxt"
         android:text="@string/annual"

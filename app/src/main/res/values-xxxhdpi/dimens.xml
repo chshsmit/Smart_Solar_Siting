@@ -1,10 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
 
-    <!--//////////////////////////////////////////-->
-    <!--Dimension values for Login Screen-->
-    <!--//////////////////////////////////////////-->
-
+    <!--Login Screen-->
     <dimen name="elevation">4dp</dimen>
     <dimen name="login_side_margin">50dp</dimen>
     <dimen name="login_top_margin">30dp</dimen>
@@ -12,5 +9,8 @@
 
     <!--Homepage-->
     <dimen name="previous_site_list_height">75dp</dimen>
+
+
+
 
 </resources>

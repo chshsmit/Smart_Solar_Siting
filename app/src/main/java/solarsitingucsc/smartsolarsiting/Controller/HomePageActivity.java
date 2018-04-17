@@ -34,6 +34,8 @@ public class HomePageActivity extends AppCompatActivity {
         initializeToolbar();
         initializeListView();
         initializeBottomNavigation();
+
+        addSiteToListView();
     }
 
 
@@ -125,8 +127,8 @@ public class HomePageActivity extends AppCompatActivity {
             }
 
             // Fills in the view.
-
-
+            TextView siteName = (TextView) newView.findViewById(R.id.site_name);
+            siteName.setText(newSiteElement.textLabel);
 
             // Set a listener for the whole list item.
             newView.setTag(newSiteElement.textLabel);
@@ -151,7 +153,7 @@ public class HomePageActivity extends AppCompatActivity {
     }
 
     public void addSiteToListView(){
-        siteList.add(new ListElement());
+        siteList.add(new ListElement("This is a test Element!"));
         siteAdapter.notifyDataSetChanged();
 
     }

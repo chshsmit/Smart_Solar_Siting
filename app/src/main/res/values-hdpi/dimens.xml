@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Login Screen-->
+    <dimen name="elevation">4dp</dimen>
+    <dimen name="login_side_margin">50dp</dimen>
+    <dimen name="login_top_margin">10dp</dimen>
+
+
+    <!--Homepage-->
+    <dimen name="previous_site_list_height">75dp</dimen>
+</resources>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,8 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:elevation="4dp"
+        android:elevation="@dimen/elevation"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:title="@string/app_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,8 +23,8 @@
 
     <ListView
         android:id="@+id/previous_site_list_view"
-        android:layout_width="411dp"
-        android:layout_height="544dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_below="@+id/my_toolbar"
         app:layout_constraintBottom_toTopOf="@+id/newSolarSite"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +37,7 @@
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/newSolarSite"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_gravity="bottom"
         app:itemIconTint="@color/common_google_signin_btn_text_light"
         app:itemTextColor="@color/common_google_signin_btn_text_light"
@@ -50,4 +51,4 @@
     </android.support.design.widget.BottomNavigationView>
 
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

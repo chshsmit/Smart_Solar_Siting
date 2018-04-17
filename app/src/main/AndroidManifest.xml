@@ -31,6 +31,13 @@
         android:name="android.hardware.sensor.gyroscope"
         android:required="true" />
 
+    <supports-screens
+        android:resizeable="true"
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:xlargeScreens="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -40,19 +47,32 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
             android:name=".Controller.MainActivity"
+            android:configChanges="screenSize"
             android:screenOrientation="landscape" />
-        <activity android:name=".Controller.DrawObstructionsActivity" />
-        <activity android:name=".Controller.DisplayCalculationsActivity" />
-        <activity android:name=".Controller.EmailSignUpActivity" />
-        <activity android:name=".Controller.LoginActivity">
+        <activity
+            android:name=".Controller.DrawObstructionsActivity"
+            android:configChanges="screenSize" />
+        <activity
+            android:name=".Controller.DisplayCalculationsActivity"
+            android:configChanges="screenSize" />
+        <activity
+            android:name=".Controller.EmailSignUpActivity"
+            android:configChanges="screenSize" />
+        <activity
+            android:name=".Controller.LoginActivity"
+            android:configChanges="screenSize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controller.HomePageActivity"></activity>
-        <activity android:name=".Controller.SettingsActivity"></activity>
+        <activity
+            android:name=".Controller.HomePageActivity"
+            android:configChanges="screenSize" ></activity>
+        <activity
+            android:name=".Controller.SettingsActivity"
+            android:configChanges="screenSize" ></activity>
     </application>
 
 </manifest>

@@ -38,6 +38,17 @@ public class HomePageActivity extends AppCompatActivity {
         addSiteToListView();
     }
 
+    //--------------------------------------------------------------------------------------------
+    //Override functions
+    //--------------------------------------------------------------------------------------------
+
+    //We want to do nothing when the back button is pressed
+    @Override
+    public void onBackPressed(){
+
+    }
+
+
 
     //--------------------------------------------------------------------------------------------
     //Toolbar functions
@@ -129,6 +140,10 @@ public class HomePageActivity extends AppCompatActivity {
             // Fills in the view.
             TextView siteName = (TextView) newView.findViewById(R.id.site_name);
             siteName.setText(newSiteElement.textLabel);
+
+
+
+
 
             // Set a listener for the whole list item.
             newView.setTag(newSiteElement.textLabel);

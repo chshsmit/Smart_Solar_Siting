@@ -108,6 +108,8 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         Camera.Parameters params = camera.getParameters();
         verticalFOV = params.getVerticalViewAngle();
         horizontalFOV = params.getHorizontalViewAngle();
+        System.out.println("VerticalFOV= "+verticalFOV);
+        System.out.println("HorizontalFOV= "+horizontalFOV);
         camera.release();
     }
 

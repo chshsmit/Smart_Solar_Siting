@@ -32,10 +32,10 @@
         android:required="true" />
 
     <supports-screens
+        android:largeScreens="true"
+        android:normalScreens="true"
         android:resizeable="true"
         android:smallScreens="true"
-        android:normalScreens="true"
-        android:largeScreens="true"
         android:xlargeScreens="true" />
 
     <application
@@ -60,7 +60,7 @@
             android:configChanges="screenSize" />
         <activity
             android:name=".Controller.LoginActivity"
-            android:configChanges="screenSize" >
+            android:configChanges="screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -69,10 +69,10 @@
         </activity>
         <activity
             android:name=".Controller.HomePageActivity"
-            android:configChanges="screenSize" ></activity>
+            android:configChanges="screenSize" />
         <activity
             android:name=".Controller.SettingsActivity"
-            android:configChanges="screenSize" ></activity>
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

@@ -43,8 +43,20 @@ public class LoginActivity extends AppCompatActivity {
         mEmailField = (EditText) findViewById(R.id.emailEditText);
         mPasswordField = (EditText) findViewById(R.id.passwordEditText);
 
+        //Firebase
         mAuth = FirebaseAuth.getInstance();
 
+        //On click listeners
+        initializeOnCLickListeners();
+
+        //signIn("chshsmit@gmail.com", "WhatTheFuck");
+    }
+
+    //--------------------------------------------------------------------------------------------
+    //Code to set up on click listeners
+    //--------------------------------------------------------------------------------------------
+
+    private void initializeOnCLickListeners(){
         //On click listener for signing in
         Button signInButton = findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -66,8 +78,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
-
-        //signIn("chshsmit@gmail.com", "WhatTheFuck");
     }
 
     //--------------------------------------------------------------------------------------------

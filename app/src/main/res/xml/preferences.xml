@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Settings" >
+        <Preference
+            android:title="Fisheye Settings"
+            android:summary="Change the camera settings"
+            android:key="changeCamera"/>
+
+        <Preference
+            android:title="Sign Out"
+            android:key="signout"/>
+
+        <Preference
+            android:title="About"
+            android:key="about"/>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,27 +1,14 @@
 package solarsitingucsc.smartsolarsiting.Controller;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.support.v7.app.ActionBar;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -56,7 +43,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         initializeToolBar();
 
-        
+
         //Gives padding underneath the toolbar
         int horizontalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
         int verticalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
@@ -147,20 +134,22 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private void setUpSignoutDialog(AlertDialog.Builder alertDialogBuilder){
         alertDialogBuilder.setTitle("Are you sure you want to signout?");
 
+        //User pressed yes so sign out and return to the login screen
         alertDialogBuilder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mFirebaseAuth.signOut();
-                        toastMessage("Signing out", SettingsActivity.this);
+                        toastMessage("Signed out", SettingsActivity.this);
                         changeToLoginScreen();
                     }
                 });
 
+        //User pressed cancel so do nothing
         alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //User pressed cancel so do nothing
+
             }
         });
 

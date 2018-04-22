@@ -1,12 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="Settings" >
+
+    <PreferenceCategory android:title="Camera Settings" >
+
         <Preference
+            android:title="@string/hor_FOV"
+            android:summary="@string/hor_FOV_summ"
+            android:key="change_horizontal" />
+
+        <Preference
+            android:title="@string/vert_FOV"
+            android:summary="@string/vert_FOV_summ"
+            android:key="change_vertical" />
+
+
+        <CheckBoxPreference
+            android:title="@string/panorama"
+            android:summary="@string/panorama_summ"
+            android:key="enable_panorama" />
+
+        <CheckBoxPreference
             android:title="Fisheye Settings"
             android:summary="Change the camera settings"
-            android:key="changeCamera"/>
+            android:key="enable_fisheye_distortion"/>
 
+    </PreferenceCategory>
+
+
+
+    <PreferenceCategory android:title="Panel Settings">
+
+        <Preference
+            android:title="@string/sys_cap"
+            android:summary="@string/sys_cap_summ"
+            android:key="system_capacity" />
+
+
+
+
+    </PreferenceCategory>
+
+
+
+    <PreferenceCategory android:title="Miscellaneous">
         <Preference
             android:title="Sign Out"
             android:key="signout"/>
@@ -15,4 +52,6 @@
             android:title="About"
             android:key="about"/>
     </PreferenceCategory>
+
+
 </PreferenceScreen>

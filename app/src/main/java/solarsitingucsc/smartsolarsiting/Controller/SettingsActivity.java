@@ -3,9 +3,11 @@ package solarsitingucsc.smartsolarsiting.Controller;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 import solarsitingucsc.smartsolarsiting.R;
+import solarsitingucsc.smartsolarsiting.View.SettingsFragment;
 
 import java.util.List;
 
@@ -34,34 +37,37 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     private FirebaseAuth mFirebaseAuth;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         mFirebaseAuth = FirebaseAuth.getInstance();
-        addPreferencesFromResource(R.xml.preferences);
+        setContentView(R.layout.activity_settings);
+        //addPreferencesFromResource(R.xml.preferences);
 
+
+        //Displaying the preference fragment
+        getFragmentManager().beginTransaction()
+                .replace(R.id.preference_content, new SettingsFragment())
+                .commit();
+
+        //Initializing the toolbar
         initializeToolBar();
 
-
-        //Gives padding underneath the toolbar
-        int horizontalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
-        int verticalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
-        int topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (int) getResources().getDimension(R.dimen.activity_vertical_margin) , getResources().getDisplayMetrics());
-        getListView().setPadding(horizontalMargin, topMargin, horizontalMargin, verticalMargin);
-
         //sets up preferences buttons
-        instantiatePrefs();
+        //instantiatePrefs();
     }
 
 
-    //----------------------------------------------------------------------------------------------
-    //ToolBar Setup
-    //----------------------------------------------------------------------------------------------
+
+//
+//    //----------------------------------------------------------------------------------------------
+//    //ToolBar Setup
+//    //----------------------------------------------------------------------------------------------
 
     private void initializeToolBar(){
-        getLayoutInflater().inflate(R.layout.settings_toolbar, (ViewGroup)findViewById(android.R.id.content));
-        Toolbar toolbar = (Toolbar)findViewById(R.id.settings_toolbar);
+        Toolbar toolbar = findViewById(R.id.settings_toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_action_arrow_back));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -71,7 +77,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 onBackPressed();
             }
         });
-
     }
 
 
@@ -79,104 +84,77 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     //Initializing preferences list
     //----------------------------------------------------------------------------------------------
 
-    public void instantiatePrefs()
-    {
-        //sets up preferences buttons
-        Preference cameraPref = (Preference) findPreference("changeCamera");
-        cameraPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                changeFishEyeSettings();
-                return true;
-            }
-        });
-
-        Preference signoutPref = (Preference) findPreference("signout");
-        signoutPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                signout();
-                return true;
-            }
-        });
-
-
-        Preference about = (Preference) findPreference("about");
-        about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                about();
-                return true;
-            }
-        });
-    }
-
-
-    //----------------------------------------------------------------------------------------------
-    //Code for the camera preferences
-    //----------------------------------------------------------------------------------------------
-
-    private void changeFishEyeSettings(){
-
-
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //Signing out
-    //----------------------------------------------------------------------------------------------
-
-    private void signout(){
-        AlertDialog.Builder signoutDialogBuilder = new AlertDialog.Builder(this);
-        setUpSignoutDialog(signoutDialogBuilder);
-
-        AlertDialog signoutDialog = signoutDialogBuilder.create();
-        signoutDialog.show();
-
-    }
-
-    private void setUpSignoutDialog(AlertDialog.Builder alertDialogBuilder){
-        alertDialogBuilder.setTitle("Are you sure you want to signout?");
-
-        //User pressed yes so sign out and return to the login screen
-        alertDialogBuilder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mFirebaseAuth.signOut();
-                        toastMessage("Signed out", SettingsActivity.this);
-                        changeToLoginScreen();
-                    }
-                });
-
-        //User pressed cancel so do nothing
-        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-
-    }
-
-    private void changeToLoginScreen(){
-        Intent login = new Intent(getApplicationContext(), LoginActivity.class);
-        login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(login);
-    }
-
-
-
-    //----------------------------------------------------------------------------------------------
-    //About Page
-    //----------------------------------------------------------------------------------------------
-
-    private void about(){
-
-    }
-
-
-    public static void toastMessage(String message, Context currentActivity)
-    {
-        Toast.makeText(currentActivity,message,Toast.LENGTH_SHORT).show();
-    }
+//
+//
+//
+//    //----------------------------------------------------------------------------------------------
+//    //Code for the camera preferences
+//    //----------------------------------------------------------------------------------------------
+//
+//    private void changeFishEyeSettings(){
+//
+//
+//    }
+//
+//    //----------------------------------------------------------------------------------------------
+//    //Signing out
+//    //----------------------------------------------------------------------------------------------
+//
+//    private void signout(){
+//        AlertDialog.Builder signoutDialogBuilder = new AlertDialog.Builder(this);
+//        setUpSignoutDialog(signoutDialogBuilder);
+//
+//        AlertDialog signoutDialog = signoutDialogBuilder.create();
+//        signoutDialog.show();
+//
+//    }
+//
+//    private void setUpSignoutDialog(AlertDialog.Builder alertDialogBuilder){
+//        alertDialogBuilder.setTitle("Are you sure you want to signout?");
+//
+//        //User pressed yes so sign out and return to the login screen
+//        alertDialogBuilder.setPositiveButton("Yes",
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        mFirebaseAuth.signOut();
+//                        toastMessage("Signed out", SettingsActivity.this);
+//                        changeToLoginScreen();
+//                    }
+//                });
+//
+//        //User pressed cancel so do nothing
+//        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//            }
+//        });
+//
+//
+//    }
+//
+//    private void changeToLoginScreen(){
+//        Intent login = new Intent(getApplicationContext(), LoginActivity.class);
+//        login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        startActivity(login);
+//    }
+//
+//
+//
+//    //----------------------------------------------------------------------------------------------
+//    //About Page
+//    //----------------------------------------------------------------------------------------------
+//
+//    private void about(){
+//
+//    }
+//
+//
+//    public static void toastMessage(String message, Context currentActivity)
+//    {
+//        Toast.makeText(currentActivity,message,Toast.LENGTH_SHORT).show();
+//    }
 
 
 

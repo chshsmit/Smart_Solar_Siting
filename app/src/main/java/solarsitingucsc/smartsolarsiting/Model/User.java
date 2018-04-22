@@ -1,5 +1,7 @@
 package solarsitingucsc.smartsolarsiting.Model;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 
 public class User {
 
@@ -33,5 +35,6 @@ public class User {
         this.email = email;
         this.name = name;
         this.id = id;
+        FirebaseDatabase.getInstance().getReference("users").child(id).setValue(this);
     }
 }

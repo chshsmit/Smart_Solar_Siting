@@ -21,8 +21,8 @@
             android:key="enable_panorama" />
 
         <CheckBoxPreference
-            android:title="Fisheye Settings"
-            android:summary="Change the camera settings"
+            android:title="@string/fisheye_dist"
+            android:summary="@string/fisheye_dist_summ"
             android:key="enable_fisheye_distortion"/>
 
     </PreferenceCategory>
@@ -36,8 +36,36 @@
             android:summary="@string/sys_cap_summ"
             android:key="system_capacity" />
 
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/sys_mod_type_entries"
+            android:entryValues="@array/sys_mod_type_values"
+            android:title="@string/sys_mod_type"
+            android:summary="@string/sys_mod_type_summ"
+            android:key="sys_mod_type" />
 
+        <Preference
+            android:title="@string/sys_losses"
+            android:summary="@string/sys_losses_summ"
+            android:key="sys_losses" />
 
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/sys_arr_type_entries"
+            android:entryValues="@array/sys_arr_type_values"
+            android:title="@string/sys_arr_type"
+            android:summary="@string/sys_arr_type_summ"
+            android:key="sys_arr_type" />
+
+        <Preference
+            android:title="@string/sys_tilt"
+            android:summary="@string/sys_tilt_summ"
+            android:key="sys_tilt" />
+
+        <Preference
+            android:title="@string/sys_azimuth"
+            android:summary="@string/sys_azimuth_summ"
+            android:key="sys_azimuth" />
 
     </PreferenceCategory>
 

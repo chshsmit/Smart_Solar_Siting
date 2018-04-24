@@ -72,7 +72,7 @@
             android:configChanges="screenSize" />
         <activity
             android:name=".Controller.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

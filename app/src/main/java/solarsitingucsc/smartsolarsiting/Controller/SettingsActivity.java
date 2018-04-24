@@ -44,8 +44,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         super.onCreate(savedInstanceState);
         mFirebaseAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_settings);
-        //addPreferencesFromResource(R.xml.preferences);
-
 
         //Displaying the preference fragment
         getFragmentManager().beginTransaction()
@@ -55,8 +53,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         //Initializing the toolbar
         initializeToolBar();
 
-        //sets up preferences buttons
-        //instantiatePrefs();
+        //This is temporary it still allows you to sign out
+        //initializeSignOut();
     }
 
 
@@ -99,49 +97,61 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 //    //----------------------------------------------------------------------------------------------
 //    //Signing out
 //    //----------------------------------------------------------------------------------------------
-//
-//    private void signout(){
-//        AlertDialog.Builder signoutDialogBuilder = new AlertDialog.Builder(this);
-//        setUpSignoutDialog(signoutDialogBuilder);
-//
-//        AlertDialog signoutDialog = signoutDialogBuilder.create();
-//        signoutDialog.show();
-//
-//    }
-//
-//    private void setUpSignoutDialog(AlertDialog.Builder alertDialogBuilder){
-//        alertDialogBuilder.setTitle("Are you sure you want to signout?");
-//
-//        //User pressed yes so sign out and return to the login screen
-//        alertDialogBuilder.setPositiveButton("Yes",
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        mFirebaseAuth.signOut();
-//                        toastMessage("Signed out", SettingsActivity.this);
-//                        changeToLoginScreen();
-//                    }
-//                });
-//
-//        //User pressed cancel so do nothing
-//        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+//    private void initializeSignOut(){
+//        final Preference signOut = (Preference) findPreference("signout");
+//        signOut.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 //            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//
+//            public boolean onPreferenceClick(Preference preference) {
+//                signout();
+//                return true;
 //            }
 //        });
 //
-//
 //    }
-//
-//    private void changeToLoginScreen(){
-//        Intent login = new Intent(getApplicationContext(), LoginActivity.class);
-//        login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        startActivity(login);
-//    }
-//
-//
-//
+
+    private void signout(){
+        AlertDialog.Builder signoutDialogBuilder = new AlertDialog.Builder(this);
+        setUpSignoutDialog(signoutDialogBuilder);
+
+        AlertDialog signoutDialog = signoutDialogBuilder.create();
+        signoutDialog.show();
+
+    }
+
+    private void setUpSignoutDialog(AlertDialog.Builder alertDialogBuilder){
+        alertDialogBuilder.setTitle("Are you sure you want to signout?");
+
+        //User pressed yes so sign out and return to the login screen
+        alertDialogBuilder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mFirebaseAuth.signOut();
+                        toastMessage("Signed out", SettingsActivity.this);
+                        changeToLoginScreen();
+                    }
+                });
+
+        //User pressed cancel so do nothing
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+
+    }
+
+    private void changeToLoginScreen(){
+        Intent login = new Intent(getApplicationContext(), LoginActivity.class);
+        login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(login);
+    }
+
+
+
 //    //----------------------------------------------------------------------------------------------
 //    //About Page
 //    //----------------------------------------------------------------------------------------------
@@ -150,11 +160,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 //
 //    }
 //
-//
-//    public static void toastMessage(String message, Context currentActivity)
-//    {
-//        Toast.makeText(currentActivity,message,Toast.LENGTH_SHORT).show();
-//    }
+
+    public static void toastMessage(String message, Context currentActivity)
+    {
+        Toast.makeText(currentActivity,message,Toast.LENGTH_SHORT).show();
+    }
 
 
 

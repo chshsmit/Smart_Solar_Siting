@@ -22,6 +22,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.vision.v1.Vision;
@@ -41,6 +45,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.io.IOException;
@@ -48,6 +53,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import solarsitingucsc.smartsolarsiting.R;
 
@@ -57,7 +63,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
-    private final  String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
+    private final String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
     private ProgressBar progressBar;
     private double[] hourlyArray = new double[8760];
     private TextView[] textViews;
@@ -66,48 +72,53 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
-        findViewById(R.id.display_calc_view).setOnTouchListener(
-                new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
-                    public void onSwipeRight() {
-                        finish();
-                    }
-                });
-        findViewById(R.id.button_capture).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-        progressBar = findViewById(R.id.progressBar);
-        latitude = getIntent().getDoubleExtra("latitude", 0.0);
-        longitude = getIntent().getDoubleExtra("longitude", 0.0);
-        String imageName = getIntent().getStringExtra("imageName");
-        String screenshotName = getIntent().getStringExtra("screenshotName");
-        FileInputStream imageFis = null;
-        FileInputStream screenshotFis = null;
-        try {
-            imageFis = openFileInput(imageName);
-            screenshotFis = openFileInput(screenshotName);
-        } catch (FileNotFoundException e) {
-            Log.d(TAG, "File not found: " + e.getMessage());
-        }
-        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
+//        findViewById(R.id.display_calc_view).setOnTouchListener(
+//                new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
+//                    public void onSwipeRight() {
+//                        finish();
+//                    }
+//                });
+//        findViewById(R.id.button_capture).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                finish();
+//            }
+//        });
+//        progressBar = findViewById(R.id.progressBar);
+//        latitude = getIntent().getDoubleExtra("latitude", 0.0);
+//        longitude = getIntent().getDoubleExtra("longitude", 0.0);
+//        String imageName = getIntent().getStringExtra("imageName");
+//        String screenshotName = getIntent().getStringExtra("screenshotName");
+//        FileInputStream imageFis = null;
+//        FileInputStream screenshotFis = null;
+//        try {
+//            imageFis = openFileInput(imageName);
+//            screenshotFis = openFileInput(screenshotName);
+//            //TODO take outside of try
+//            Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
+//            Matrix matrix = new Matrix();
+//            matrix.postRotate(90);
+//
+//            Bitmap rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
+//                    originalImage.getHeight(), matrix, true);
+//            Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
+//        } catch (FileNotFoundException e) {
+//            Log.d(TAG, "File not found: " + e.getMessage());
+//        } catch (Exception ignored) {
+//        }//TODO remove
+//
+//
+//        textViews = new TextView[13];
+//        int[] months = {R.id.janKwTxt, R.id.febKwTxt, R.id.marKwTxt, R.id.aprKwTxt, R.id.mayKwTxt,
+//                R.id.junKwTxt, R.id.julKwTxt, R.id.augKwTxt, R.id.sepKwTxt, R.id.octKwTxt,
+//                R.id.novKwTxt, R.id.decKwTxt, R.id.annualKwTxt};
+//        for (int i = 0; i < textViews.length; i++) {
+//            textViews[i] = findViewById(months[i]);
+//        }
 
-        Bitmap rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
-                originalImage.getHeight(), matrix, true);
-        Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
+//        new MakeGoogleRequest().execute(screenshot);
+        createSomthing();
 
-        textViews = new TextView[13];
-        int[] months = {R.id.janKwTxt, R.id.febKwTxt, R.id.marKwTxt, R.id.aprKwTxt, R.id.mayKwTxt,
-                R.id.junKwTxt, R.id.julKwTxt, R.id.augKwTxt, R.id.sepKwTxt, R.id.octKwTxt,
-                R.id.novKwTxt, R.id.decKwTxt, R.id.annualKwTxt};
-        for (int i = 0; i < textViews.length; i++) {
-            textViews[i] = findViewById(months[i]);
-        }
-
-        new MakeGoogleRequest().execute(screenshot);
     }
 
     private void makeDatasetRequest(double latitude, double longitude) {
@@ -117,7 +128,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //This is the link that we are making our Volley call to
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
-                "api_key=" + DATASET_API_KEY + "&lat=" +latitude+ "&lon=" +longitude+
+                "api_key=" + DATASET_API_KEY + "&lat=" + latitude + "&lon=" + longitude +
                 "&system_capacity=4" + "&azimuth=180" + "&tilt=40" + "&array_type=1" +
                 "&module_type=1" + "&losses=10" + "&timeframe=hourly";
 
@@ -132,10 +143,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                             JSONArray arr = outputs.getJSONArray("ac");
 
                             //Adding objects to our hourlyArray to be split
-                            for(int i=0; i<arr.length(); i++){
+                            for (int i = 0; i < arr.length(); i++) {
                                 hourlyArray[i] = arr.getDouble(i);
                             }
-                        } catch(JSONException e){
+                        } catch (JSONException e) {
                             System.out.println(e);
                         }
                     }
@@ -157,18 +168,18 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //Add up the total amount of Watts we will be receiving at the indicated hour
         //for the indicated month
-        for(int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
+        for (int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS) {
             totalAcWatts += arrayForMonth[index];
         }
 
 
-        return totalAcWatts/1000;   //Converting from Watts to Kilowatts
+        return totalAcWatts / 1000;   //Converting from Watts to Kilowatts
     }
 
     //This function gets only the indexes for the month we are working with
     private double[] splitForMonth(int month) {
         double[] monthlyArray = null;
-        switch(month){
+        switch (month) {
             case Calendar.JANUARY:
                 monthlyArray = Arrays.copyOfRange(hourlyArray, 0, 744);
                 break;
@@ -257,11 +268,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         }
         Iterator it = result.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
+            Map.Entry pair = (Map.Entry) it.next();
             String key = (String) pair.getKey();
             int monthInt, hourInt, dashIndex = key.indexOf("-"), previousIndex = 0;
             String month = "", hour = "";
-            while(dashIndex >= 0) {
+            while (dashIndex >= 0) {
                 //Get the month and hour strings from the key
                 month = key.substring(previousIndex, dashIndex);
                 hour = key.substring(dashIndex + 1, key.length());
@@ -316,7 +327,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         a = a.toLowerCase();
         b = b.toLowerCase();
         // i == 0
-        int [] costs = new int [b.length() + 1];
+        int[] costs = new int[b.length() + 1];
         for (int j = 0; j < costs.length; j++)
             costs[j] = j;
         for (int i = 1; i <= a.length(); i++) {
@@ -340,6 +351,62 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         inputImage.encodeContent(byteArray);
         return inputImage;
     }
+
+    class ChartValue{
+        int month, value;
+
+        public ChartValue(int month, int value) {
+            this.month = month;
+            this.value = value;
+        }
+    }
+
+
+    public void createSomthing() {
+        Random random = new Random();
+        LineChart chart = (LineChart) findViewById(R.id.chart);
+        List<Entry> entries = new ArrayList<Entry>();
+        for (int i = 0; i < 12; i++) {
+            entries.add(new Entry(i, random.nextInt(100)));
+        }
+        LineDataSet dataSet = new LineDataSet(entries, "Label"); // add entries to dataset
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate();
+//        Iterator it = list.iterator();
+//        int annualPower = 0;
+//        int[] monthlyPower = new int[12];
+//        while (it.hasNext()) {
+//            Map.Entry pair = (Map.Entry) it.next();
+//            String key = (String) pair.getKey();
+//            int value = (int) pair.getValue();
+//            int dashIndex = key.indexOf("-");
+//            String month = "", hour = "";
+//            if (dashIndex != -1) {
+//                month = key.substring(0, dashIndex);
+//                hour = key.substring(dashIndex + 1, key.length());
+//            }
+//            for (int i = 0; i < value; i++) {
+//                try {
+//                    int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
+//                    double power = getPowerForMonthAndHour(monthInt, hourInt) / 6;
+//                    annualPower += power;
+//                    monthlyPower[monthInt] += power;
+//                } catch (NumberFormatException e) {
+//                    break;
+//                }
+//            }
+//            it.remove(); // avoids a ConcurrentModificationException
+//        }
+//        progressBar.setVisibility(View.GONE);
+//        String text = random.nextInt(100) + "kW";
+//        textViews[12].setText(text);
+//        for (int i = 0; i < list.size(); i++) {
+//            text = list.get(i)+ "kW";
+//            textViews[i].setText(text);
+//        }
+    }
+
 
     private class MakeGoogleRequest extends AsyncTask<Bitmap, Void, String> {
 
@@ -399,11 +466,19 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response) {
             Map<String, Integer> result = translateResponseToMap(response);
-            Iterator it = result.entrySet().iterator();
+
+            ArrayList<Integer> list = new ArrayList<>(12);
+            Random random = new Random();
+            for (int i = 0; i < 12; i++) {
+                list.add(random.nextInt(100));
+            }
+
+            Iterator it = list.iterator();
+
             int annualPower = 0;
             int[] monthlyPower = new int[12];
             while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
+                Map.Entry pair = (Map.Entry) it.next();
                 String key = (String) pair.getKey();
                 int value = (int) pair.getValue();
                 int dashIndex = key.indexOf("-");
@@ -415,7 +490,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 for (int i = 0; i < value; i++) {
                     try {
                         int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
-                        double power = getPowerForMonthAndHour(monthInt, hourInt)/6;
+                        double power = getPowerForMonthAndHour(monthInt, hourInt) / 6;
                         annualPower += power;
                         monthlyPower[monthInt] += power;
                     } catch (NumberFormatException e) {
@@ -432,6 +507,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 textViews[i].setText(text);
             }
         }
+
     }
 }
 

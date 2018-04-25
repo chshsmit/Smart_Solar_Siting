@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
         //On click listeners
         initializeOnCLickListeners();
 
-        //signIn("chshsmit@gmail.com", "WhatTheFuck");
     }
 
     //--------------------------------------------------------------------------------------------

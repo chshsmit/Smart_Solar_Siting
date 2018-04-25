@@ -34,6 +34,14 @@
         android:translationZ="2dp"
         android:visibility="gone"/>
 
+    <Button
+        android:id="@+id/panoramaButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:clickable="true"
+        android:text="Panorama" />
+
 
 </FrameLayout>
 

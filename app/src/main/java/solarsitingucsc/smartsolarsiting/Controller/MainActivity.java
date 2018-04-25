@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
@@ -30,6 +31,7 @@ import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 import android.support.design.widget.FloatingActionButton;
 
 
+import com.google.api.client.util.BackOffUtils;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
@@ -212,4 +214,28 @@ public class MainActivity extends Activity {
 //
 //        return mediaFile;
 //    }
+
+    /*
+    * Function that allows button to switch to panorama activity
+    * */
+    public void configurePanoramaButton() {
+        Button panoButton = (Button) findViewById(R.id.panoramaButton);
+        panoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = getBaseContext();
+                Intent intent = new Intent(context, PanoramaActivity.class);
+                context.startActivity(intent);
+                finish();
+
+
+            }
+
+        });
+
+    }
+
+
+
+
 }

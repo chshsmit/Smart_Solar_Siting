@@ -49,7 +49,7 @@
         </activity>
         <activity android:name=".Controller.DrawObstructionsActivity" />
         <activity android:name=".Controller.DisplayCalculationsActivity" />
-        <activity android:name=".Controller.PanoramaActivity"></activity>
+        <activity android:name=".Controller.PanoramaActivity"> </activity>
     </application>
 
 </manifest>

@@ -91,6 +91,7 @@ public class MainActivity extends Activity {
         cameraPreviewPane.addView(mDraw);
 
         configureCaptureButton();
+        configurePanoramaButton();
     }
 
     /**
@@ -225,8 +226,8 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 Context context = getBaseContext();
                 Intent intent = new Intent(context, PanoramaActivity.class);
-                context.startActivity(intent);
-                finish();
+                startActivity(intent);
+                //finish();
 
 
             }

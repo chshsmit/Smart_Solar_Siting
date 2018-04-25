@@ -108,15 +108,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         }
 
         new MakeGoogleRequest().execute(screenshot);
-
-//        ImageView imageView = findViewById(R.id.imageView);
-
-        //Use this to set image as background in the new activity
-//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-//        imageView.setImageBitmap(rotatedImage);
-
-        //Use this to set the screenshot (with just the lines) as background in the new activity
-//        imageView.setImageBitmap(screenshot);
     }
 
     private void makeDatasetRequest(double latitude, double longitude) {

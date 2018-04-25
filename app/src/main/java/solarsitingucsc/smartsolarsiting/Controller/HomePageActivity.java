@@ -29,13 +29,18 @@ public class HomePageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_page);
 
-        initializeToolbar();
-        initializeListView();
-        initializeBottomNavigation();
 
-        addSiteToListView();
+        Intent intent = new Intent(getApplicationContext(), DisplayCalculationsActivity.class);
+        startActivity(intent);
+
+//        setContentView(R.layout.activity_home_page);
+//
+//        initializeToolbar();
+//        initializeListView();
+//        initializeBottomNavigation();
+//
+//        addSiteToListView();
     }
 
     //--------------------------------------------------------------------------------------------

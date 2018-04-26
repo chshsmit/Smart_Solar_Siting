@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -216,6 +218,9 @@ public class MainActivity extends Activity {
 //        return mediaFile;
 //    }
 
+
+
+
     /*
     * Function that allows button to switch to panorama activity
     * */
@@ -226,6 +231,9 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 Context context = getBaseContext();
                 Intent intent = new Intent(context, PanoramaActivity.class);
+
+                mCameraPreview.surfaceDestroyed(mCameraPreview.getHolder());
+
                 startActivity(intent);
                 //finish();
 

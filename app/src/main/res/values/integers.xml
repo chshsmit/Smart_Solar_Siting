@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ZERO">0</integer>
+
+    <integer name="sys_cap_max">500000</integer>
+    <integer name="sys_cap_min">1</integer>
+
+    <integer name="sys_losses_min">-5</integer>
+    <integer name="sys_losses_max">99</integer>
+
+
+    <integer name="sys_tilt_max">90</integer>
+    <integer name="sys_azimuth_max">359</integer>
+</resources>

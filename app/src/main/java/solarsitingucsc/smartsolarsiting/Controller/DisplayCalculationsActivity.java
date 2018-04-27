@@ -124,6 +124,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
+
+        //TODO: Add the dataset to the API call
+        //TODO: Add the shared preference values to the API call
+
         //This is the link that we are making our Volley call to
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
                 "api_key=" + DATASET_API_KEY + "&lat=" +latitude+ "&lon=" +longitude+

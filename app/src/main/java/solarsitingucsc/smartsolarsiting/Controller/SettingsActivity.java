@@ -3,24 +3,27 @@ package solarsitingucsc.smartsolarsiting.Controller;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.preference.RingtonePreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 import solarsitingucsc.smartsolarsiting.R;
-import solarsitingucsc.smartsolarsiting.View.SettingsFragment;
-
-import java.util.List;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -35,7 +38,8 @@ import java.util.List;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-    private FirebaseAuth mFirebaseAuth;
+    private static  FirebaseAuth mFirebaseAuth;
+    private static Context mContext;
 
 
     @Override
@@ -43,6 +47,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     {
         super.onCreate(savedInstanceState);
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mContext = this.getApplicationContext();
         setContentView(R.layout.activity_settings);
 
         //Displaying the preference fragment
@@ -53,16 +58,150 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         //Initializing the toolbar
         initializeToolBar();
 
-        //This is temporary it still allows you to sign out
-        //initializeSignOut();
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //This is the settings fragment that gets prefs from preferences.xml
+    //----------------------------------------------------------------------------------------------
+
+    public static class SettingsFragment extends PreferenceFragment {
+
+        @Override
+        public void onCreate(Bundle savedInstanceState){
+            super.onCreate(savedInstanceState);
+
+            //Loading preferences from XML resource
+            addPreferencesFromResource(R.xml.preferences);
+
+            bindAllPreferencesToSummary();
+        }
+
+        public void bindAllPreferencesToSummary(){
+
+            bindPreferenceSummaryToValue(findPreference("sys_mod_type"));
+            bindPreferenceSummaryToValue(findPreference("sys_arr_type"));
+            bindPreferenceSummaryToValue(findPreference("system_capacity"));
+            bindPreferenceSummaryToValue(findPreference("sys_losses"));
+            bindPreferenceSummaryToValue(findPreference("sys_tilt"));
+            bindPreferenceSummaryToValue(findPreference("sys_azimuth"));
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //These functions set the summary value for each preference based on the user's current
+    //setting values
+    //----------------------------------------------------------------------------------------------
+
+
+    private static void bindPreferenceSummaryToValue(Preference preference) {
+        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+
+        if(preference instanceof ListPreference){
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getString(preference.getKey(), ""));
+        } else {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getInt(preference.getKey(), -1));
+        }
+    }
+
+    /**
+     * A preference value change listener that updates the preference's summary
+     * to reflect its new value.
+     */
+    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener
+            = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            String stringValue = newValue.toString();
+
+            if (preference instanceof ListPreference) {
+                // For list preferences, look up the correct display value in
+                // the preference's 'entries' list.
+                ListPreference listPreference = (ListPreference) preference;
+                int index = listPreference.findIndexOfValue(stringValue);
+
+                // Set the summary to reflect the new value.
+                preference.setSummary(
+                        index >= 0
+                                ? listPreference.getEntries()[index]
+                                : null);
+
+            } else if (preference instanceof EditTextPreference) {
+
+                try{
+                    //This line will throw an exception if the text entered is not
+                    //able to be parsed as an int
+                    int intValue = Integer.valueOf(stringValue);
+                    Resources intResources = mContext.getResources();
+
+                    switch(preference.getKey()){
+
+                        case "system_capacity":
+
+                            if(valueNotInRange(intValue, R.integer.sys_cap_min, R.integer.sys_cap_max)){
+                                break;
+                            }
+                            preference.setSummary(mContext.getString(R.string.sys_cap_summ)
+                                    +" "+stringValue+ "kW" );
+                            break;
+
+                        case "sys_losses":
+                            if(valueNotInRange(intValue, R.integer.sys_losses_min, R.integer.sys_losses_max)){
+                                break;
+                            }
+                            preference.setSummary(mContext.getString(R.string.sys_losses_summ)
+                                    +" "+stringValue+ "%" );
+                            break;
+
+                        case "sys_tilt":
+                            if(valueNotInRange(intValue, R.integer.ZERO, R.integer.sys_tilt_max)){
+                                break;
+                            }
+                            preference.setSummary(mContext.getString(R.string.sys_tilt_summ)
+                                    +" "+stringValue+ (char) 0x00B0 );
+                            break;
+
+                        case "sys_azimuth":
+                            if(valueNotInRange(intValue, R.integer.ZERO, R.integer.sys_azimuth_max)){
+                                break;
+                            }
+                            preference.setSummary(mContext.getString(R.string.sys_azimuth_summ)
+                                    +" "+stringValue+ (char) 0x00B0 );
+                            break;
+
+                    }
+                } catch(NumberFormatException e){
+                    System.out.println("Caught the exception");
+                    toastMessage("You must input a number", mContext);
+                }
+
+            }
+
+            return true;
+        }
+    };
+
+
+    //This function returns true if the given intValue is not in the proper range
+    private static boolean valueNotInRange(int intValue, int minId, int maxId){
+        Resources resources = mContext.getResources();
+        if(intValue < resources.getInteger(minId) ||
+                intValue > resources.getInteger(maxId)){
+            toastMessage("Value not in range", mContext);
+            return true;
+        }
+        return false;
     }
 
 
-
-//
-//    //----------------------------------------------------------------------------------------------
-//    //ToolBar Setup
-//    //----------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------
+    //ToolBar Setup
+    //----------------------------------------------------------------------------------------------
 
     private void initializeToolBar(){
         Toolbar toolbar = findViewById(R.id.settings_toolbar);
@@ -77,90 +216,27 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         });
     }
 
-
     //----------------------------------------------------------------------------------------------
-    //Initializing preferences list
+    //Signing out
     //----------------------------------------------------------------------------------------------
 
-//
-//
-//
-//    //----------------------------------------------------------------------------------------------
-//    //Code for the camera preferences
-//    //----------------------------------------------------------------------------------------------
-//
-//    private void changeFishEyeSettings(){
-//
-//
-//    }
-//
-//    //----------------------------------------------------------------------------------------------
-//    //Signing out
-//    //----------------------------------------------------------------------------------------------
 
-//    private void initializeSignOut(){
-//        final Preference signOut = (Preference) findPreference("signout");
-//        signOut.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            @Override
-//            public boolean onPreferenceClick(Preference preference) {
-//                signout();
-//                return true;
-//            }
-//        });
-//
-//    }
-
-    private void signout(){
-        AlertDialog.Builder signoutDialogBuilder = new AlertDialog.Builder(this);
-        setUpSignoutDialog(signoutDialogBuilder);
-
-        AlertDialog signoutDialog = signoutDialogBuilder.create();
-        signoutDialog.show();
-
-    }
-
-    private void setUpSignoutDialog(AlertDialog.Builder alertDialogBuilder){
-        alertDialogBuilder.setTitle("Are you sure you want to signout?");
-
-        //User pressed yes so sign out and return to the login screen
-        alertDialogBuilder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mFirebaseAuth.signOut();
-                        toastMessage("Signed out", SettingsActivity.this);
-                        changeToLoginScreen();
-                    }
-                });
-
-        //User pressed cancel so do nothing
-        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-
-    }
-
-    private void changeToLoginScreen(){
-        Intent login = new Intent(getApplicationContext(), LoginActivity.class);
+    public static void changeToLoginScreen(){
+        Intent login = new Intent(mContext, LoginActivity.class);
         login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(login);
+        toastMessage("Signed Out", mContext);
+        mContext.startActivity(login);
     }
 
 
+    //----------------------------------------------------------------------------------------------
+    //About Page
+    //----------------------------------------------------------------------------------------------
 
-//    //----------------------------------------------------------------------------------------------
-//    //About Page
-//    //----------------------------------------------------------------------------------------------
-//
-//    private void about(){
-//
-//    }
-//
 
+
+
+    //Toast utility Function
     public static void toastMessage(String message, Context currentActivity)
     {
         Toast.makeText(currentActivity,message,Toast.LENGTH_SHORT).show();

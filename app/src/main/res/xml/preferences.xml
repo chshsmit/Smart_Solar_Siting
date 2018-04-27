@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:preference="http://schemas.android.com/apk/res-auto">
 
 
-    <PreferenceCategory android:title="Camera Settings" >
+    <PreferenceCategory android:title="@string/cam_settings" >
 
         <Preference
             android:title="@string/hor_FOV"
@@ -18,66 +19,95 @@
         <CheckBoxPreference
             android:title="@string/panorama"
             android:summary="@string/panorama_summ"
+            android:defaultValue="false"
             android:key="enable_panorama" />
 
         <CheckBoxPreference
             android:title="@string/fisheye_dist"
             android:summary="@string/fisheye_dist_summ"
+            android:defaultValue="false"
             android:key="enable_fisheye_distortion"/>
 
     </PreferenceCategory>
 
 
 
-    <PreferenceCategory android:title="Panel Settings">
+    <PreferenceCategory android:title="@string/pan_settings">
 
-        <Preference
+        <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_cap"
             android:summary="@string/sys_cap_summ"
-            android:key="system_capacity" />
+            android:dialogMessage="@string/sys_cap_dialog"
+            android:defaultValue="4"
+            android:key="system_capacity"
+            preference:minValue="@integer/sys_cap_min"
+            preference:maxValue="@integer/sys_cap_max"/>
 
         <ListPreference
-            android:defaultValue="1"
+            android:title="@string/sys_mod_type"
             android:entries="@array/sys_mod_type_entries"
             android:entryValues="@array/sys_mod_type_values"
-            android:title="@string/sys_mod_type"
-            android:summary="@string/sys_mod_type_summ"
+            android:defaultValue="1"
             android:key="sys_mod_type" />
 
-        <Preference
+        <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_losses"
             android:summary="@string/sys_losses_summ"
-            android:key="sys_losses" />
+            android:dialogMessage="@string/sys_losses_dialog"
+            android:defaultValue="10"
+            android:key="sys_losses"
+            preference:minValue="@integer/sys_losses_min"
+            preference:maxValue="@integer/sys_losses_max"/>
 
         <ListPreference
-            android:defaultValue="1"
+            android:title="@string/sys_arr_type"
             android:entries="@array/sys_arr_type_entries"
             android:entryValues="@array/sys_arr_type_values"
-            android:title="@string/sys_arr_type"
-            android:summary="@string/sys_arr_type_summ"
+            android:defaultValue="1"
             android:key="sys_arr_type" />
 
-        <Preference
+        <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_tilt"
             android:summary="@string/sys_tilt_summ"
-            android:key="sys_tilt" />
+            android:dialogMessage="@string/sys_tilt_dialog"
+            android:defaultValue="40"
+            android:key="sys_tilt"
+            preference:minValue="@integer/ZERO"
+            preference:maxValue="@integer/sys_tilt_max"/>
 
-        <Preference
+        <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_azimuth"
             android:summary="@string/sys_azimuth_summ"
-            android:key="sys_azimuth" />
+            android:dialogMessage="@string/sys_azimuth_dialog"
+            android:defaultValue="30"
+            android:key="sys_azimuth"
+            preference:minValue="@integer/ZERO"
+            preference:maxValue="@integer/sys_azimuth_max"/>
+
+        <ListPreference
+            android:title="@string/sys_dataset"
+            android:summary="@string/sys_dataset_summ"
+            android:entries="@array/sys_dataset_entries"
+            android:entryValues="@array/sys_dataset_values"
+            android:defaultValue="tmy2"
+            android:key="sys_dataset"
+            />
 
     </PreferenceCategory>
 
 
 
-    <PreferenceCategory android:title="Miscellaneous">
-        <Preference
-            android:title="Sign Out"
-            android:key="signout"/>
+    <PreferenceCategory android:title="@string/extra_settings">
+        <solarsitingucsc.smartsolarsiting.View.SignoutDialogPreference
+            android:title="@string/signout"
+            android:dialogMessage="@string/signout_message"
+            android:positiveButtonText="@string/signout_pos"
+            android:negativeButtonText="@string/signout_neg"
+            android:key="signout">
+        </solarsitingucsc.smartsolarsiting.View.SignoutDialogPreference>
 
         <Preference
-            android:title="About"
+            android:title="@string/about"
             android:key="about"/>
     </PreferenceCategory>
 

@@ -49,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         //On click listeners
         initializeOnCLickListeners();
 
+        signIn("chshsmit@gmail.com", "WhatTheFuck");
+
     }
 
     //--------------------------------------------------------------------------------------------
@@ -85,9 +87,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void signIn(String email, String passsword) {
         Log.d(TAG, "signIn:" + email);
-        if(!validateForm()){
-            return;
-        }
+//        if(!validateForm()){
+//            return;
+//        }
 
         //Start sign in with email
         mAuth.signInWithEmailAndPassword(email, passsword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

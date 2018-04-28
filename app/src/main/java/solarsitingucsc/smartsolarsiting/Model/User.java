@@ -35,6 +35,6 @@ public class User {
         this.email = email;
         this.name = name;
         this.id = id;
-        FirebaseDatabase.getInstance().getReference("users").child(id).setValue(this);
+//        FirebaseDatabase.getInstance().getReference("users").child(id).setValue(this);
     }
 }

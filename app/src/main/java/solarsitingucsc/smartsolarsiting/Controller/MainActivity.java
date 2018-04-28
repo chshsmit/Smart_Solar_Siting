@@ -137,7 +137,8 @@ public class MainActivity extends Activity {
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressBar.setVisibility(View.VISIBLE);
+                if (progressBar != null )
+                    progressBar.setVisibility(View.VISIBLE);
                 String path = takeScreenshot();
                 Location userLocation = mDraw.lastLocation;
 

@@ -84,6 +84,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("sys_losses"));
             bindPreferenceSummaryToValue(findPreference("sys_tilt"));
             bindPreferenceSummaryToValue(findPreference("sys_azimuth"));
+            bindPreferenceSummaryToValue(findPreference("sys_dataset"));
         }
     }
 
@@ -92,7 +93,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     //setting values
     //----------------------------------------------------------------------------------------------
 
-    //TODO: Make gridded station summary display the current dataset
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);

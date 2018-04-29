@@ -419,7 +419,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
     private void storeResults(final String name, final int[] monthlyPower) {
         final String id = getCurrentUserId();
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("pictures");
         rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {

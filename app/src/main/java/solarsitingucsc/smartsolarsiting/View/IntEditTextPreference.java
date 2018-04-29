@@ -50,7 +50,7 @@ public class IntEditTextPreference extends EditTextPreference {
         return String.valueOf(getPersistedInt(-1));
     }
 
-
+    //TODO:Clean up this portion of code/refactor
     @Override
     protected boolean persistString(String value) {
         boolean output;

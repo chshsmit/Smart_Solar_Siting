@@ -79,7 +79,7 @@
             android:title="@string/sys_azimuth"
             android:summary="@string/sys_azimuth_summ"
             android:dialogMessage="@string/sys_azimuth_dialog"
-            android:defaultValue="30"
+            android:defaultValue="180"
             android:key="sys_azimuth"
             preference:minValue="@integer/ZERO"
             preference:maxValue="@integer/sys_azimuth_max"/>

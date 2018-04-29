@@ -4,11 +4,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -98,6 +100,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
+
+        //Getting values from shared preferences
+        setPanelConstraints();
+
         Runtime.getRuntime().freeMemory();
         mAuth = FirebaseAuth.getInstance();
         findViewById(R.id.display_calc_view).setOnTouchListener(
@@ -179,19 +185,40 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     //Functions to make call to database
     //----------------------------------------------------------------------------------------------
 
+    //Variables for the API url
+    private int sysCapacity;
+    private int sysAzimuth;
+    private int sysTilt;
+    private int sysLosses;
+    private String sysArrayType;
+    private String sysModuleType;
+    private String sysDataset;
+
+
+    private void setPanelConstraints(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        sysCapacity = prefs.getInt("system_capacity", 4);
+        sysAzimuth = prefs.getInt("sys_azimuth", 180);
+        sysTilt = prefs.getInt("sys_tilt", 40);
+        sysLosses = prefs.getInt("sys_losses", 10);
+        sysArrayType = prefs.getString("sys_array_type", "1");
+        sysModuleType = prefs.getString("sys_mod_type", "1");
+        sysDataset = prefs.getString("sys_dataset", "tmy2");
+    }
+
     private void makeDatasetRequest(double latitude, double longitude) {
         System.out.println("We are making a JSONObject Request");
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        
-        //TODO: Add the shared preference values to the API call
 
         //This is the link that we are making our Volley call to
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
                 "api_key=" + DATASET_API_KEY + "&lat=" +latitude+ "&lon=" +longitude+
-                "&system_capacity=4" + "&azimuth=180" + "&tilt=40" + "&array_type=1" +
-                "&module_type=1" + "&losses=10" +"&dataset=tmy2" + "&timeframe=hourly";
+                "&system_capacity=" +sysCapacity+ "&azimuth=" +sysAzimuth+ "&tilt=" +sysTilt+
+                "&array_type=" +sysArrayType+ "&module_type="+sysModuleType+ "&losses="+sysLosses+
+                "&dataset=" +sysDataset+ "&timeframe=hourly";
 
         //JSONObject Response Listener
         JsonObjectRequest jsObjRequest = new JsonObjectRequest

@@ -576,20 +576,20 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String text = input.getText().toString();
+                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                            Matcher m = p.matcher(text);
                             if (text.equals("")) {
                                 Toast.makeText(DisplayCalculationsActivity.this,
                                         "Name can't be empty", Toast.LENGTH_SHORT).show();
-                                dialog.cancel();
                             }
-                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-                            Matcher m = p.matcher(text);
-                            if (m.find()) {
+                            else if (m.find()) {
                                 Toast.makeText(DisplayCalculationsActivity.this,
                                         "Name can't contain special symbols", Toast.LENGTH_SHORT).show();
-                                dialog.cancel();
                             }
-                            name[0] = input.getText().toString();
-                            storeResults(name[0], monthlyPower);
+                            else {
+                                name[0] = input.getText().toString();
+                                storeResults(name[0], monthlyPower);
+                            }
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

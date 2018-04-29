@@ -21,7 +21,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-
     <ListView
         android:id="@+id/previous_site_list_view"
         android:layout_width="match_parent"
@@ -48,7 +47,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/previous_site_list_view"
         app:menu="@menu/bottom_nav_items">
-
     </android.support.design.widget.BottomNavigationView>
 
 

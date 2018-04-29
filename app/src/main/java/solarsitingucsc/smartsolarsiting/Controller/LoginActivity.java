@@ -10,14 +10,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import solarsitingucsc.smartsolarsiting.R;
 
@@ -33,24 +31,28 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        //Toolbar setup
-        Toolbar topToolBar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(topToolBar);
-
-        //Views
-        mEmailField = (EditText) findViewById(R.id.emailEditText);
-        mPasswordField = (EditText) findViewById(R.id.passwordEditText);
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
 
-        //On click listeners
-        initializeOnCLickListeners();
+        if(mAuth.getCurrentUser() == null) {
 
-        signIn("chshsmit@gmail.com", "WhatTheFuck");
+            setContentView(R.layout.activity_login);
 
+            //Toolbar setup
+            Toolbar topToolBar = findViewById(R.id.my_toolbar);
+            setSupportActionBar(topToolBar);
+
+            //Views
+            mEmailField = (EditText) findViewById(R.id.emailEditText);
+            mPasswordField = (EditText) findViewById(R.id.passwordEditText);
+
+            //On click listeners
+            initializeOnCLickListeners();
+            
+        } else {
+            changeToHomePage();
+        }
     }
 
     //--------------------------------------------------------------------------------------------

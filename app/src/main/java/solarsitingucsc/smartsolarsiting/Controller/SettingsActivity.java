@@ -92,6 +92,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     //setting values
     //----------------------------------------------------------------------------------------------
 
+    //TODO: Make gridded station summary display the current dataset
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);

@@ -1,16 +1,24 @@
 package solarsitingucsc.smartsolarsiting.Controller;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +30,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.vision.v1.Vision;
@@ -33,6 +43,16 @@ import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.google.api.services.vision.v1.model.TextAnnotation;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,14 +61,20 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import solarsitingucsc.smartsolarsiting.Model.SolarSiting;
 import solarsitingucsc.smartsolarsiting.R;
 
 import static android.content.ContentValues.TAG;
@@ -61,28 +87,38 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private double[] hourlyArray = new double[8760];
     private TextView[] textViews;
+    private FirebaseAuth mAuth;
+    private FloatingActionButton saveBtn;
+    private String imageName;
+    private String screenshotName;
+    private Bitmap imageToSave;
+    private Bitmap thumbnail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
+        Runtime.getRuntime().freeMemory();
+        mAuth = FirebaseAuth.getInstance();
         findViewById(R.id.display_calc_view).setOnTouchListener(
                 new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
                     public void onSwipeRight() {
                         finish();
                     }
                 });
-        findViewById(R.id.button_capture).setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton capture = findViewById(R.id.button_capture);
+        capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
+        saveBtn = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progressBar);
         latitude = getIntent().getDoubleExtra("latitude", 0.0);
         longitude = getIntent().getDoubleExtra("longitude", 0.0);
-        String imageName = getIntent().getStringExtra("imageName");
-        String screenshotName = getIntent().getStringExtra("screenshotName");
+        imageName = getIntent().getStringExtra("imageName");
+        screenshotName = getIntent().getStringExtra("screenshotName");
         FileInputStream imageFis = null;
         FileInputStream screenshotFis = null;
         try {
@@ -95,9 +131,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
-        Bitmap rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
+        imageToSave = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
                 originalImage.getHeight(), matrix, true);
         Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
+        thumbnail = makeThumbnail(originalImage, matrix);
 
         textViews = new TextView[13];
         int[] months = {R.id.janKwTxt, R.id.febKwTxt, R.id.marKwTxt, R.id.aprKwTxt, R.id.mayKwTxt,
@@ -108,6 +145,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         }
 
         new MakeGoogleRequest().execute(screenshot);
+        deleteFile(screenshotName);
 
 //        ImageView imageView = findViewById(R.id.imageView);
 
@@ -117,6 +155,20 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //Use this to set the screenshot (with just the lines) as background in the new activity
 //        imageView.setImageBitmap(screenshot);
+    }
+
+    @Override
+    public void onBackPressed(){
+        //Go back to the home page
+        Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
+        startActivity(homePage);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        deleteFile(imageName);
+        deleteFile(screenshotName);
     }
 
     private void makeDatasetRequest(double latitude, double longitude) {
@@ -359,6 +411,78 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return inputImage;
     }
 
+    private Bitmap makeThumbnail(Bitmap imageBitmap, Matrix matrix) {
+        final int THUMBNAIL_SIZE = 64;
+        imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        return Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(),
+                imageBitmap.getHeight(), matrix, true);
+    }
+
+    private String getCurrentUserId() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            return currentUser.getUid();
+        }
+        return "";
+    }
+
+    private void storeResults(final String name, final int[] monthlyPower) {
+        final String id = getCurrentUserId();
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("pictures");
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.hasChild(id + name)) {
+                    Toast.makeText(DisplayCalculationsActivity.this,
+                            "Name already in use", Toast.LENGTH_SHORT).show();
+                } else {
+                    storeImage(thumbnail, id + name);
+                    Date today = Calendar.getInstance().getTime();
+                    DateFormat df = DateFormat.getDateTimeInstance();
+                    SolarSiting solarSiting = new SolarSiting(
+                            id, name,
+                            Arrays.toString(monthlyPower).split("[\\[\\]]")[1].split(", "),
+                            id, df.format(today));
+                    solarSiting.store();
+                    Toast.makeText(DisplayCalculationsActivity.this,
+                            "Saved!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(DisplayCalculationsActivity.this,
+                        "Unknown error occurred. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void storeImage(Bitmap image, String name) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child(name + ".jpg");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = imageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(DisplayCalculationsActivity.this,
+                        "Failed to save image", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+            }
+        });
+    }
+
     private class MakeGoogleRequest extends AsyncTask<Bitmap, Void, String> {
 
         @Override
@@ -419,7 +543,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             Map<String, Integer> result = translateResponseToMap(response);
             Iterator it = result.entrySet().iterator();
             int annualPower = 0;
-            int[] monthlyPower = new int[12];
+            final int[] monthlyPower = new int[13];
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
                 String key = (String) pair.getKey();
@@ -442,13 +566,53 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
+            monthlyPower[monthlyPower.length - 1] = annualPower;
             progressBar.setVisibility(View.GONE);
-            String text = annualPower + "kW";
-            textViews[12].setText(text);
             for (int i = 0; i < monthlyPower.length; i++) {
-                text = monthlyPower[i] + "kW";
+                String text = monthlyPower[i] + "kW";
                 textViews[i].setText(text);
             }
+
+            saveBtn.setVisibility(View.VISIBLE);
+            saveBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final String[] name = {""};
+                    Context context = DisplayCalculationsActivity.this;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    final EditText input = new EditText(context);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    builder.setTitle("Name: ");
+                    builder.setView(input);
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String text = input.getText().toString();
+                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                            Matcher m = p.matcher(text);
+                            if (text.equals("")) {
+                                Toast.makeText(DisplayCalculationsActivity.this,
+                                        "Name can't be empty", Toast.LENGTH_SHORT).show();
+                            }
+                            else if (m.find()) {
+                                Toast.makeText(DisplayCalculationsActivity.this,
+                                        "Name can't contain special symbols", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                name[0] = input.getText().toString();
+                                storeResults(name[0], monthlyPower);
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                }
+            });
         }
     }
 }

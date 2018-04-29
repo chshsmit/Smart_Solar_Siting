@@ -27,6 +27,8 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
+    //TODO:Make camera view work in landscape mode
+
     public static final String DEBUG_TAG = "CameraPreview Log";
     private SurfaceHolder mHolder;
     private Camera mCamera;

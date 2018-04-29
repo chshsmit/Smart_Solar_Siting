@@ -138,7 +138,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     //This line will throw an exception if the text entered is not
                     //able to be parsed as an int
                     int intValue = Integer.valueOf(stringValue);
-                    Resources intResources = mContext.getResources();
 
                     switch(preference.getKey()){
 

@@ -157,6 +157,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //        imageView.setImageBitmap(screenshot);
     }
 
+    //----------------------------------------------------------------------------------------------
+    //Fucntions that we are over riding
+    //----------------------------------------------------------------------------------------------
+
     @Override
     public void onBackPressed(){
         //Go back to the home page
@@ -171,20 +175,23 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         deleteFile(screenshotName);
     }
 
+    //----------------------------------------------------------------------------------------------
+    //Functions to make call to database
+    //----------------------------------------------------------------------------------------------
+
     private void makeDatasetRequest(double latitude, double longitude) {
         System.out.println("We are making a JSONObject Request");
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
-
-        //TODO: Add the dataset to the API call
+        
         //TODO: Add the shared preference values to the API call
 
         //This is the link that we are making our Volley call to
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
                 "api_key=" + DATASET_API_KEY + "&lat=" +latitude+ "&lon=" +longitude+
                 "&system_capacity=4" + "&azimuth=180" + "&tilt=40" + "&array_type=1" +
-                "&module_type=1" + "&losses=10" + "&timeframe=hourly";
+                "&module_type=1" + "&losses=10" +"&dataset=tmy2" + "&timeframe=hourly";
 
         //JSONObject Response Listener
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -218,6 +225,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         // Add the request to the request queue
         queue.add(jsObjRequest);
     }
+
+    //----------------------------------------------------------------------------------------------
+    //Functions to parse through the database results
+    //----------------------------------------------------------------------------------------------
 
     private double getPowerForMonthAndHour(int month, int hour) {
         //We increment by 24 hour time periods
@@ -290,6 +301,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         }
         return monthlyArray;
     }
+
+
+    //----------------------------------------------------------------------------------------------
+    //Functions for the Google Vision API
+    //----------------------------------------------------------------------------------------------
 
     private Map<String, Integer> translateResponseToMap(String response) {
         //Sometimes 8s are confused with Bs by Google's API -- there should be no Bs so change to 8s
@@ -402,6 +418,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return costs[b.length()];
     }
 
+    //----------------------------------------------------------------------------------------------
+    //Functions to process the bitmap/image
+    //----------------------------------------------------------------------------------------------
+
     private Image bitmapToImage(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -420,6 +440,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(),
                 imageBitmap.getHeight(), matrix, true);
     }
+
+
+    //----------------------------------------------------------------------------------------------
+    //Fuctions for storing information to firebase
+    //----------------------------------------------------------------------------------------------
 
     private String getCurrentUserId() {
         FirebaseUser currentUser = mAuth.getCurrentUser();

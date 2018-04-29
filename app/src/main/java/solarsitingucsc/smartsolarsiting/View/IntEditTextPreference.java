@@ -50,7 +50,6 @@ public class IntEditTextPreference extends EditTextPreference {
         return String.valueOf(getPersistedInt(-1));
     }
 
-    //TODO:Clean up this portion of code/refactor
     @Override
     protected boolean persistString(String value) {
         boolean output;
@@ -60,18 +59,13 @@ public class IntEditTextPreference extends EditTextPreference {
         try {
             //Try to get an integer value of the string
             intToPersist =Integer.valueOf(value);
-            System.out.println("intToPersist = "+intToPersist);
-            System.out.println(MIN_VALUE);
-            System.out.println(MAX_VALUE);
 
             //Check that the entered value is within range
             if(intToPersist < MIN_VALUE || intToPersist > MAX_VALUE){
-                System.out.println("PersistedInt = "+getPersistedInt(-1));
                 setTextValues(String.valueOf(getPersistedInt(-1)), mEditText);
                 return false;
             }
 
-            System.out.println("IntToPersist = "+intToPersist);
             output = persistInt(intToPersist);
 
         } catch (NumberFormatException e){

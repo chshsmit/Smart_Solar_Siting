@@ -38,7 +38,7 @@ dependencies {
     implementation 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0'
     implementation 'com.google.code.findbugs:jsr305:2.0.1'
     implementation 'com.shobhitpuri.custombuttons:google-signin:1.0.0'
-    compile 'com.squareup.picasso:picasso:2.5.0'
+    implementation 'com.squareup.picasso:picasso:2.5.0'
 }
 
 

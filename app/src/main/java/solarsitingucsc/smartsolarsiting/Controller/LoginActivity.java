@@ -31,14 +31,11 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-<<<<<<< Updated upstream
-=======
         mAuth = FirebaseAuth.getInstance();
 
         if(mAuth.getCurrentUser() == null) {
 
             setContentView(R.layout.activity_login);
->>>>>>> Stashed changes
 
             //Toolbar setup
             Toolbar topToolBar = findViewById(R.id.my_toolbar);
@@ -47,23 +44,8 @@ public class LoginActivity extends AppCompatActivity {
             //Views
             mEmailField = (EditText) findViewById(R.id.emailEditText);
             mPasswordField = (EditText) findViewById(R.id.passwordEditText);
-
-            //Firebase
-
-<<<<<<< Updated upstream
-        if (mAuth.getCurrentUser() == null) {
-
-            setContentView(R.layout.activity_login);
-
-            //Toolbar setup
-            Toolbar topToolBar = findViewById(R.id.my_toolbar);
-            setSupportActionBar(topToolBar);
-=======
-            //On click listeners
-            initializeOnCLickListeners();
         }else
             changeToHomePage();
->>>>>>> Stashed changes
 
             //Views
             mEmailField = (EditText) findViewById(R.id.emailEditText);
@@ -72,9 +54,6 @@ public class LoginActivity extends AppCompatActivity {
             //On click listeners
             initializeOnCLickListeners();
 
-        } else {
-            changeToHomePage();
-        }
     }
 
     //--------------------------------------------------------------------------------------------

@@ -22,25 +22,23 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.shobhitpuri.custombuttons:google-signin:1.0.0'
     implementation 'com.google.firebase:firebase-auth:15.0.0'
     implementation 'com.google.firebase:firebase-storage:15.0.0'
     implementation 'com.google.firebase:firebase-database:15.0.0'
+
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.android.volley:volley:1.1.0'
     implementation 'com.google.api-client:google-api-client-android:1.22.0'
     implementation 'com.google.apis:google-api-services-vision:v1-rev357-1.22.0'
     implementation 'com.google.code.findbugs:jsr305:2.0.1'
     implementation 'com.shobhitpuri.custombuttons:google-signin:1.0.0'
-
-
+    compile 'com.squareup.picasso:picasso:2.5.0'
 }
 
 

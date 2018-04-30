@@ -35,8 +35,11 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+<<<<<<< Updated upstream
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+=======
+>>>>>>> Stashed changes
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -430,7 +433,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         chart.setData(lineData);
         chart.invalidate();
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);

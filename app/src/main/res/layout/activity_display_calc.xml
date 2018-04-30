@@ -22,6 +22,7 @@
         android:clickable="true"
         app:srcCompat="@android:drawable/ic_menu_save" />
 
+<<<<<<< Updated upstream
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/button_save"
@@ -36,5 +37,7 @@
         app:srcCompat="@android:drawable/ic_menu_save"
         app:backgroundTint="@android:color/holo_green_light"
         android:visibility="gone" />
+=======
+>>>>>>> Stashed changes
 
 </RelativeLayout>

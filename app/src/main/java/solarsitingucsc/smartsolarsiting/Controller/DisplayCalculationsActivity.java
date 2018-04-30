@@ -30,11 +30,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.vision.v1.Vision;
@@ -86,6 +89,10 @@ import static android.content.ContentValues.TAG;
 
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
+    private static final String[] months = {"January" , "February" , "March" , "April", "May",
+            "June", "July", "August", "September", "October",
+            "November", "December"};
+
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
     private final String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
@@ -101,8 +108,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_display_calc);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_display_calc);
 //        Runtime.getRuntime().freeMemory();
 //        mAuth = FirebaseAuth.getInstance();
 //        findViewById(R.id.display_calc_view).setOnTouchListener(
@@ -151,6 +158,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //
 //        new MakeGoogleRequest().execute(screenshot);
 //        deleteFile(screenshotName);
+//
 
 //        new MakeGoogleRequest().execute(screenshot);
         createSomthing();
@@ -412,16 +420,33 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
     public void createSomthing() {
         Random random = new Random();
-        LineChart chart = (LineChart) findViewById(R.id.chart);
-        List<Entry> entries = new ArrayList<Entry>();
+        final LineChart chart = findViewById(R.id.chart);
+        List<Entry> entries = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
             entries.add(new Entry(i, random.nextInt(100)));
         }
-        LineDataSet dataSet = new LineDataSet(entries, "Label"); // add entries to dataset
+        LineDataSet dataSet = new LineDataSet(entries, "Power in KW");
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
         chart.invalidate();
 
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return months[(int) value];
+            }
+        });
+
+        findViewById(R.id.save_plot).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chart.saveToGallery("mychart.jpg", 85); // 85 is the quality of the image
+            }
+        });
     }
 
 

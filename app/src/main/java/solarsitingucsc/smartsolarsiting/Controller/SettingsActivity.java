@@ -225,6 +225,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         Intent login = new Intent(mContext, LoginActivity.class);
         login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         toastMessage("Signed Out", mContext);
+        mFirebaseAuth.signOut();
         mContext.startActivity(login);
     }
 

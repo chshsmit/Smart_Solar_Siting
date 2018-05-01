@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import solarsitingucsc.smartsolarsiting.Controller.SettingsActivity;
 
 /**
@@ -14,6 +16,7 @@ import solarsitingucsc.smartsolarsiting.Controller.SettingsActivity;
  */
 
 public class SignoutDialogPreference extends DialogPreference {
+
 
     public SignoutDialogPreference(Context context, AttributeSet attrs) {
         super(context, attrs);

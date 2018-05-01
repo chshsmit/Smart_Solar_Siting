@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Color;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,10 +30,12 @@ import com.google.api.services.vision.v1.VisionRequestInitializer;
 import com.google.api.services.vision.v1.model.AnnotateImageRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
+import com.google.api.services.vision.v1.model.BoundingPoly;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.google.api.services.vision.v1.model.TextAnnotation;
+import com.google.api.services.vision.v1.model.Vertex;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +51,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import solarsitingucsc.smartsolarsiting.R;
 
@@ -61,6 +65,12 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private double[] hourlyArray = new double[8760];
     private TextView[] textViews;
+    private Bitmap originalImage;
+    private Bitmap rotatedImage;
+    private Bitmap screenshot;
+    private ImageView watershed;
+    private ImageView dots;
+    private List<List<Vertex>> vertices = new ArrayList<List<Vertex>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,15 +102,16 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             Log.d(TAG, "File not found: " + e.getMessage());
         }
         System.out.println("HERE");
-        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+        originalImage = BitmapFactory.decodeStream(imageFis, null, options);
         System.out.println("HERE");
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
-        Bitmap rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
+        rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
                 originalImage.getHeight(), matrix, true);
-        Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
-
+        screenshot = BitmapFactory.decodeStream(screenshotFis, null, options);
         textViews = new TextView[13];
         int[] months = {R.id.janKwTxt, R.id.febKwTxt, R.id.marKwTxt, R.id.aprKwTxt, R.id.mayKwTxt,
                 R.id.junKwTxt, R.id.julKwTxt, R.id.augKwTxt, R.id.sepKwTxt, R.id.octKwTxt,
@@ -108,7 +119,14 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         for (int i = 0; i < textViews.length; i++) {
             textViews[i] = findViewById(months[i]);
         }
-
+        watershed = (ImageView) findViewById(R.id.watershed);
+        dots = (ImageView) findViewById(R.id.dots);
+        watershed.setImageBitmap(rotatedImage);
+        watershed.setScaleType(ImageView.ScaleType.FIT_XY);
+        watershed.setImageBitmap(rotatedImage);
+        dots.setImageBitmap(screenshot);
+        dots.setScaleType(ImageView.ScaleType.FIT_XY);
+        dots.setImageBitmap(screenshot);
         new MakeGoogleRequest().execute(screenshot);
 
 //        ImageView imageView = findViewById(R.id.imageView);
@@ -166,11 +184,29 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         final int TWENTY_FOUR_HOURS = 24;
         double[] arrayForMonth = splitForMonth(month);
         double totalAcWatts = 0;
+        int[] pixels = new int[400];
+//        box dimensions for text: 70 x 120
+
 
         //Add up the total amount of Watts we will be receiving at the indicated hour
         //for the indicated month
         for(int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
-            totalAcWatts += arrayForMonth[index];
+//            rotatedImage.getPixels(pixels,0,25,
+//                    vertices.get(index).get(index).getX(), vertices.get(index).get(index).getY(), 20,20);
+//            boolean add = true;
+//            for(int i=0;i<20;i++)
+//            {
+//                for(int j=0;j<20;j++)
+//                {
+//                    if(Color.red(pixels[i+20*j])!=255 && Color.green(pixels[i+20*j])!=255 &&
+//                            Color.blue(pixels[i+20*j])!=255)
+//                    {
+//                        add=false;
+//                    }
+//                }
+//            }
+//            if(add==true)
+                totalAcWatts += arrayForMonth[index];
         }
 
 
@@ -396,8 +432,36 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             if (batchResponse != null) {
                 TextAnnotation fullTextAnnotation = batchResponse.getResponses().get(0).getFullTextAnnotation();
                 //This contains the coordinates for each -- to be used later
+//                EntityAnnotation test = new EntityAnnotation();
+//                BoundingPoly test1 = new BoundingPoly();
+//                test1.getVertices(); //list of vertex
+//                Vertex test2 = new Vertex();
+//                test2.
+
+
                 List<EntityAnnotation> textAnnotations = batchResponse.getResponses().get(0)
                         .getTextAnnotations();
+//                System.out.println(Arrays.toString(textAnnotations.toArray()));
+
+                //grab list of vertices of all points in picture
+//                Log.d(TAG,"text Annotations Size: " + Integer.toString(textAnnotations.size()));
+//                for(int i=0;i<textAnnotations.size()-1;i++)
+//                {
+//                    Log.d(TAG,"TA Element: " + Integer.toString(i));
+////                    EntityAnnotation point = textAnnotations.get(i);
+//                    BoundingPoly textBox = textAnnotations.get(i).getBoundingPoly();
+//
+//                    vertices.add(textBox.getVertices());
+//                }
+//
+//                Log.d(TAG, "vertice x: " + Integer.toString(vertices.get(0).get(0).getX().intValue()) +
+//                        "vertice y: " + Integer.toString(vertices.get(0).get(0).getY().intValue()));
+//                Log.d(TAG, "vertice x: " + Integer.toString(vertices.get(0).get(1).getX().intValue()) +
+//                        "vertice y: " + Integer.toString(vertices.get(0).get(1).getY().intValue()));
+//                Log.d(TAG, "vertice x: " + Integer.toString(vertices.get(0).get(2).getX().intValue()) +
+//                        "vertice y: " + Integer.toString(vertices.get(0).get(2).getY().intValue()));
+//                Log.d(TAG, "vertice x: " + Integer.toString(vertices.get(0).get(3).getX().intValue()) +
+//                        "vertice y: " + Integer.toString(vertices.get(0).get(3).getY().intValue()));
                 String text;
                 if (fullTextAnnotation != null)
                     text = fullTextAnnotation.getText();

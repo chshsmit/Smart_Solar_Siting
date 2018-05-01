@@ -85,7 +85,10 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
         }
-        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 1;
+        Bitmap originalImage = BitmapFactory.decodeStream(imageFis,null,options);
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
@@ -93,6 +96,7 @@ public class DrawObstructionsActivity extends AppCompatActivity {
                 originalImage.getHeight(), matrix, true);
 
         ImageView imageView = findViewById(R.id.imageView);
+
         //Set image as background in the new activity
         Mat img = Imgcodecs.imread(screenshotName);
         Mat gray_mat=new Mat();
@@ -105,6 +109,7 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         imageView.setImageBitmap(rotatedImage);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         imageView.setImageBitmap(rotatedImage);
+
 
         FloatingActionButton fabDelete = findViewById(R.id.fabDelete);
         FloatingActionButton fabConfirm = findViewById(R.id.fabConfirm);

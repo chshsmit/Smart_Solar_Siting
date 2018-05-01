@@ -290,4 +290,24 @@
         android:layout_toRightOf="@+id/annualTxt"
         android:layout_alignBottom="@+id/annualTxt"  />
 
+    <ImageView
+        android:id="@+id/watershed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/marKwTxt"
+        android:layout_toEndOf="@+id/annualTxt"
+        android:layout_toRightOf="@+id/annualTxt"
+        android:contentDescription="@string/results"
+        app:srcCompat="@drawable/paint" />
+
+    <ImageView
+        android:id="@+id/dots"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/watershed"
+        android:layout_alignStart="@+id/watershed"
+        android:layout_alignTop="@+id/augKwTxt"
+        android:contentDescription="@string/results"
+        app:srcCompat="@drawable/paint" />
+
 </RelativeLayout>

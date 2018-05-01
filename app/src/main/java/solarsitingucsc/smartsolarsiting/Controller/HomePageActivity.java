@@ -54,12 +54,12 @@ public class HomePageActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), DisplayCalculationsActivity.class);
         startActivity(intent);
 
-//        setContentView(R.layout.activity_home_page);
-//        mAuth = FirebaseAuth.getInstance();
-//
-//        initializeToolbar();
-//        initializeListView();
-//        initializeBottomNavigation();
+        setContentView(R.layout.activity_home_page);
+        mAuth = FirebaseAuth.getInstance();
+
+        initializeToolbar();
+        initializeListView();
+        initializeBottomNavigation();
     }
 
     @Override

@@ -6,9 +6,6 @@ import android.preference.PreferenceFragment;
 
 import solarsitingucsc.smartsolarsiting.R;
 
-/**
- * Created by chrissmith on 4/21/18.
- */
 
 public class SettingsFragment extends PreferenceFragment {
 
@@ -17,7 +14,7 @@ public class SettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         //Loading preferences from XML resource
-        addPreferencesFromResource(R.xml.preferences);
+//        addPreferencesFromResource(R.xml.preferences);
     }
 
 

@@ -73,6 +73,7 @@
     <string name="sys_azimuth">System Azimuth</string>
     <string name="sys_azimuth_summ">Chenage your system\'s azimuth angle (degrees)</string>
 
+    <string name="pref_title_sync_frequency" />
 
 </resources>
 

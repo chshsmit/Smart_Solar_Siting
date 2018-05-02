@@ -51,8 +51,6 @@ public class HomePageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = new Intent(getApplicationContext(), DisplayCalculationsActivity.class);
-        startActivity(intent);
 
         setContentView(R.layout.activity_home_page);
         mAuth = FirebaseAuth.getInstance();

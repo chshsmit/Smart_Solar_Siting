@@ -3,6 +3,8 @@ package solarsitingucsc.smartsolarsiting.Controller;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -16,9 +18,10 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,7 +72,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -90,9 +92,6 @@ import static android.content.ContentValues.TAG;
 
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
-    private static final String[] months = {"January" , "February" , "March" , "April", "May",
-            "June", "July", "August", "September", "October",
-            "November", "December"};
 
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
@@ -111,14 +110,14 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
-//        Runtime.getRuntime().freeMemory();
-//        mAuth = FirebaseAuth.getInstance();
-//        findViewById(R.id.display_calc_view).setOnTouchListener(
-//                new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
-//                    public void onSwipeRight() {
-//                        finish();
-//                    }
-//                });
+        Runtime.getRuntime().freeMemory();
+        mAuth = FirebaseAuth.getInstance();
+        findViewById(R.id.display_calc_view).setOnTouchListener(
+                new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
+                    public void onSwipeRight() {
+                        finish();
+                    }
+                });
 //        FloatingActionButton capture = findViewById(R.id.button_capture);
 //        capture.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -126,43 +125,42 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 //                finish();
 //            }
 //        });
-//        saveBtn = findViewById(R.id.button_save);
-//        progressBar = findViewById(R.id.progressBar);
-//        latitude = getIntent().getDoubleExtra("latitude", 0.0);
-//        longitude = getIntent().getDoubleExtra("longitude", 0.0);
-//        imageName = getIntent().getStringExtra("imageName");
-//        screenshotName = getIntent().getStringExtra("screenshotName");
-//        FileInputStream imageFis = null;
-//        FileInputStream screenshotFis = null;
-//        try {
-//            imageFis = openFileInput(imageName);
-//            screenshotFis = openFileInput(screenshotName);
-//        } catch (FileNotFoundException e) {
-//            Log.d(TAG, "File not found: " + e.getMessage());
-//        }
-//        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
-//        Matrix matrix = new Matrix();
-//        matrix.postRotate(90);
-//
-//        imageToSave = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
-//                originalImage.getHeight(), matrix, true);
-//        Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
-//        thumbnail = makeThumbnail(originalImage, matrix);
-//
-//        textViews = new TextView[13];
-//        int[] months = {R.id.janKwTxt, R.id.febKwTxt, R.id.marKwTxt, R.id.aprKwTxt, R.id.mayKwTxt,
-//                R.id.junKwTxt, R.id.julKwTxt, R.id.augKwTxt, R.id.sepKwTxt, R.id.octKwTxt,
-//                R.id.novKwTxt, R.id.decKwTxt, R.id.annualKwTxt};
-//        for (int i = 0; i < textViews.length; i++) {
-//            textViews[i] = findViewById(months[i]);
-//        }
-//
-//        new MakeGoogleRequest().execute(screenshot);
-//        deleteFile(screenshotName);
-//
+        saveBtn = findViewById(R.id.button_save);
+        progressBar = findViewById(R.id.progressBar);
+        latitude = getIntent().getDoubleExtra("latitude", 0.0);
+        longitude = getIntent().getDoubleExtra("longitude", 0.0);
+        imageName = getIntent().getStringExtra("imageName");
+        screenshotName = getIntent().getStringExtra("screenshotName");
+        FileInputStream imageFis = null;
+        FileInputStream screenshotFis = null;
+        try {
+            imageFis = openFileInput(imageName);
+            screenshotFis = openFileInput(screenshotName);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        }
+        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
 
-//        new MakeGoogleRequest().execute(screenshot);
-        createSomthing();
+        imageToSave = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
+                originalImage.getHeight(), matrix, true);
+        Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
+        thumbnail = makeThumbnail(originalImage, matrix);
+
+        textViews = new TextView[13];
+        int[] months = {R.id.janKwTxt, R.id.febKwTxt, R.id.marKwTxt, R.id.aprKwTxt, R.id.mayKwTxt,
+                R.id.junKwTxt, R.id.julKwTxt, R.id.augKwTxt, R.id.sepKwTxt, R.id.octKwTxt,
+                R.id.novKwTxt, R.id.decKwTxt, R.id.annualKwTxt};
+        for (int i = 0; i < textViews.length; i++) {
+            textViews[i] = findViewById(months[i]);
+        }
+
+        new MakeGoogleRequest().execute(screenshot);
+        deleteFile(screenshotName);
+
+
+        new MakeGoogleRequest().execute(screenshot);
 
     }
 
@@ -409,45 +407,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return inputImage;
     }
 
-    class ChartValue{
-        int month, value;
-
-        public ChartValue(int month, int value) {
-            this.month = month;
-            this.value = value;
-        }
-    }
-
-
-    public void createSomthing() {
-        Random random = new Random();
-        final LineChart chart = findViewById(R.id.chart);
-        List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            entries.add(new Entry(i, random.nextInt(100)));
-        }
-        LineDataSet dataSet = new LineDataSet(entries, "Power in KW");
-        LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        chart.invalidate();
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return months[(int) value];
-            }
-        });
-
-        findViewById(R.id.save_plot).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                chart.saveToGallery("mychart.jpg", 85); // 85 is the quality of the image
-            }
-        });
-    }
-
 
     private Bitmap makeThumbnail(Bitmap imageBitmap, Matrix matrix) {
         final int THUMBNAIL_SIZE = 64;
@@ -579,19 +538,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response) {
             Map<String, Integer> result = translateResponseToMap(response);
-
-            ArrayList<Integer> list = new ArrayList<>(12);
-            Random random = new Random();
-            for (int i = 0; i < 12; i++) {
-                list.add(random.nextInt(100));
-            }
-
-            Iterator it = list.iterator();
-
+            Iterator it = result.entrySet().iterator();
             int annualPower = 0;
             final int[] monthlyPower = new int[13];
             while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
+                Map.Entry pair = (Map.Entry)it.next();
                 String key = (String) pair.getKey();
                 int value = (int) pair.getValue();
                 int dashIndex = key.indexOf("-");
@@ -603,7 +554,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 for (int i = 0; i < value; i++) {
                     try {
                         int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
-                        double power = getPowerForMonthAndHour(monthInt, hourInt) / 6;
+                        double power = getPowerForMonthAndHour(monthInt, hourInt)/6;
                         annualPower += power;
                         monthlyPower[monthInt] += power;
                     } catch (NumberFormatException e) {
@@ -614,10 +565,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             }
             monthlyPower[monthlyPower.length - 1] = annualPower;
             progressBar.setVisibility(View.GONE);
-            for (int i = 0; i < monthlyPower.length; i++) {
-                String text = monthlyPower[i] + "kW";
-                textViews[i].setText(text);
-            }
+
 
             saveBtn.setVisibility(View.VISIBLE);
             saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -634,20 +582,20 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String text = input.getText().toString();
-                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-                            Matcher m = p.matcher(text);
                             if (text.equals("")) {
                                 Toast.makeText(DisplayCalculationsActivity.this,
                                         "Name can't be empty", Toast.LENGTH_SHORT).show();
+                                dialog.cancel();
                             }
-                            else if (m.find()) {
+                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                            Matcher m = p.matcher(text);
+                            if (m.find()) {
                                 Toast.makeText(DisplayCalculationsActivity.this,
                                         "Name can't contain special symbols", Toast.LENGTH_SHORT).show();
+                                dialog.cancel();
                             }
-                            else {
-                                name[0] = input.getText().toString();
-                                storeResults(name[0], monthlyPower);
-                            }
+                            name[0] = input.getText().toString();
+                            storeResults(name[0], monthlyPower);
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -659,6 +607,40 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     builder.show();
                 }
             });
+
+            // Get reference of widgets from XML layout
+            ListView lv = (ListView) findViewById(R.id.months_list_view);
+
+            // Initializing a new String Array
+            Resources res = getResources();
+
+
+            // Create a List from String Array elements
+            List<String> months = new ArrayList<String>(Arrays.asList(res.getStringArray(R.array.months)));
+
+            // Create a ArrayAdapter from List
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
+                    (getApplicationContext(), android.R.layout.simple_list_item_1, months);
+
+            // Populate ListView with items from ArrayAdapter
+            lv.setAdapter(arrayAdapter);
+
+            // Set an item click listener for ListView
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // Get the selected item text from ListView
+                    String selectedItem = (String) parent.getItemAtPosition(position);
+                    Intent intent = new Intent(getApplicationContext(), DisplayPlotActivity.class);
+                    startActivity(intent);
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+
+                }
+            });
+
+
         }
 
     }

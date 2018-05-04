@@ -83,6 +83,8 @@ import static android.content.ContentValues.TAG;
 
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
+    //TODO: Add toolbar to this activity with the three dots
+
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
     private final  String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";

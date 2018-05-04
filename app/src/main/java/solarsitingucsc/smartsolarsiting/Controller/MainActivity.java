@@ -4,16 +4,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -29,11 +26,6 @@ import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 
 import android.support.design.widget.FloatingActionButton;
 
-
-
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
-
 public class MainActivity extends Activity {
 
     private CameraPreview mCameraPreview;
@@ -46,11 +38,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         checkForPermissionsAndOpenCamera();
-        if (progressBar == null ) {
+        if (progressBar == null)
             progressBar = findViewById(R.id.progressBar);
-        } else {
+        else
             progressBar.setVisibility(View.GONE);
-        }
     }
 
     /**

@@ -1,10 +1,13 @@
 package solarsitingucsc.smartsolarsiting.Controller;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,9 +42,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import solarsitingucsc.smartsolarsiting.Model.SolarSiting;
 import solarsitingucsc.smartsolarsiting.R;
 
 public class HomePageActivity extends AppCompatActivity {
@@ -51,6 +57,7 @@ public class HomePageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_home_page);
         mAuth = FirebaseAuth.getInstance();
 
@@ -123,21 +130,15 @@ public class HomePageActivity extends AppCompatActivity {
     //Constructor
     private class ListElement {
 
-        private String siteNameLabel;
-        private String siteDateLabel;
         private String sitePowerLabel;
         private StorageReference imageStorageReference;
         private boolean loaded;
         private String uriPath;
+        private SolarSiting solarSiting;
 
-        ListElement() {
-        }
-
-        ListElement(String name, String date, String power) {
-            siteNameLabel = name;
-            siteDateLabel = date;
+        ListElement(SolarSiting solarSiting, String power) {
+            this.solarSiting = solarSiting;
             sitePowerLabel = power;
-            loaded = false;
         }
 
         private void setSiteImageBitmap(StorageReference ref) {
@@ -184,9 +185,9 @@ public class HomePageActivity extends AppCompatActivity {
 
             // Fills in the view.
             TextView siteName = newView.findViewById(R.id.site_name);
-            siteName.setText(newSiteElement.siteNameLabel);
+            siteName.setText(newSiteElement.solarSiting.getName());
             TextView siteDate = newView.findViewById(R.id.site_date);
-            siteDate.setText(newSiteElement.siteDateLabel);
+            siteDate.setText(newSiteElement.solarSiting.getDate());
             TextView sitePower = newView.findViewById(R.id.site_power);
             sitePower.setText(newSiteElement.sitePowerLabel);
             final ImageView siteImage = newView.findViewById(R.id.site_image);
@@ -208,13 +209,41 @@ public class HomePageActivity extends AppCompatActivity {
                     }
                 });
             }
+            FloatingActionButton fabDelete = newView.findViewById(R.id.fabDelete);
+            fabDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    final String[] name = {""};
+                    Context context = HomePageActivity.this;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Are you sure you want to delete this solar site?");
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (newSiteElement.solarSiting != null) {
+                                newSiteElement.solarSiting.delete();
+                                siteList.remove(newSiteElement);
+                                siteAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+                    builder.show();
+                }
+            });
 
             // Set a listener for the whole list item.
-            newView.setTag(newSiteElement.siteNameLabel);
+            newView.setTag(newSiteElement.solarSiting.getName());
             newView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    changeToCalculationsActivity(newSiteElement.solarSiting.getResults());
                 }
             });
 
@@ -270,7 +299,7 @@ public class HomePageActivity extends AppCompatActivity {
                             String name = (String) solarSiting.get("name");
                             boolean exists = false;
                             for (ListElement l : siteList) {
-                                if (l.siteNameLabel.equals(name)) {
+                                if (l.solarSiting.getName().equals(name)) {
                                     exists = true;
                                     break;
                                 }
@@ -279,13 +308,14 @@ public class HomePageActivity extends AppCompatActivity {
                                 break;
                             String userId = (String) solarSiting.get("userId");
                             String date = (String) solarSiting.get("date");
-                            List powerList = (List) solarSiting.get("results");
-                            String power = powerList.get(powerList.size() - 1) + "kW";
-                            ListElement listElement = addSiteToListView(name, date, power);
+                            HashMap<String, ArrayList> powerList =
+                                    (HashMap<String, ArrayList>) solarSiting.get("results");
+                            String power = Math.round((Double) powerList.get("Annual").get(0) * 100.0)/100.0 + "kW";
+                            ListElement listElement = addSiteToListView(userId, name, date, power, powerList);
                             getBitmapAndAddSite(name, userId, listElement);
                         }
                     } catch (ClassCastException e) {
-                        //ignore
+                        e.printStackTrace();
                     }
                 }
 
@@ -300,16 +330,35 @@ public class HomePageActivity extends AppCompatActivity {
         siteAdapter.notifyDataSetChanged();
     }
 
-    private ListElement addSiteToListView(String name, String date, String power) {
-        ListElement listElement = new ListElement(name, date, power);
+    private ListElement addSiteToListView(String userId, String name, String date, String power,
+                                          HashMap<String, ArrayList> list) {
+        HashMap<String, HashMap<String, Double>> powerList = new HashMap<>();
+        Iterator it = list.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            try {
+                HashMap a = (HashMap) pair.getValue();
+                powerList.put((String) pair.getKey(), a);
+            } catch(ClassCastException e) {
+                ArrayList a = (ArrayList) pair.getValue();
+                HashMap<String, Double> t = new HashMap<>();
+                for (int i = 0; i < a.size(); i++) {
+                    t.put("" + i, (Double) a.get(i));
+                }
+                powerList.put((String) pair.getKey(), t);
+            }
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        SolarSiting solarSiting = new SolarSiting(userId, name, powerList, date);
+        ListElement listElement = new ListElement(solarSiting, power);
         siteList.add(listElement);
         Collections.sort(siteList, new Comparator<ListElement>() {
             @Override
             public int compare(ListElement listElement1, ListElement listElement2) {
                 DateFormat df = DateFormat.getDateTimeInstance();
                 try {
-                    Date date1 = df.parse(listElement1.siteDateLabel);
-                    Date date2 = df.parse(listElement2.siteDateLabel);
+                    Date date1 = df.parse(listElement1.solarSiting.getDate());
+                    Date date2 = df.parse(listElement2.solarSiting.getDate());
                     return date2.compareTo(date1);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -355,6 +404,12 @@ public class HomePageActivity extends AppCompatActivity {
 
     private void changeToMainActivity() {
         Intent next_activity = new Intent(HomePageActivity.this, MainActivity.class);
+        startActivity(next_activity);
+    }
+
+    private void changeToCalculationsActivity(HashMap<String, HashMap<String, Double>> powerList) {
+        Intent next_activity = new Intent(HomePageActivity.this, DisplayCalculationsActivity.class);
+        next_activity.putExtra("powerList", powerList);
         startActivity(next_activity);
     }
 }

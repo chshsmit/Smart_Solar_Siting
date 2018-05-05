@@ -19,7 +19,7 @@ public class DrawingView extends View {
     //drawing and canvas paint
     private Paint drawPaint, canvasPaint;
     //initial color
-    private int paintColor = Color.WHITE;
+    private int paintColor = Color.BLACK;
     //canvas
     private Canvas drawCanvas;
     //canvas bitmap

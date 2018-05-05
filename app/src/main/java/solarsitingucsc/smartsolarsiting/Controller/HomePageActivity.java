@@ -307,7 +307,10 @@ public class HomePageActivity extends AppCompatActivity {
                             String date = (String) solarSiting.get("date");
                             HashMap<String, ArrayList> powerList =
                                     (HashMap<String, ArrayList>) solarSiting.get("results");
-                            String power = Math.round((Double) powerList.get("Annual").get(0) * 100.0)/100.0 + "kW";
+                            String power =
+                                    "Total power: " +
+                                    Math.round((Double) powerList.get("Annual").get(0) * 100.0)/100.0
+                                    + "kW";
                             ListElement listElement = addSiteToListView(userId, name, date, power, powerList);
                             getBitmapAndAddSite(name, userId, listElement);
                         }

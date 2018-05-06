@@ -194,7 +194,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
 
         int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
+
+        //This handles to the click of the three dots
         if (id == R.id.more_results) {
             return true;
         }

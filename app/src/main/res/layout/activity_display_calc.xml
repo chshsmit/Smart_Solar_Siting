@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/display_calc_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="solarsitingucsc.smartsolarsiting.Controller.DisplayCalculationsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/results_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:title="@string/results"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
 
     <ProgressBar
@@ -17,20 +30,28 @@
         android:indeterminate="true"
         android:layout_centerInParent="true"
         android:translationZ="2dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"/>
+
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/results_toolbar" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_below="@id/spinner"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/button_save"
@@ -46,4 +67,4 @@
         app:backgroundTint="@android:color/holo_green_light"
         android:visibility="gone" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

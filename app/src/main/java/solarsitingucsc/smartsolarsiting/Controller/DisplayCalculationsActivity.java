@@ -18,9 +18,12 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -121,6 +124,9 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         //Getting values from shared preferences
         setPanelConstraints();
 
+        //Setting up the toolbar
+        initializeToolBar();
+
         Runtime.getRuntime().freeMemory();
         mAuth = FirebaseAuth.getInstance();
         findViewById(R.id.display_calc_view).setOnTouchListener(
@@ -158,6 +164,41 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             new MakeGoogleRequest().execute(screenshot);
             deleteFile(screenshotName);
         }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //Toolbar functions
+    //----------------------------------------------------------------------------------------------
+
+    private void initializeToolBar() {
+        //Toolbar setup
+        Toolbar topToolBar = findViewById(R.id.results_toolbar);
+        topToolBar.setTitle("Results");
+        setSupportActionBar(topToolBar);
+    }
+
+
+    //ToolBar function to setup res/menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.results_bar_menu, menu);
+        return true;
+    }
+
+    //Toolbar function for when the dots are selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        int id = item.getItemId();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.more_results) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //----------------------------------------------------------------------------------------------

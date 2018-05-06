@@ -82,15 +82,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private void signIn(String email, String passsword) {
         Log.d(TAG, "signIn:" + email);
-<<<<<<< HEAD
-//        if(!validateForm()){
-//            return;
-//        }
-=======
         if (!validateForm()) {
             return;
         }
->>>>>>> develop
+
 
         //Start sign in with email
         mAuth.signInWithEmailAndPassword(email, passsword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

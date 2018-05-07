@@ -126,16 +126,14 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         //Setting up the toolbar
         initializeToolBar();
 
-        Runtime.getRuntime().freeMemory();
-        mAuth = FirebaseAuth.getInstance();
+        //Free memory and set firebase auth
+        freeMemAndFirebase();
 
-        
         //Set up save button and progress bar
         initializeViews();
 
         HashMap<String, HashMap<String, Double>> powerList =
                 (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
-
 
         if (powerList != null)
             setupDropdown(powerList);
@@ -143,39 +141,47 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             //Set values from the intent
             getIntentValues();
 
-            FileInputStream imageFis = null;
-            FileInputStream screenshotFis = null;
-            try {
-                imageFis = openFileInput(imageName);
-                screenshotFis = openFileInput(screenshotName);
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            }
-            Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
-            Matrix matrix = new Matrix();
-            matrix.postRotate(90);
-
-            Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
-            thumbnail = makeThumbnail(originalImage, matrix);
-
-            new MakeGoogleRequest().execute(screenshot);
-            deleteFile(screenshotName);
+            //Get the image and make google request
+            setBitmap();
         }
     }
 
     //----------------------------------------------------------------------------------------------
-    //On create initializations
+    //On create functions
     //----------------------------------------------------------------------------------------------
 
-    private void initializeViews(){
+    private void setBitmap(){
+        FileInputStream imageFis = null;
+        FileInputStream screenshotFis = null;
+        try {
+            imageFis = openFileInput(imageName);
+            screenshotFis = openFileInput(screenshotName);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        }
+        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
 
+        Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
+        thumbnail = makeThumbnail(originalImage, matrix);
+
+        new MakeGoogleRequest().execute(screenshot);
+        deleteFile(screenshotName);
+    }
+
+    private void freeMemAndFirebase(){
+        Runtime.getRuntime().freeMemory();
+        mAuth = FirebaseAuth.getInstance();
+    }
+
+    private void initializeViews(){
         findViewById(R.id.display_calc_view).setOnTouchListener(
                 new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
                     public void onSwipeRight() {
                         finish();
                     }
                 });
-
 
         saveBtn = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progressBar);

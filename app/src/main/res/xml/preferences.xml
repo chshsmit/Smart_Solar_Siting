@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:preference="http://schemas.android.com/apk/res-auto">
 
 
@@ -85,13 +86,23 @@
             preference:maxValue="@integer/sys_azimuth_max"/>
 
         <ListPreference
-            android:title="@string/sys_dataset"
-            android:summary="@string/sys_dataset_summ"
+            android:defaultValue="nsrdb"
             android:entries="@array/sys_dataset_entries"
             android:entryValues="@array/sys_dataset_values"
-            android:defaultValue="tmy2"
             android:key="sys_dataset"
-            />
+            android:summary="@string/sys_dataset_summ"
+            android:title="@string/sys_dataset"
+             />
+
+        <solarsitingucsc.smartsolarsiting.View.PreferenceHelp
+            android:dialogMessage="@string/sys_dataset_dialog"
+            android:icon="?android:attr/actionModeFindDrawable"
+            android:key="sys_dataset_help"
+            android:negativeButtonText=""
+            android:positiveButtonText="Okay"
+            android:summary=""
+            android:title="@string/help" />
+
 
     </PreferenceCategory>
 

@@ -99,7 +99,6 @@ import static android.content.ContentValues.TAG;
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
 
-    //TODO: Add toolbar to this activity with the three dots
 
 
     private double latitude, longitude;
@@ -129,23 +128,21 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         Runtime.getRuntime().freeMemory();
         mAuth = FirebaseAuth.getInstance();
-        findViewById(R.id.display_calc_view).setOnTouchListener(
-                new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
-                    public void onSwipeRight() {
-                        finish();
-                    }
-                });
-        saveBtn = findViewById(R.id.button_save);
-        progressBar = findViewById(R.id.progressBar);
+
+        
+        //Set up save button and progress bar
+        initializeViews();
+
         HashMap<String, HashMap<String, Double>> powerList =
                 (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
+
+
         if (powerList != null)
             setupDropdown(powerList);
         else {
-            latitude = getIntent().getDoubleExtra("latitude", 0.0);
-            longitude = getIntent().getDoubleExtra("longitude", 0.0);
-            imageName = getIntent().getStringExtra("imageName");
-            screenshotName = getIntent().getStringExtra("screenshotName");
+            //Set values from the intent
+            getIntentValues();
+
             FileInputStream imageFis = null;
             FileInputStream screenshotFis = null;
             try {
@@ -165,6 +162,32 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             deleteFile(screenshotName);
         }
     }
+
+    //----------------------------------------------------------------------------------------------
+    //On create initializations
+    //----------------------------------------------------------------------------------------------
+
+    private void initializeViews(){
+
+        findViewById(R.id.display_calc_view).setOnTouchListener(
+                new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
+                    public void onSwipeRight() {
+                        finish();
+                    }
+                });
+
+
+        saveBtn = findViewById(R.id.button_save);
+        progressBar = findViewById(R.id.progressBar);
+    }
+
+    private void getIntentValues(){
+        latitude = getIntent().getDoubleExtra("latitude", 0.0);
+        longitude = getIntent().getDoubleExtra("longitude", 0.0);
+        imageName = getIntent().getStringExtra("imageName");
+        screenshotName = getIntent().getStringExtra("screenshotName");
+    }
+
 
     //----------------------------------------------------------------------------------------------
     //Toolbar functions

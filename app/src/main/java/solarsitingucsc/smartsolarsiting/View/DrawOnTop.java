@@ -292,6 +292,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
             // now translate the dx
             canvas.translate(0.0f-dx, 0.0f);
 
+
             // draw our point -- we've rotated and translated this to the right spot already
             canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, CIRCLE_RADIUS,
                     targetPaint);
@@ -307,6 +308,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                 canvas.drawText(text, canvas.getWidth()/2, canvas.getHeight()/2, targetPaint);
                 foundHighestPoint = true;
             }
+
 
             canvas.restore();
         }

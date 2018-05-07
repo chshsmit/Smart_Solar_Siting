@@ -6,12 +6,12 @@
 
     <PreferenceCategory android:title="@string/cam_settings" >
 
-        <Preference
+        <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/hor_FOV"
             android:summary="@string/hor_FOV_summ"
             android:key="change_horizontal" />
 
-        <Preference
+        <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/vert_FOV"
             android:summary="@string/vert_FOV_summ"
             android:key="change_vertical" />
@@ -23,11 +23,6 @@
             android:defaultValue="false"
             android:key="enable_panorama" />
 
-        <CheckBoxPreference
-            android:title="@string/fisheye_dist"
-            android:summary="@string/fisheye_dist_summ"
-            android:defaultValue="false"
-            android:key="enable_fisheye_distortion"/>
 
     </PreferenceCategory>
 

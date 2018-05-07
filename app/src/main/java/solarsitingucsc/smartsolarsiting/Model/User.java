@@ -2,8 +2,13 @@ package solarsitingucsc.smartsolarsiting.Model;
 
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.List;
+
 
 public class User {
+
+
+    private List<String> plots;
 
     private String email, name, id;
 
@@ -31,7 +36,7 @@ public class User {
         this.name = name;
     }
 
-    public User(String email, String name, String id) {
+    public User(String id, String name, String email) {
         this.email = email;
         this.name = name;
         this.id = id;

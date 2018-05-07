@@ -31,8 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Firebase
         mAuth = FirebaseAuth.getInstance();
 
         if(mAuth.getCurrentUser() == null) {
@@ -46,20 +44,15 @@ public class LoginActivity extends AppCompatActivity {
             //Views
             mEmailField = (EditText) findViewById(R.id.emailEditText);
             mPasswordField = (EditText) findViewById(R.id.passwordEditText);
-
-            //On click listeners
-            initializeOnCLickListeners();
-            
-        } else {
+        }else
             changeToHomePage();
-        }
     }
 
     //--------------------------------------------------------------------------------------------
     //Code to set up on click listeners
     //--------------------------------------------------------------------------------------------
 
-    private void initializeOnCLickListeners(){
+    private void initializeOnCLickListeners() {
         //On click listener for signing in
         Button signInButton = findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -89,15 +82,21 @@ public class LoginActivity extends AppCompatActivity {
 
     private void signIn(String email, String passsword) {
         Log.d(TAG, "signIn:" + email);
+<<<<<<< HEAD
 //        if(!validateForm()){
 //            return;
 //        }
+=======
+        if (!validateForm()) {
+            return;
+        }
+>>>>>>> develop
 
         //Start sign in with email
         mAuth.signInWithEmailAndPassword(email, passsword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     //Sign in success
                     Log.d(TAG, "signInWithEmail:success");
                     changeToHomePage();
@@ -116,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean valid = true;
 
         String email = mEmailField.getText().toString().trim();
-        if(TextUtils.isEmpty(email)){
+        if (TextUtils.isEmpty(email)) {
             mEmailField.setError("Required.");
             valid = false;
         } else {
@@ -124,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         String password = mPasswordField.getText().toString().trim();
-        if(TextUtils.isEmpty(password)) {
+        if (TextUtils.isEmpty(password)) {
             mPasswordField.setError("Required.");
             valid = false;
         } else {
@@ -140,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
     //Functions to change activities
     //--------------------------------------------------------------------------------------------
 
-    private void changeToHomePage(){
+    private void changeToHomePage() {
         Intent intent = new Intent(getApplication(),
                 HomePageActivity.class);
         startActivity(intent);

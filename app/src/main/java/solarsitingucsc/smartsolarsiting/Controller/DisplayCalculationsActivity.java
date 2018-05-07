@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import android.content.res.Resources;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -19,11 +22,11 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -32,8 +35,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.vision.v1.Vision;
@@ -63,8 +74,9 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Field;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.io.IOException;
@@ -83,17 +95,22 @@ import static android.content.ContentValues.TAG;
 
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
+
+    //TODO: Add toolbar to this activity with the three dots
+
+
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
-    private final  String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
+    private final String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
+    private static final String[] months = {"January", "February", "March", "April", "May",
+            "June", "July", "August", "September", "October",
+            "November", "December"};
     private ProgressBar progressBar;
     private double[] hourlyArray = new double[8760];
-    private TextView[] textViews;
     private FirebaseAuth mAuth;
     private FloatingActionButton saveBtn;
     private String imageName;
     private String screenshotName;
-    private Bitmap imageToSave;
     private Bitmap thumbnail;
 
     @Override
@@ -112,55 +129,35 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-        FloatingActionButton capture = findViewById(R.id.button_capture);
-        capture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
         saveBtn = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progressBar);
-        latitude = getIntent().getDoubleExtra("latitude", 0.0);
-        longitude = getIntent().getDoubleExtra("longitude", 0.0);
-        imageName = getIntent().getStringExtra("imageName");
-        screenshotName = getIntent().getStringExtra("screenshotName");
-        FileInputStream imageFis = null;
-        FileInputStream screenshotFis = null;
-        try {
-            imageFis = openFileInput(imageName);
-            screenshotFis = openFileInput(screenshotName);
-        } catch (FileNotFoundException e) {
-            Log.d(TAG, "File not found: " + e.getMessage());
+        HashMap<String, HashMap<String, Double>> powerList =
+                (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
+        if (powerList != null)
+            setupDropdown(powerList);
+        else {
+            latitude = getIntent().getDoubleExtra("latitude", 0.0);
+            longitude = getIntent().getDoubleExtra("longitude", 0.0);
+            imageName = getIntent().getStringExtra("imageName");
+            screenshotName = getIntent().getStringExtra("screenshotName");
+            FileInputStream imageFis = null;
+            FileInputStream screenshotFis = null;
+            try {
+                imageFis = openFileInput(imageName);
+                screenshotFis = openFileInput(screenshotName);
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            }
+            Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+
+            Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
+            thumbnail = makeThumbnail(originalImage, matrix);
+
+            new MakeGoogleRequest().execute(screenshot);
+            deleteFile(screenshotName);
         }
-        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-
-        imageToSave = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
-                originalImage.getHeight(), matrix, true);
-        Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
-        thumbnail = makeThumbnail(originalImage, matrix);
-
-        textViews = new TextView[13];
-        int[] months = {R.id.janKwTxt, R.id.febKwTxt, R.id.marKwTxt, R.id.aprKwTxt, R.id.mayKwTxt,
-                R.id.junKwTxt, R.id.julKwTxt, R.id.augKwTxt, R.id.sepKwTxt, R.id.octKwTxt,
-                R.id.novKwTxt, R.id.decKwTxt, R.id.annualKwTxt};
-        for (int i = 0; i < textViews.length; i++) {
-            textViews[i] = findViewById(months[i]);
-        }
-
-        new MakeGoogleRequest().execute(screenshot);
-        deleteFile(screenshotName);
-
-//        ImageView imageView = findViewById(R.id.imageView);
-
-        //Use this to set image as background in the new activity
-//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-//        imageView.setImageBitmap(rotatedImage);
-
-        //Use this to set the screenshot (with just the lines) as background in the new activity
-//        imageView.setImageBitmap(screenshot);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -177,8 +174,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        deleteFile(imageName);
-        deleteFile(screenshotName);
+        if (imageName != null)
+            deleteFile(imageName);
+        if (screenshotName != null)
+            deleteFile(screenshotName);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -235,11 +234,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                             System.out.println(poa.toString());
 
                             //Adding objects to our hourlyArray to be split
-                            for(int i=0; i<arr.length(); i++){
+                            for (int i = 0; i < arr.length(); i++) {
                                 hourlyArray[i] = arr.getDouble(i);
 
                             }
-                        } catch(JSONException e){
+                        } catch (JSONException e) {
                             System.out.println(e);
                         }
                     }
@@ -265,18 +264,18 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //Add up the total amount of Watts we will be receiving at the indicated hour
         //for the indicated month
-        for(int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
+        for (int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS) {
             totalAcWatts += arrayForMonth[index];
         }
 
 
-        return totalAcWatts/1000;   //Converting from Watts to Kilowatts
+        return totalAcWatts / 1000;   //Converting from Watts to Kilowatts
     }
 
     //This function gets only the indexes for the month we are working with
     private double[] splitForMonth(int month) {
         double[] monthlyArray = null;
-        switch(month){
+        switch (month) {
             case Calendar.JANUARY:
                 monthlyArray = Arrays.copyOfRange(hourlyArray, 0, 744);
                 break;
@@ -370,11 +369,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         }
         Iterator it = result.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
+            Map.Entry pair = (Map.Entry) it.next();
             String key = (String) pair.getKey();
             int monthInt, hourInt, dashIndex = key.indexOf("-"), previousIndex = 0;
             String month = "", hour = "";
-            while(dashIndex >= 0) {
+            while (dashIndex >= 0) {
                 //Get the month and hour strings from the key
                 month = key.substring(previousIndex, dashIndex);
                 hour = key.substring(dashIndex + 1, key.length());
@@ -429,7 +428,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         a = a.toLowerCase();
         b = b.toLowerCase();
         // i == 0
-        int [] costs = new int [b.length() + 1];
+        int[] costs = new int[b.length() + 1];
         for (int j = 0; j < costs.length; j++)
             costs[j] = j;
         for (int i = 1; i <= a.length(); i++) {
@@ -458,6 +457,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return inputImage;
     }
 
+
     private Bitmap makeThumbnail(Bitmap imageBitmap, Matrix matrix) {
         final int THUMBNAIL_SIZE = 64;
         imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
@@ -481,7 +481,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return "";
     }
 
-    private void storeResults(final String name, final int[] monthlyPower) {
+    private void storeResults(final String name, final HashMap<String, HashMap<String, Double>> monthlyPower) {
         final String id = getCurrentUserId();
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("pictures");
         rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -494,10 +494,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     storeImage(thumbnail, id + name);
                     Date today = Calendar.getInstance().getTime();
                     DateFormat df = DateFormat.getDateTimeInstance();
-                    SolarSiting solarSiting = new SolarSiting(
-                            id, name,
-                            Arrays.toString(monthlyPower).split("[\\[\\]]")[1].split(", "),
-                            id, df.format(today));
+                    SolarSiting solarSiting = new SolarSiting(id, name, monthlyPower, df.format(today));
                     solarSiting.store();
                     Toast.makeText(DisplayCalculationsActivity.this,
                             "Saved!", Toast.LENGTH_SHORT).show();
@@ -531,6 +528,104 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
+            }
+        });
+    }
+
+    private void displayChart(String month, HashMap<String, HashMap<String, Double>> powerMap) {
+        LineChart chart = findViewById(R.id.chart);
+        chart.setVisibility(View.VISIBLE);
+        List<Entry> entries = new ArrayList<>();
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        if (month.equals("All")) {
+            Double[] monthValues = new Double[12];
+            HashMap<String, Double> allValues = powerMap.get(month);
+            for (int i = 0; i < monthValues.length; i++) {
+                if (allValues.get(months[i]) != null && allValues.get(months[i]) instanceof Double)
+                    monthValues[i] = allValues.get(months[i]);
+                else
+                    monthValues[i] = 0d;
+            }
+            for (int i = 0; i < monthValues.length; i++) {
+                entries.add(new Entry(i, monthValues[i].floatValue()));
+            }
+            xAxis.setValueFormatter(new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, AxisBase axis) {
+                    return months[(int) value];
+                }
+            });
+        } else {
+            Double[] hours = new Double[24];
+            HashMap<String, Double> monthValues = powerMap.get(month);
+            for (int i = 0; i < hours.length; i++) {
+                if (monthValues != null && monthValues.get("" + i) != null)
+                    hours[i] = monthValues.get("" + i);
+                else
+                    hours[i] = 0d;
+            }
+            for (int i = 0; i < hours.length; i++) {
+                entries.add(new Entry(i, hours[i].floatValue()));
+            }
+            String[] stringHours = new String[hours.length];
+            for (int i = 0; i < stringHours.length; i++) {
+                stringHours[i] = i + ":00";
+            }
+            final String[] finalHours = stringHours;
+            xAxis.setValueFormatter(new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, AxisBase axis) {
+                    return finalHours[(int) value];
+                }
+            });
+        }
+        LineDataSet dataSet = new LineDataSet(entries, "Power in KW");
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate();
+    }
+
+    private void setupDropdown(final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth) {
+        final Spinner dropdown = findViewById(R.id.spinner);
+
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(dropdown);
+
+            // Set popupWindow height to 500px
+            popupWindow.setHeight(1000);
+        } catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+        }
+
+        // Initializing a new String Array
+        Resources res = getResources();
+
+        // Create a List from String Array elements
+        List<String> months = new ArrayList<>(Arrays.asList(res.getStringArray(R.array.months)));
+
+        // Create a ArrayAdapter from List
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>
+                (getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, months);
+
+        // Populate spinner with items from ArrayAdapter
+        dropdown.setAdapter(arrayAdapter);
+
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String month = dropdown.getSelectedItem().toString();
+                displayChart(month, powerByTimeAndMonth);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                //do nothing
             }
         });
     }
@@ -594,8 +689,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         protected void onPostExecute(String response) {
             Map<String, Integer> result = translateResponseToMap(response);
             Iterator it = result.entrySet().iterator();
-            int annualPower = 0;
-            final int[] monthlyPower = new int[13];
+            Double annualPower = 0d;
+            final Double[] monthlyPower = new Double[12];
+            Arrays.fill(monthlyPower, 0d);
+            final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth = new HashMap<>();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
                 String key = (String) pair.getKey();
@@ -612,18 +709,33 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                         double power = getPowerForMonthAndHour(monthInt, hourInt)/6;
                         annualPower += power;
                         monthlyPower[monthInt] += power;
+                        HashMap<String, Double> newMap = powerByTimeAndMonth.get(months[monthInt]);
+                        if (newMap == null) {
+                            HashMap<String, Double> n = new HashMap<>();
+                            n.put("" + hourInt, power);
+                            powerByTimeAndMonth.put(months[monthInt], n);
+                        } else {
+                            if (newMap.get("" + hourInt) == null) {
+                                powerByTimeAndMonth.get(months[monthInt]).put("" + hourInt, power);
+                            } else {
+                                powerByTimeAndMonth.get(months[monthInt]).put("" + hourInt, newMap.get("" + hourInt) + power);
+                            }
+                        }
                     } catch (NumberFormatException e) {
                         break;
                     }
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
-            monthlyPower[monthlyPower.length - 1] = annualPower;
-            progressBar.setVisibility(View.GONE);
+            HashMap<String, Double> t = new HashMap<>();
+            t.put("0", annualPower);
+            powerByTimeAndMonth.put("Annual", t);
+            HashMap<String, Double> temp = new HashMap<>();
             for (int i = 0; i < monthlyPower.length; i++) {
-                String text = monthlyPower[i] + "kW";
-                textViews[i].setText(text);
+                temp.put(months[i], monthlyPower[i]);
             }
+            powerByTimeAndMonth.put("All", temp);
+            progressBar.setVisibility(View.GONE);
 
             saveBtn.setVisibility(View.VISIBLE);
             saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -640,20 +752,20 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String text = input.getText().toString();
-                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-                            Matcher m = p.matcher(text);
                             if (text.equals("")) {
                                 Toast.makeText(DisplayCalculationsActivity.this,
                                         "Name can't be empty", Toast.LENGTH_SHORT).show();
+                                dialog.cancel();
                             }
-                            else if (m.find()) {
+                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                            Matcher m = p.matcher(text);
+                            if (m.find()) {
                                 Toast.makeText(DisplayCalculationsActivity.this,
                                         "Name can't contain special symbols", Toast.LENGTH_SHORT).show();
+                                dialog.cancel();
                             }
-                            else {
-                                name[0] = input.getText().toString();
-                                storeResults(name[0], monthlyPower);
-                            }
+                            name[0] = input.getText().toString();
+                            storeResults(name[0], powerByTimeAndMonth);
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -665,6 +777,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     builder.show();
                 }
             });
+            setupDropdown(powerByTimeAndMonth);
         }
     }
 }

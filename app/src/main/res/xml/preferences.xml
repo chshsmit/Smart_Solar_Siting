@@ -95,8 +95,8 @@
             android:key="sys_dataset_help"
             android:negativeButtonText=""
             android:positiveButtonText="Okay"
-            android:summary=""
-            android:title="@string/help" />
+            android:summary="@string/help"
+            android:title="" />
 
 
     </PreferenceCategory>

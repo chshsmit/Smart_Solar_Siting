@@ -15,6 +15,7 @@ import android.view.View;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.*;
 
 import solarsitingucsc.smartsolarsiting.R;
 
@@ -41,6 +42,7 @@ public class DrawObstructionsActivity extends AppCompatActivity {
 
     public Mat img=new Mat();
     public Mat result = new Mat();
+    public Bitmap rotatedImage;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -87,12 +89,12 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         }
 
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 1;
+        options.inSampleSize = 2;
         Bitmap originalImage = BitmapFactory.decodeStream(imageFis,null,options);
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
-        Bitmap rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
+        rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
                 originalImage.getHeight(), matrix, true);
 
         ImageView imageView = findViewById(R.id.imageView);
@@ -129,6 +131,10 @@ public class DrawObstructionsActivity extends AppCompatActivity {
                 intent.putExtra("latitude", latitude);
                 intent.putExtra("longitude", longitude);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //send bitmap to DisplayCalculationsActivity
+                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                rotatedImage.compress(Bitmap.CompressFormat.PNG, 100, bs);
+                intent.putExtra("byteArray", bs.toByteArray());
                 context.startActivity(intent);
                 finish();
             }

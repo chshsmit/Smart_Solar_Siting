@@ -1,5 +1,5 @@
 package solarsitingucsc.smartsolarsiting.Controller;
-
+//glide or picasso
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -68,9 +68,37 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private Bitmap originalImage;
     private Bitmap rotatedImage;
     private Bitmap screenshot;
+    private Bitmap b;
     private ImageView watershed;
     private ImageView dots;
-    private List<List<Vertex>> vertices = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> janV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> febV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> marV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> aprV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> mayV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> junV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> julV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> augV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> sepV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> octV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> novV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> decV = new ArrayList<List<Vertex>>();
+    private int janBox = 0;
+    private int febBox = 0;
+    private int marBox = 0;
+    private int aprBox = 0;
+    private int mayBox = 0;
+    private int junBox = 0;
+    private int julBox = 0;
+    private int augBox = 0;
+    private int sepBox = 0;
+    private int octBox = 0;
+    private int novBox = 0;
+    private int decBox = 0;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,15 +131,15 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         }
         System.out.println("HERE");
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 4;
-        originalImage = BitmapFactory.decodeStream(imageFis, null, options);
+        options.inSampleSize = 2;
+//        originalImage = BitmapFactory.decodeStream(imageFis, null, options);
         System.out.println("HERE");
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
-        rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
-                originalImage.getHeight(), matrix, true);
-        screenshot = BitmapFactory.decodeStream(screenshotFis, null, options);
+//        rotatedImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
+//                originalImage.getHeight(), matrix, true);
+        screenshot = BitmapFactory.decodeStream(screenshotFis);
         textViews = new TextView[13];
         int[] months = {R.id.janKwTxt, R.id.febKwTxt, R.id.marKwTxt, R.id.aprKwTxt, R.id.mayKwTxt,
                 R.id.junKwTxt, R.id.julKwTxt, R.id.augKwTxt, R.id.sepKwTxt, R.id.octKwTxt,
@@ -119,14 +147,25 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         for (int i = 0; i < textViews.length; i++) {
             textViews[i] = findViewById(months[i]);
         }
-        watershed = (ImageView) findViewById(R.id.watershed);
+
+        if(getIntent().hasExtra("byteArray")) {
+            Log.d(TAG, "FOUNDBYTEARRAY");
+            b = BitmapFactory.decodeByteArray(
+                    getIntent().getByteArrayExtra("byteArray"),0,getIntent()
+                            .getByteArrayExtra("byteArray").length, options);
+            watershed = (ImageView) findViewById(R.id.watershed);
+            watershed.setImageBitmap(b);
+            watershed.setScaleType(ImageView.ScaleType.FIT_XY);
+            watershed.setImageBitmap(b);
+        }
         dots = (ImageView) findViewById(R.id.dots);
-        watershed.setImageBitmap(rotatedImage);
-        watershed.setScaleType(ImageView.ScaleType.FIT_XY);
-        watershed.setImageBitmap(rotatedImage);
         dots.setImageBitmap(screenshot);
         dots.setScaleType(ImageView.ScaleType.FIT_XY);
         dots.setImageBitmap(screenshot);
+
+        b = Bitmap.createScaledBitmap(b,screenshot.getWidth(),screenshot.getHeight(),true);
+        Log.d(TAG, "watershed width x height: " + b.getWidth() +"x" + b.getHeight());
+        Log.d(TAG, "dots width x height: " + screenshot.getWidth() + "x" + screenshot.getHeight());
         new MakeGoogleRequest().execute(screenshot);
 
 //        ImageView imageView = findViewById(R.id.imageView);
@@ -179,34 +218,65 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         queue.add(jsObjRequest);
     }
 
-    private double getPowerForMonthAndHour(int month, int hour) {
+    private double getPowerForMonthAndHour(int month, int hour, List<List<Vertex>> vertices) {
         //We increment by 24 hour time periods
+        Log.d(TAG, "month: " + Integer.toString(month));
         final int TWENTY_FOUR_HOURS = 24;
         double[] arrayForMonth = splitForMonth(month);
         double totalAcWatts = 0;
-        int[] pixels = new int[400];
-//        box dimensions for text: 70 x 120
+//        int box=0;
+//        int[] pixels = new int[400];
+//        boolean add=true;
+//        b.getPixels(pixels, 0, 20,
+//                vertices.get(box).get(box).getX(), vertices.get(box).get(box).getY(), 20, 20);
+//        Log.d(TAG, "arrayformonth: " + Integer.toString(arrayForMonth.length) + "index: " + Integer.toString(hour));
+//        int w = rotatedImage.getWidth();
+//        int h = rotatedImage.getHeight();
 
+//        int[] pixels = new int[h*w];
+//        rotatedImage.getPixels(pixels, 0, w,
+//                0, 0, w, h);
+//        box dimensions for text: 70 x 120
 
         //Add up the total amount of Watts we will be receiving at the indicated hour
         //for the indicated month
-        for(int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
-//            rotatedImage.getPixels(pixels,0,25,
-//                    vertices.get(index).get(index).getX(), vertices.get(index).get(index).getY(), 20,20);
-//            boolean add = true;
-//            for(int i=0;i<20;i++)
-//            {
-//                for(int j=0;j<20;j++)
-//                {
-//                    if(Color.red(pixels[i+20*j])!=255 && Color.green(pixels[i+20*j])!=255 &&
-//                            Color.blue(pixels[i+20*j])!=255)
-//                    {
-//                        add=false;
-//                    }
+//        for (int i = 0; i < 20; i++) {
+//            for (int j = 0; j < 20; j++) {
+//                if (Color.red(pixels[i + 20 * j]) != 255 && Color.green(pixels[i + 20 * j]) != 255 &&
+//                        Color.blue(pixels[i + 20 * j]) != 255) {
+////                            Log.d(TAG, "NOT ADDED");
+//                    add = false;
+//                    break;
 //                }
 //            }
-//            if(add==true)
-                totalAcWatts += arrayForMonth[index];
+//        }
+//        if(add==true)
+//        {
+            for(int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
+//                Log.d(TAG, "month: " + month + " index: " + index + " value: " + arrayForMonth[index]);
+//            int[] pixels = new int[400];
+//            Log.d(TAG, "index: " + index);
+//                if((vertices.size())>index) {
+////                Log.d(TAG, "vertice size" + Integer.toString(vertices.size()) + " index size: " +index
+////                + " vertex x: " + vertices.get(box).get(box).getX() + " vertex y: " + vertices.get(box).get(box).getY()
+////                + " pixel size: " + pixels.length);
+//                    b.getPixels(pixels, 0, 20,
+//                            vertices.get(box).get(box).getX(), vertices.get(box).get(box).getY(), 20, 20);
+//                    boolean add = true;
+//                    for (int i = 0; i < 20; i++) {
+//                        for (int j = 0; j < 20; j++) {
+//                            if (Color.red(pixels[i + 20 * j]) != 255 && Color.green(pixels[i + 20 * j]) != 255 &&
+//                                    Color.blue(pixels[i + 20 * j]) != 255) {
+////                            Log.d(TAG, "NOT ADDED");
+//                                add = false;
+//                                break;
+//                            }
+//                        }
+//                    }
+//                    if (add == true)
+                        totalAcWatts += arrayForMonth[index];
+//                }
+//            }
         }
 
 
@@ -442,18 +512,54 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 List<EntityAnnotation> textAnnotations = batchResponse.getResponses().get(0)
                         .getTextAnnotations();
 //                System.out.println(Arrays.toString(textAnnotations.toArray()));
-
+//                textAnnotations.get(0).getDes
+//                dashIndex = key.indexOf("-")
                 //grab list of vertices of all points in picture
-//                Log.d(TAG,"text Annotations Size: " + Integer.toString(textAnnotations.size()));
-//                for(int i=0;i<textAnnotations.size()-1;i++)
-//                {
-//                    Log.d(TAG,"TA Element: " + Integer.toString(i));
-////                    EntityAnnotation point = textAnnotations.get(i);
-//                    BoundingPoly textBox = textAnnotations.get(i).getBoundingPoly();
-//
+                Log.d(TAG,"text Annotations Size: " + Integer.toString(textAnnotations.size()));
+                for(int i=0;i<textAnnotations.size()-1;i++)
+                {
+                    Log.d(TAG,"TA Element: " + Integer.toString(i));
+//                    EntityAnnotation point = textAnnotations.get(i);
+
+                    BoundingPoly textBox = textAnnotations.get(i).getBoundingPoly();
+                    String desc = textAnnotations.get(i).getDescription();
+                    if(desc.length()==5) {
+                        Log.d(TAG, desc);
+                        String month = desc.substring(0, 2);
+                        if (month.equals("00")) janV.add(textBox.getVertices());
+                        else if (month.equals("01")) febV.add(textBox.getVertices());
+                        else if (month.equals("02")) marV.add(textBox.getVertices());
+                        else if (month.equals("03")) aprV.add(textBox.getVertices());
+                        else if (month.equals("04")) mayV.add(textBox.getVertices());
+                        else if (month.equals("05")) junV.add(textBox.getVertices());
+                        else if (month.equals("06")) julV.add(textBox.getVertices());
+                        else if (month.equals("07")) augV.add(textBox.getVertices());
+                        else if (month.equals("08")) sepV.add(textBox.getVertices());
+                        else if (month.equals("09")) octV.add(textBox.getVertices());
+                        else if (month.equals("10")) novV.add(textBox.getVertices());
+                        else if (month.equals("11")) decV.add(textBox.getVertices());
+                    }
+
 //                    vertices.add(textBox.getVertices());
-//                }
-//
+                }
+                Log.d(TAG, "jan length: " + Integer.toString(janV.size()));
+                Log.d(TAG, "feb length: " + Integer.toString(febV.size()));
+                Log.d(TAG, "mar length: " + Integer.toString(marV.size()));
+                Log.d(TAG, "apr length: " + Integer.toString(aprV.size()));
+                Log.d(TAG, "may length: " + Integer.toString(mayV.size()));
+                Log.d(TAG, "jun length: " + Integer.toString(junV.size()));
+                Log.d(TAG, "jul length: " + Integer.toString(julV.size()));
+                Log.d(TAG, "aug length: " + Integer.toString(augV.size()));
+                Log.d(TAG, "sep length: " + Integer.toString(sepV.size()));
+                Log.d(TAG, "oct length: " + Integer.toString(octV.size()));
+                Log.d(TAG, "nov length: " + Integer.toString(novV.size()));
+                Log.d(TAG, "dec length: " + Integer.toString(decV.size()));
+
+
+                //WHAT I NEED TO DO:
+//                READ WHAT MONTH IT IS SHOULD SHOW IN PHONE
+//                CREATE LIST FOR EACH MONTH TO STORE VERTICES
+//                USE SPECIFIC LIST FOR PIXEL COMPARING
 //                Log.d(TAG, "vertice x: " + Integer.toString(vertices.get(0).get(0).getX().intValue()) +
 //                        "vertice y: " + Integer.toString(vertices.get(0).get(0).getY().intValue()));
 //                Log.d(TAG, "vertice x: " + Integer.toString(vertices.get(0).get(1).getX().intValue()) +
@@ -482,21 +588,112 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 Map.Entry pair = (Map.Entry)it.next();
                 String key = (String) pair.getKey();
                 int value = (int) pair.getValue();
+//                Log.d(TAG,"Value: " + value);
                 int dashIndex = key.indexOf("-");
                 String month = "", hour = "";
                 if (dashIndex != -1) {
                     month = key.substring(0, dashIndex);
                     hour = key.substring(dashIndex + 1, key.length());
                 }
+//                int box=0;
+//                int[] pixels = new int[400];
+//                boolean add=true;
                 for (int i = 0; i < value; i++) {
                     try {
                         int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
-                        double power = getPowerForMonthAndHour(monthInt, hourInt)/6;
-                        annualPower += power;
-                        monthlyPower[monthInt] += power;
+                        double power=0;
+                        Log.d(TAG, "month: " + month);
+//                        for (int k = 0; i < 20; i++) {
+//                            for (int j = 0; j < 20; j++) {
+//                                if (Color.red(pixels[k + 20 * j]) != 255 && Color.green(pixels[k + 20 * j]) != 255 &&
+//                                        Color.blue(pixels[k + 20 * j]) != 255) {
+////                            Log.d(TAG, "NOT ADDED");
+//                                    add = false;
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                        if(add==true) {
+                            if (monthInt == 0) {
+                                if(!processPixels(janV,janBox) && janBox!=janV.size())
+                                {
+                                    janBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, janV) / 6;
+                            }
+                            else if (monthInt == 1){
+                                if(!processPixels(febV, febBox) && febBox!=febV.size())
+                                {
+                                    febBox++;
+                                }
+                                power = getPowerForMonthAndHour(monthInt, hourInt, febV) / 6;
+                            }
+                            else if (monthInt == 2) {
+                                if(!processPixels(marV, marBox) && marBox!=marV.size())
+                                {
+                                    marBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, marV) / 6;
+                            }
+                            else if (monthInt == 3) {
+                                if(!processPixels(aprV, aprBox) && aprBox!=aprV.size())
+                                {
+                                    aprBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, aprV) / 6;
+                            }
+                            else if (monthInt == 4) {
+                                if(!processPixels(mayV, mayBox) && mayBox!=mayV.size())
+                                {
+                                    mayBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, mayV) / 6;
+                            }
+                            else if (monthInt == 5) {
+                                if(!processPixels(junV, junBox) && junBox!=junV.size())
+                                {
+                                    junBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, junV) / 6;
+                            }
+                            else if (monthInt == 6) {
+                                if(!processPixels(julV, julBox) && julBox!=julV.size())
+                                {
+                                    julBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, julV) / 6;
+                            }
+                            else if (monthInt == 7) {
+                                if(!processPixels(augV, augBox) && augBox!=augV.size())
+                                {
+                                    augBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, augV) / 6;
+                            }
+                            else if (monthInt == 8) {
+                                if(!processPixels(sepV, sepBox) && sepBox!=sepV.size())
+                                {
+                                    sepBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, sepV) / 6;
+                            }
+                            else if (monthInt == 9) {
+                                if(!processPixels(octV, octBox) && octBox!=octV.size())
+                                {
+                                    octBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, octV) / 6;
+                            }
+                            else if (monthInt == 10) {
+                                if(!processPixels(novV, novBox) && novBox!=novV.size())
+                                {
+                                    novBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, novV) / 6;
+                            }
+                            else if (monthInt == 11) {
+                                if(!processPixels(decV, decBox) && decBox!=decV.size())
+                                {
+                                    decBox++;
+                                } else power = getPowerForMonthAndHour(monthInt, hourInt, decV) / 6;
+                            }
+                            annualPower += power;
+                            monthlyPower[monthInt] += power;
+//                        }
                     } catch (NumberFormatException e) {
                         break;
                     }
+
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
@@ -508,6 +705,48 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 textViews[i].setText(text);
             }
         }
+    }
+
+    public boolean processPixels(List<List<Vertex>> vertices, int box)
+    {
+        Log.d(TAG, "month size: " + vertices.size() + " verx: " + vertices.get(box).get(0).getX());
+        int[] pixels = new int[400];
+        b.getPixels(pixels, 0, 20,
+                vertices.get(box).get(0).getX(), vertices.get(box).get(0).getY(), 20, 20);
+        for (int k = 0; k < 20; k++) {
+            for (int j = 0; j < 20; j++) {
+                if (Color.red(pixels[k + 20 * j]) != 255 && Color.green(pixels[k + 20 * j]) != 255 &&
+                        Color.blue(pixels[k + 20 * j]) != 255) {
+                            Log.d(TAG, "NOT ADDED");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 }
 

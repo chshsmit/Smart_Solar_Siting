@@ -17,6 +17,9 @@
     <string name="dec">Dec:</string>
     <string name="annual">Annual:</string>
 
+    <string name="facebook_app_id">1899192993433816</string>
+    <string name="fb_login_protocol_scheme">fb1899192993433816</string>
+
     <!--Toolbar Strings-->
     <string name="app_title">Smart Solar Siting</string>
 
@@ -74,6 +77,7 @@
     <string name="sys_azimuth_summ">Chenage your system\'s azimuth angle (degrees)</string>
 
     <string name="pref_title_sync_frequency" />
+    <string name="todo">TODO</string>
 
 </resources>
 

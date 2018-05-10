@@ -430,6 +430,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     solarSiting.store();
                     Toast.makeText(DisplayCalculationsActivity.this,
                             "Saved!", Toast.LENGTH_SHORT).show();
+//                    saveToGallery()
                 }
             }
 

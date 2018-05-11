@@ -55,8 +55,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginEnd="26dp"
         android:layout_marginRight="26dp"
-        android:layout_toLeftOf="@+id/fabDelete"
-        android:layout_toStartOf="@+id/fabDelete"
+        android:layout_toLeftOf="@+id/delete_solar_site"
+        android:layout_toStartOf="@+id/delete_solar_site"
         android:gravity="end"
         android:text="@string/site_power"
         android:textColor="#040404"
@@ -76,16 +76,29 @@
         <!--android:layout_marginRight="81dp"-->
         <!--android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />-->
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/delete_solar_site"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:clickable="true"
-        app:backgroundTint="@android:color/holo_red_dark"
+        android:background="@drawable/outline_delete_black_24"
+        android:backgroundTint="@android:color/holo_red_dark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_delete" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fabDelete"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:clickable="true"-->
+        <!--app:backgroundTint="@android:color/holo_red_dark"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:srcCompat="@android:drawable/ic_menu_delete" />-->
 
 </RelativeLayout>

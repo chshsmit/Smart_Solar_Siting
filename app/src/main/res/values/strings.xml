@@ -19,6 +19,8 @@
 
     <!--Toolbar Strings-->
     <string name="app_title">Smart Solar Siting</string>
+    <string name="home">Home</string>
+    <string name="more">More</string>
 
     <!--Login Screen Strings-->
     <string name="login">Log In</string>

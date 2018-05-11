@@ -215,8 +215,8 @@ public class HomePageActivity extends AppCompatActivity {
                 });
             }
 
-            Button fabDelete = newView.findViewById(R.id.delete_solar_site);
-            fabDelete.setOnClickListener(new View.OnClickListener() {
+            Button deleteSolarSite = newView.findViewById(R.id.delete_solar_site);
+            deleteSolarSite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     final String[] name = {""};

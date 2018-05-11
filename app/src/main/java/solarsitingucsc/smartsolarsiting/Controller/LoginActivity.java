@@ -44,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
             //Views
             mEmailField = (EditText) findViewById(R.id.emailEditText);
             mPasswordField = (EditText) findViewById(R.id.passwordEditText);
+
+            initializeOnCLickListeners();
         }else
             changeToHomePage();
     }

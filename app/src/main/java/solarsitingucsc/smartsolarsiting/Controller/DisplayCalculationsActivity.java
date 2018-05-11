@@ -199,6 +199,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     //Toolbar functions
     //----------------------------------------------------------------------------------------------
 
+    //TODO: Add home button and change dots in the toolbar
     private void initializeToolBar() {
         //Toolbar setup
         Toolbar topToolBar = findViewById(R.id.results_toolbar);

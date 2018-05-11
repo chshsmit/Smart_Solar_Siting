@@ -52,16 +52,12 @@
         android:id="@+id/site_power"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="26dp"
-        android:layout_marginRight="26dp"
-        android:layout_toLeftOf="@+id/delete_solar_site"
-        android:layout_toStartOf="@+id/delete_solar_site"
-        android:gravity="end"
+        android:layout_below="@id/site_date"
+        android:layout_toRightOf="@+id/site_image_thumbnail"
         android:text="@string/site_power"
-        android:textColor="#040404"
+        android:textColor="#343434"
         android:textSize="12sp"
-        android:textStyle="bold" />
+        android:layout_toEndOf="@+id/site_image_thumbnail" />
 
 
     <!-- View Calculations Arrow -->

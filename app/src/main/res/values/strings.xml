@@ -43,6 +43,11 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
+    <string name="cam_settings">Camera Settings</string>
+    <string name="pan_settings">Panel Settings</string>
+    <string name="extra_settings">Extras</string>
+
+
     <string name="hor_FOV">Horizontal Field of View</string>
     <string name="hor_FOV_summ">Set camera\'s horizontal field of view</string>
 
@@ -56,22 +61,39 @@
     <string name="fisheye_dist_summ">Enable Fisheye Distortion</string>
 
     <string name="sys_cap">System Capacity</string>
-    <string name="sys_cap_summ">Set your system\'s nameplate capacity</string>
+    <string name="sys_cap_summ">Set your system\'s nameplate capacity. Current = </string>
+    <string name="sys_cap_dialog">Set a value between 1 and 500000 </string>
 
     <string name="sys_mod_type">Module Type</string>
-    <string name="sys_mod_type_summ">Change your system\'s module type</string>
+    <string name="sys_mod_type_summ">Change your system\'s module type. Current = </string>
+    <string name="sys_mod_type_dialog">Choose a module type</string>
 
     <string name="sys_losses">Losses</string>
-    <string name="sys_losses_summ">Change your system\'s losses (percent)</string>
+    <string name="sys_losses_summ">Change your system\'s losses. Current = </string>
+    <string name="sys_losses_dialog">Set a value between -5 and 99</string>
 
     <string name="sys_arr_type">Array Type</string>
-    <string name="sys_arr_type_summ">Change your system\'s array type</string>
+    <string name="sys_arr_type_summ">Change your system\'s array type. Current = </string>
+    <string name="sys_arr_type_dialog">Choose an array type</string>
 
     <string name="sys_tilt">System Tilt</string>
-    <string name="sys_tilt_summ">Change your system\'s tilt (degrees)</string>
+    <string name="sys_tilt_summ">Change your system\'s tilt. Current = </string>
+    <string name="sys_tilt_dialog">Set a value between 0 snd 90</string>
 
     <string name="sys_azimuth">System Azimuth</string>
-    <string name="sys_azimuth_summ">Chenage your system\'s azimuth angle (degrees)</string>
+    <string name="sys_azimuth_summ">Change your system\'s azimuth angle. Current = </string>
+    <string name="sys_azimuth_dialog">Set a value between 0 and 359</string>
+
+    <string name="sys_dataset">System Dataset</string>
+    <string name="sys_dataset_summ">Choose the dataset you wish to use.</string>
+    <string name="sys_dataset_dialog">Choose what dataset you want to extract from</string>
+
+    <string name="signout">Sign Out</string>
+    <string name="signout_message">Are you sure you want to sign out?</string>
+    <string name="signout_pos">Yes</string>
+    <string name="signout_neg">Cancel</string>
+
+    <string name="about">About</string>
 
     <string name="pref_title_sync_frequency" />
 

@@ -259,6 +259,9 @@ public class HomePageActivity extends AppCompatActivity {
         }
     }
 
+
+    //TODO:Set empty list view
+
     private void initializeListView() {
         siteList = new ArrayList<>();
         siteAdapter = new PreviousSiteAdapter(this, R.layout.previous_site_list_element, siteList);

@@ -32,6 +32,19 @@
     </string-array>
 
 
+    <string-array name="sys_dataset_entries">
+        <item>TMY2 Station Data</item>
+        <item>TMY3 Station Data</item>
+        <item>NSRDB Grid Data</item>
+    </string-array>
+
+
+    <string-array name="sys_dataset_values">
+        <item>tmy2</item>
+        <item>tmy3</item>
+        <item>nsrdb</item>
+    </string-array>
+
     <string-array name="months">
         <item>All</item>
         <item>January</item>

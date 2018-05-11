@@ -4,19 +4,26 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+
 import android.content.res.Resources;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -92,6 +99,8 @@ import static android.content.ContentValues.TAG;
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
 
+
+
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
     private final String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
@@ -110,43 +119,128 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
+
+        //Getting values from shared preferences
+        setPanelConstraints();
+
+        //Setting up the toolbar
+        initializeToolBar();
+
+        //Free memory and set firebase auth
+        freeMemAndFirebase();
+
+        //Set up save button and progress bar
+        initializeViews();
+
+        HashMap<String, HashMap<String, Double>> powerList =
+                (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
+
+        if (powerList != null)
+            setupDropdown(powerList);
+        else {
+            //Set values from the intent
+            getIntentValues();
+
+            //Get the image and make google request
+            setBitmap();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //On create functions
+    //----------------------------------------------------------------------------------------------
+
+    private void setBitmap(){
+        FileInputStream imageFis = null;
+        FileInputStream screenshotFis = null;
+        try {
+            imageFis = openFileInput(imageName);
+            screenshotFis = openFileInput(screenshotName);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        }
+        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+
+        Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
+        thumbnail = makeThumbnail(originalImage, matrix);
+
+        new MakeGoogleRequest().execute(screenshot);
+        deleteFile(screenshotName);
+    }
+
+    private void freeMemAndFirebase(){
         Runtime.getRuntime().freeMemory();
         mAuth = FirebaseAuth.getInstance();
+    }
+
+    private void initializeViews(){
         findViewById(R.id.display_calc_view).setOnTouchListener(
                 new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
                     public void onSwipeRight() {
                         finish();
                     }
                 });
+
         saveBtn = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progressBar);
-        HashMap<String, HashMap<String, Double>> powerList =
-                (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
-        if (powerList != null)
-            setupDropdown(powerList);
-        else {
-            latitude = getIntent().getDoubleExtra("latitude", 0.0);
-            longitude = getIntent().getDoubleExtra("longitude", 0.0);
-            imageName = getIntent().getStringExtra("imageName");
-            screenshotName = getIntent().getStringExtra("screenshotName");
-            FileInputStream imageFis = null;
-            FileInputStream screenshotFis = null;
-            try {
-                imageFis = openFileInput(imageName);
-                screenshotFis = openFileInput(screenshotName);
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            }
-            Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
-            Matrix matrix = new Matrix();
-            matrix.postRotate(90);
+    }
 
-            Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
-            thumbnail = makeThumbnail(originalImage, matrix);
+    private void getIntentValues(){
+        latitude = getIntent().getDoubleExtra("latitude", 0.0);
+        longitude = getIntent().getDoubleExtra("longitude", 0.0);
+        imageName = getIntent().getStringExtra("imageName");
+        screenshotName = getIntent().getStringExtra("screenshotName");
+    }
 
-            new MakeGoogleRequest().execute(screenshot);
-            deleteFile(screenshotName);
+
+    //----------------------------------------------------------------------------------------------
+    //Toolbar functions
+    //----------------------------------------------------------------------------------------------
+
+    //TODO: Add home button and change dots in the toolbar
+    private void initializeToolBar() {
+        //Toolbar setup
+        Toolbar topToolBar = findViewById(R.id.results_toolbar);
+        topToolBar.setTitle("Results");
+        setSupportActionBar(topToolBar);
+    }
+
+
+    //ToolBar function to setup res/menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.results_bar_menu, menu);
+        return true;
+    }
+
+    //Toolbar function for when the dots are selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        int id = item.getItemId();
+
+        //This handles to the click of the three dots
+        if (id == R.id.more_results) {
+            return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //Fucntions that we are over riding
+    //----------------------------------------------------------------------------------------------
+
+    @Override
+    public void onBackPressed(){
+        //Go back to the home page
+        Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
+        startActivity(homePage);
     }
 
     @Override
@@ -158,16 +252,44 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             deleteFile(screenshotName);
     }
 
+    //----------------------------------------------------------------------------------------------
+    //Functions to make call to database
+    //----------------------------------------------------------------------------------------------
+
+    //Variables for the API url
+    private int sysCapacity;
+    private int sysAzimuth;
+    private int sysTilt;
+    private int sysLosses;
+    private String sysArrayType;
+    private String sysModuleType;
+    private String sysDataset;
+
+
+    private void setPanelConstraints(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        sysCapacity = prefs.getInt("system_capacity", 4);
+        sysAzimuth = prefs.getInt("sys_azimuth", 180);
+        sysTilt = prefs.getInt("sys_tilt", 40);
+        sysLosses = prefs.getInt("sys_losses", 10);
+        sysArrayType = prefs.getString("sys_array_type", "1");
+        sysModuleType = prefs.getString("sys_mod_type", "1");
+        sysDataset = prefs.getString("sys_dataset", "tmy2");
+    }
+
     private void makeDatasetRequest(double latitude, double longitude) {
         System.out.println("We are making a JSONObject Request");
         //Instantiate the request queue
         RequestQueue queue = Volley.newRequestQueue(this);
 
+
         //This is the link that we are making our Volley call to
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
-                "api_key=" + DATASET_API_KEY + "&lat=" + latitude + "&lon=" + longitude +
-                "&system_capacity=4" + "&azimuth=180" + "&tilt=40" + "&array_type=1" +
-                "&module_type=1" + "&losses=10" + "&timeframe=hourly";
+                "api_key=" + DATASET_API_KEY + "&lat=" +latitude+ "&lon=" +longitude+
+                "&system_capacity=" +sysCapacity+ "&azimuth=" +sysAzimuth+ "&tilt=" +sysTilt+
+                "&array_type=" +sysArrayType+ "&module_type="+sysModuleType+ "&losses="+sysLosses+
+                "&dataset=" +sysDataset+ "&timeframe=hourly";
 
         //JSONObject Response Listener
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -201,6 +323,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         // Add the request to the request queue
         queue.add(jsObjRequest);
     }
+
+    //----------------------------------------------------------------------------------------------
+    //Functions to parse through the database results
+    //----------------------------------------------------------------------------------------------
 
     private double getPowerForMonthAndHour(int month, int hour) {
         //We increment by 24 hour time periods
@@ -273,6 +399,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         }
         return monthlyArray;
     }
+
+
+    //----------------------------------------------------------------------------------------------
+    //Functions for the Google Vision API
+    //----------------------------------------------------------------------------------------------
 
     private Map<String, Integer> translateResponseToMap(String response) {
         //Sometimes 8s are confused with Bs by Google's API -- there should be no Bs so change to 8s
@@ -385,6 +516,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return costs[b.length()];
     }
 
+    //----------------------------------------------------------------------------------------------
+    //Functions to process the bitmap/image
+    //----------------------------------------------------------------------------------------------
+
     private Image bitmapToImage(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -404,6 +539,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(),
                 imageBitmap.getHeight(), matrix, true);
     }
+
+
+    //----------------------------------------------------------------------------------------------
+    //Fuctions for storing information to firebase
+    //----------------------------------------------------------------------------------------------
 
     private String getCurrentUserId() {
         FirebaseUser currentUser = mAuth.getCurrentUser();

@@ -44,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
             //Views
             mEmailField = (EditText) findViewById(R.id.emailEditText);
             mPasswordField = (EditText) findViewById(R.id.passwordEditText);
+
+            initializeOnCLickListeners();
         }else
             changeToHomePage();
     }
@@ -85,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         if (!validateForm()) {
             return;
         }
+
 
         //Start sign in with email
         mAuth.signInWithEmailAndPassword(email, passsword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

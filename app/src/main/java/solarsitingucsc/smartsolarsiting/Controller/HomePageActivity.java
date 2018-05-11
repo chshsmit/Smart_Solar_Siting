@@ -123,6 +123,10 @@ public class HomePageActivity extends AppCompatActivity {
     //List view functions
     //--------------------------------------------------------------------------------------------
 
+    //TODO:Set empty list view
+    //TODO:Refactor this portion of the code
+
+    
     //Adapter and list variables
     private PreviousSiteAdapter siteAdapter;
     private ArrayList<ListElement> siteList;

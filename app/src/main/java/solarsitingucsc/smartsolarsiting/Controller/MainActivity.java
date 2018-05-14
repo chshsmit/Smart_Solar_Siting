@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Setting orientation of the view based on shared prefs
         setOrientation();
 
         checkForPermissionsAndOpenCamera();
@@ -52,7 +53,6 @@ public class MainActivity extends Activity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         boolean land_orientation = prefs.getBoolean("land_orient", false);
-
         if(land_orientation){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }else{

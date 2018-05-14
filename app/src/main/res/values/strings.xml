@@ -59,6 +59,9 @@
     <string name="panorama">Panorama</string>
     <string name="panorama_summ">Indicate whether you want panorama turned on</string>
 
+    <string name="land_orient">Landscape Orientation</string>
+    <string name="land_orient_summ">Set the camera orientation to landscape</string>
+
     <string name="fisheye_dist">Fisheye Distortion</string>
     <string name="fisheye_dist_summ">Enable Fisheye Distortion</string>
 

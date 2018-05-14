@@ -17,6 +17,13 @@
             android:key="change_vertical" />
 
         <CheckBoxPreference
+            android:title="@string/land_orient"
+            android:summary="@string/land_orient_summ"
+            android:defaultValue="false"
+            android:key="land_orient"
+            />
+
+        <CheckBoxPreference
             android:title="@string/panorama"
             android:summary="@string/panorama_summ"
             android:defaultValue="false"

@@ -35,7 +35,7 @@
     <string-array name="sys_dataset_entries">
         <item>TMY2 Station Data</item>
         <item>TMY3 Station Data</item>
-        <item>Gridded Station Data</item>
+        <item>NSRDB Grid Data</item>
     </string-array>
 
 

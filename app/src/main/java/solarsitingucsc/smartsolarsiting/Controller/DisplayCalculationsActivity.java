@@ -247,8 +247,12 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        //This handles to the click of the three dots
+
+        //Handles click events on the toolbar
         if (id == R.id.more_results) {
+            return true;
+        } else if (id == R.id.return_home){
+            changeToHomeScreen();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -261,8 +265,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         //Go back to the home page
-        Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
-        startActivity(homePage);
+        changeToHomeScreen();
     }
 
     @Override
@@ -874,6 +877,15 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             });
             setupDropdown(powerByTimeAndMonth);
         }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //Fuctions to change activities
+    //----------------------------------------------------------------------------------------------
+
+    private void changeToHomeScreen(){
+        Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
+        startActivity(homePage);
     }
 }
 

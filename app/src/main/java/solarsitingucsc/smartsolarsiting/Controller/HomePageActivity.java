@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -123,6 +124,10 @@ public class HomePageActivity extends AppCompatActivity {
     //List view functions
     //--------------------------------------------------------------------------------------------
 
+    //TODO:Set empty list view
+    //TODO:Refactor this portion of the code
+
+    
     //Adapter and list variables
     private PreviousSiteAdapter siteAdapter;
     private ArrayList<ListElement> siteList;
@@ -209,11 +214,11 @@ public class HomePageActivity extends AppCompatActivity {
                     }
                 });
             }
-            FloatingActionButton fabDelete = newView.findViewById(R.id.fabDelete);
-            fabDelete.setOnClickListener(new View.OnClickListener() {
+
+            Button deleteSolarSite = newView.findViewById(R.id.delete_solar_site);
+            deleteSolarSite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     final String[] name = {""};
                     Context context = HomePageActivity.this;
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -258,9 +263,6 @@ public class HomePageActivity extends AppCompatActivity {
             return newView;
         }
     }
-
-
-    //TODO:Set empty list view
 
     private void initializeListView() {
         siteList = new ArrayList<>();

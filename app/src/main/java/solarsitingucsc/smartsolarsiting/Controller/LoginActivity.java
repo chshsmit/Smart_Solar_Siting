@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;
-//    private static final DataBaseAPI databaseAPI = DataBaseAPI.getDataBase();
+    //    private static final DataBaseAPI databaseAPI = DataBaseAPI.getDataBase();
     private GoogleSignInClient mGoogleSignInClient;
     private CallbackManager mCallbackManager;
 
@@ -65,54 +65,61 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        /////////FACEBOOK LOGIN/////////
-        final Activity activity = this;
-        setUpFaceBook();
+        if (mAuth.getCurrentUser() == null) {
 
-        /////////GOOGLE LOGIN/////////
-        setUpGoogle();
+            /////////FACEBOOK LOGIN/////////
+            final Activity activity = this;
+            setUpFaceBook();
 
-        /////////BUTTON LISTENERS/////////
-        FloatingActionButton facebookLogin = findViewById(R.id.FacebookFloatingButton);
-        facebookLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Collection<String> permission = Arrays.asList("public_profile", "user_friends");
-                LoginManager.getInstance().logInWithReadPermissions(activity, permission);
-            }
-        });
+            /////////GOOGLE LOGIN/////////
+            setUpGoogle();
 
-        FloatingActionButton googleLogin = findViewById(R.id.GoogleFloatingButton);
-        googleLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-            }
-        });
+            /////////BUTTON LISTENERS/////////
+            FloatingActionButton facebookLogin = findViewById(R.id.FacebookFloatingButton);
+            facebookLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Collection<String> permission = Arrays.asList("public_profile", "user_friends");
+                    LoginManager.getInstance().logInWithReadPermissions(activity, permission);
+                }
+            });
 
-        Button emailLogin = findViewById(R.id.loginButton);
-        emailLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText email = findViewById(R.id.emailInput);
-                EditText password = findViewById(R.id.passwordIn);
-                signInEmail(email.getText().toString(), password.getText().toString());
-            }
-        });
+            FloatingActionButton googleLogin = findViewById(R.id.GoogleFloatingButton);
+            googleLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                }
+            });
 
-        Button createAccount = findViewById(R.id.createAccount);
-        createAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent createNewUser = new Intent(getApplication(), EmailSignUpActivity.class);
-                startActivity(createNewUser);
+            Button emailLogin = findViewById(R.id.loginButton);
+            emailLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EditText email = findViewById(R.id.emailInput);
+                    EditText password = findViewById(R.id.passwordIn);
+                    signInEmail(email.getText().toString(), password.getText().toString());
+                }
+            });
 
-            }
-        });
+            Button createAccount = findViewById(R.id.createAccount);
+            createAccount.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent createNewUser = new Intent(getApplication(), EmailSignUpActivity.class);
+                    startActivity(createNewUser);
+
+                }
+            });
+        } else {
+            Intent intent = new Intent(getApplication(),
+                    HomePageActivity.class);
+            startActivity(intent);
+        }
     }
 
-    private void setUpFaceBook(){
+    private void setUpFaceBook() {
         AppEventsLogger.activateApp(getApplication());
         mCallbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(mCallbackManager,
@@ -121,10 +128,12 @@ public class LoginActivity extends AppCompatActivity {
                     public void onSuccess(LoginResult loginResult) {
                         signInFacebook(loginResult.getAccessToken());
                     }
+
                     @Override
                     public void onCancel() {
                         //TODO Deal with this
                     }
+
                     @Override
                     public void onError(FacebookException exception) {
                         exception.printStackTrace();
@@ -132,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void setUpGoogle(){
+    private void setUpGoogle() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -197,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    public void onSuccessfulSignUp(){
+    public void onSuccessfulSignUp() {
         final FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             FirebaseDatabase.getInstance().getReference("users").child(user.getUid()).addListenerForSingleValueEvent(
@@ -222,7 +231,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 64206)
+        if (requestCode == 64206)
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -346,10 +355,6 @@ public class LoginActivity extends AppCompatActivity {
 //    //Functions to change activities
 //    //--------------------------------------------------------------------------------------------
 //
-//    private void changeToHomePage() {
-//        Intent intent = new Intent(getApplication(),
-//                HomePageActivity.class);
-//        startActivity(intent);
-//    }
+
 
 }

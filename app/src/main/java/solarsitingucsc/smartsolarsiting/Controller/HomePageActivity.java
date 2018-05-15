@@ -269,6 +269,8 @@ public class HomePageActivity extends AppCompatActivity {
         siteAdapter = new PreviousSiteAdapter(this, R.layout.previous_site_list_element, siteList);
         ListView myListView = findViewById(R.id.previous_site_list_view);
 
+        //myListView.setEmptyView(findViewById(R.id.empty_view_layout));
+
         myListView.setAdapter(siteAdapter);
         siteAdapter.notifyDataSetChanged();
     }

@@ -31,8 +31,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
-
     </ListView>
+    
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/newSolarSite"

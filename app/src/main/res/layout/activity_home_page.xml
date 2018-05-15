@@ -35,8 +35,6 @@
     </ListView>
 
 
-
-
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/newSolarSite"
         android:layout_width="match_parent"

@@ -5,9 +5,16 @@
     tools:context=".Controller.DisplayCalculationsActivity">
 
     <item
-        android:id="@+id/more_results"
-        android:title="More"
-        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:id="@+id/save"
+        android:icon="@android:drawable/ic_menu_save"
         android:orderInCategory="300"
+        android:title="Save"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/share"
+        android:icon="@android:drawable/ic_menu_share"
+        android:orderInCategory="300"
+        android:title="Share"
         app:showAsAction="ifRoom" />
 </menu>

@@ -11,11 +11,13 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -98,9 +100,6 @@ import static android.content.ContentValues.TAG;
 
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
-
-
-
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
     private final String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
@@ -110,15 +109,18 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private double[] hourlyArray = new double[8760];
     private FirebaseAuth mAuth;
-    private FloatingActionButton saveBtn;
+//    private FloatingActionButton saveBtn;
     private String imageName;
     private String screenshotName;
     private Bitmap thumbnail;
+    private boolean saved;
+    private HashMap<String, HashMap<String, Double>> powerMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
+        powerMap = null;
 
         //Getting values from shared preferences
         setPanelConstraints();
@@ -135,9 +137,12 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         HashMap<String, HashMap<String, Double>> powerList =
                 (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
 
-        if (powerList != null)
+        if (powerList != null) {
             setupDropdown(powerList);
+            saved = true;
+        }
         else {
+            saved = false;
             //Set values from the intent
             getIntentValues();
 
@@ -183,7 +188,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     }
                 });
 
-        saveBtn = findViewById(R.id.button_save);
+//        saveBtn = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progressBar);
     }
 
@@ -202,8 +207,41 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private void initializeToolBar() {
         //Toolbar setup
         Toolbar topToolBar = findViewById(R.id.results_toolbar);
-        topToolBar.setTitle("Results");
+        Drawable homeIcon = ContextCompat.getDrawable(this, R.drawable.smart_siting_logo);
+        topToolBar.setNavigationIcon(homeIcon);
         setSupportActionBar(topToolBar);
+        topToolBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeToHomePage();
+            }
+        });
+    }
+
+    private void changeToHomePage() {
+        if (!saved) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to go back to the home page? Unsaved data will be discarded.");
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Go back to the home page
+                    Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
+                    startActivity(homePage);
+                }
+            });
+            builder.show();
+        } else {
+            //Go back to the home page
+            Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
+            startActivity(homePage);
+        }
     }
 
 
@@ -225,7 +263,43 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //This handles to the click of the three dots
-        if (id == R.id.more_results) {
+        if (id == R.id.save) {
+            if (powerMap != null) {
+                final String[] name = {""};
+                Context context = DisplayCalculationsActivity.this;
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                final EditText input = new EditText(context);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setTitle("Name: ");
+                builder.setView(input);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = input.getText().toString();
+                        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                        Matcher m = p.matcher(text);
+                        if (text.equals("")) {
+                            Toast.makeText(DisplayCalculationsActivity.this,
+                                    "Name can't be empty", Toast.LENGTH_SHORT).show();
+                            dialog.cancel();
+                        } else if (m.find()) {
+                            Toast.makeText(DisplayCalculationsActivity.this,
+                                    "Name can't contain special symbols", Toast.LENGTH_SHORT).show();
+                            dialog.cancel();
+                        } else {
+                            name[0] = input.getText().toString();
+                            storeResults(name[0], powerMap);
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -236,10 +310,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     //----------------------------------------------------------------------------------------------
 
     @Override
-    public void onBackPressed(){
-        //Go back to the home page
-        Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
-        startActivity(homePage);
+    public void onBackPressed() {
+        changeToHomePage();
     }
 
     @Override
@@ -569,6 +641,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     solarSiting.store();
                     Toast.makeText(DisplayCalculationsActivity.this,
                             "Saved!", Toast.LENGTH_SHORT).show();
+                    saved = true;
                 }
             }
 
@@ -806,48 +879,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 temp.put(months[i], monthlyPower[i]);
             }
             powerByTimeAndMonth.put("All", temp);
+            powerMap = powerByTimeAndMonth;
             progressBar.setVisibility(View.GONE);
-
-            saveBtn.setVisibility(View.VISIBLE);
-            saveBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final String[] name = {""};
-                    Context context = DisplayCalculationsActivity.this;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    final EditText input = new EditText(context);
-                    input.setInputType(InputType.TYPE_CLASS_TEXT);
-                    builder.setTitle("Name: ");
-                    builder.setView(input);
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String text = input.getText().toString();
-                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-                            Matcher m = p.matcher(text);
-                            if (text.equals("")) {
-                                Toast.makeText(DisplayCalculationsActivity.this,
-                                        "Name can't be empty", Toast.LENGTH_SHORT).show();
-                                dialog.cancel();
-                            } else if (m.find()) {
-                                Toast.makeText(DisplayCalculationsActivity.this,
-                                        "Name can't contain special symbols", Toast.LENGTH_SHORT).show();
-                                dialog.cancel();
-                            } else {
-                                name[0] = input.getText().toString();
-                                storeResults(name[0], powerByTimeAndMonth);
-                            }
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
-                }
-            });
             setupDropdown(powerByTimeAndMonth);
         }
     }

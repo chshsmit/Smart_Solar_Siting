@@ -8,13 +8,31 @@
         android:id="@+id/save"
         android:icon="@android:drawable/ic_menu_save"
         android:orderInCategory="300"
-        android:title="Save"
+        android:title="@string/save"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/share"
         android:icon="@android:drawable/ic_menu_share"
         android:orderInCategory="300"
-        android:title="Share"
+        android:title="@string/share"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/return_home"
+        android:title="@string/home"
+        android:icon="@drawable/baseline_home_black_24"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_display_bar_chart"
+        android:orderInCategory="1"
+        android:title="@string/display_bar_chart"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_display_line_chart"
+        android:orderInCategory="2"
+        android:title="@string/display_line_chart"
+        app:showAsAction="never" />
+
 </menu>

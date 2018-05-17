@@ -90,7 +90,7 @@ public class EmailSignUpActivity extends AppCompatActivity {
                                     "Verification email sent to " + user.getEmail(),
                                     Toast.LENGTH_SHORT).show();
 
-                            changeToHomePage();
+                            changeOnboarding();
                         } else {
                             Toast.makeText(EmailSignUpActivity.this,
                                     "Failed to send verification email.",
@@ -101,23 +101,10 @@ public class EmailSignUpActivity extends AppCompatActivity {
         }
     }
 
-    private void changeToHomePage(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean previouslyStarted = prefs.getBoolean("onboarding_done", false);
-
-        if(!previouslyStarted){
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean("onboarding_done", Boolean.TRUE);
-            edit.apply();
-
-            Intent onboard = new Intent(EmailSignUpActivity.this,
-                    OnboardingActivity.class);
-            startActivity(onboard);
-        } else {
-            Intent intent = new Intent(EmailSignUpActivity.this,
-                    HomePageActivity.class);
-            startActivity(intent);
-        }
+    private void changeOnboarding(){
+        Intent onboarding = new Intent(EmailSignUpActivity.this,
+                OnboardingActivity.class);
+        startActivity(onboarding);
     }
 
 

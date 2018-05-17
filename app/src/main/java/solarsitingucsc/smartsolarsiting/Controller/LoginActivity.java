@@ -222,6 +222,7 @@ public class LoginActivity extends AppCompatActivity {
                                 new User(user.getUid(), user.getDisplayName(), user.getEmail());
                             }
                             changeToHomePage();
+
                         }
 
                         @Override
@@ -248,23 +249,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
     private void changeToHomePage() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean previouslyStarted = prefs.getBoolean("onboarding_done", false);
-
-        if(!previouslyStarted){
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean("onboarding_done", Boolean.TRUE);
-            edit.commit();
-
-            Intent onboard = new Intent(LoginActivity.this, OnboardingActivity.class);
-            startActivity(onboard);
-        } else {
-            Intent intent = new Intent(getApplication(),
-                    HomePageActivity.class);
-            startActivity(intent);
-            }
+        Intent intent = new Intent(getApplication(), HomePageActivity.class);
+        startActivity(intent);
     }
 //
 //    private static final String TAG = "LoginActivity";

@@ -4,6 +4,7 @@
     <dimen name="elevation">4dp</dimen>
     <dimen name="login_side_margin">50dp</dimen>
     <dimen name="login_top_margin">50dp</dimen>
+    <dimen name="login_fab_top_margin">45dp</dimen>
 
     <!--Onboarding Slide-->
 

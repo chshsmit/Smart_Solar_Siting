@@ -6,6 +6,8 @@
     <dimen name="login_side_margin">50dp</dimen>
     <dimen name="login_top_margin">20dp</dimen>
 
+    <dimen name="login_fab_top_margin">15dp</dimen>
+
     <!--Onboarding Slide-->
 
     <dimen name="onboarding_top_margin">40dp</dimen>

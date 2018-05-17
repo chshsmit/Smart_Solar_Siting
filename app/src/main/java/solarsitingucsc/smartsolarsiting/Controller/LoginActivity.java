@@ -51,7 +51,7 @@ import solarsitingucsc.smartsolarsiting.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-
+    //TODO:Find a way to relate firebase account to onboarding variable
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;
@@ -66,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
 
+        Toolbar topToolBar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(topToolBar);
 
 
         if (mAuth.getCurrentUser() == null) {
@@ -216,11 +218,10 @@ public class LoginActivity extends AppCompatActivity {
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
-                            Intent intent = new Intent(getApplication(), MainActivity.class);
                             if (!snapshot.child(user.getUid()).exists()) {
                                 new User(user.getUid(), user.getDisplayName(), user.getEmail());
                             }
-                            startActivity(intent);
+                            changeToHomePage();
                         }
 
                         @Override

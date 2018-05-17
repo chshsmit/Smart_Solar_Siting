@@ -1,5 +1,6 @@
 package solarsitingucsc.smartsolarsiting.Controller;
 
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -67,6 +68,24 @@ public class OnboardingActivity extends AppCompatActivity {
         });
     }
 
+    private void changeOnClickToFinish(Button button){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeToHomePage();
+            }
+        });
+    }
+
+    private void changeOnClickToNext(Button button){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSLideViewPager.setCurrentItem(mCurrentSlide + 1);
+            }
+        });
+    }
+
     //----------------------------------------------------------------------------------------------
     //Changing state of the dots on bottom of screen
     //----------------------------------------------------------------------------------------------
@@ -87,7 +106,7 @@ public class OnboardingActivity extends AppCompatActivity {
         }
 
         if(mDots.length > 0){
-            mDots[position].setTextColor(getResources().getColor(R.color.colorWhite));
+            mDots[position].setTextColor(getResources().getColor(R.color.colorBlack));
         }
 
     }
@@ -120,6 +139,7 @@ public class OnboardingActivity extends AppCompatActivity {
                 mBackButton.setEnabled(true);
                 mBackButton.setVisibility(View.VISIBLE);
                 mNextButton.setEnabled(true);
+                changeOnClickToFinish(mNextButton);
 
                 mBackButton.setText("Back");
                 mNextButton.setText("Finish");
@@ -127,6 +147,8 @@ public class OnboardingActivity extends AppCompatActivity {
                 mBackButton.setEnabled(true);
                 mBackButton.setVisibility(View.VISIBLE);
                 mNextButton.setEnabled(true);
+
+                changeOnClickToNext(mNextButton);
 
                 mBackButton.setText("Back");
                 mNextButton.setText("Next");
@@ -138,5 +160,15 @@ public class OnboardingActivity extends AppCompatActivity {
 
         }
     };
+
+    //----------------------------------------------------------------------------------------------
+    //Changing activities
+    //----------------------------------------------------------------------------------------------
+
+    private void changeToHomePage(){
+        Intent homePage = new Intent(OnboardingActivity.this,
+                HomePageActivity.class);
+        startActivity(homePage);
+    }
 
 }

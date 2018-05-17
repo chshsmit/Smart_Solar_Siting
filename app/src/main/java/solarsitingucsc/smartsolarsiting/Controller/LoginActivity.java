@@ -1,6 +1,8 @@
 package solarsitingucsc.smartsolarsiting.Controller;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
 
+
+
         if(mAuth.getCurrentUser() == null) {
 
             setContentView(R.layout.activity_login);
@@ -46,8 +50,10 @@ public class LoginActivity extends AppCompatActivity {
             mPasswordField = (EditText) findViewById(R.id.passwordEditText);
 
             initializeOnCLickListeners();
-        }else
+        }else {
+            System.out.println("The current user is not null");
             changeToHomePage();
+        }
     }
 
     //--------------------------------------------------------------------------------------------
@@ -137,9 +143,21 @@ public class LoginActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------------------
 
     private void changeToHomePage() {
-        Intent intent = new Intent(getApplication(),
-                HomePageActivity.class);
-        startActivity(intent);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean previouslyStarted = prefs.getBoolean("onboarding_done", false);
+
+        if(!previouslyStarted){
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean("onboarding_done", Boolean.TRUE);
+            edit.commit();
+
+            Intent onboard = new Intent(LoginActivity.this, OnboardingActivity.class);
+            startActivity(onboard);
+        } else {
+            Intent intent = new Intent(getApplication(),
+                    HomePageActivity.class);
+            startActivity(intent);
+        }
     }
 
 }

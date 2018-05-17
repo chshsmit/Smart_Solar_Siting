@@ -88,16 +88,4 @@
         app:srcCompat="@android:drawable/ic_menu_delete"
         android:focusable="true" />
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fabDelete"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:clickable="true"-->
-        <!--app:backgroundTint="@android:color/holo_red_dark"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:srcCompat="@android:drawable/ic_menu_delete" />-->
-
 </RelativeLayout>

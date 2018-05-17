@@ -314,10 +314,15 @@ public class HomePageActivity extends AppCompatActivity {
                             String date = (String) solarSiting.get("date");
                             HashMap<String, ArrayList> powerList =
                                     (HashMap<String, ArrayList>) solarSiting.get("results");
-                            String power =
-                                    "Total power: " +
-                                    Math.round((Double) powerList.get("Annual").get(0) * 100.0)/100.0
-                                    + "kW";
+                            String power;
+                            try {
+                                power = "Total power: " +
+                                        Math.round((Double) powerList.get("Annual").get(0) * 100.0)/100.0
+                                        + "kW";
+                            } catch (ClassCastException e) {
+                                power = "0";
+                            }
+
                             ListElement listElement = addSiteToListView(userId, name, date, power, powerList);
                             getBitmapAndAddSite(name, userId, listElement);
                         }
@@ -350,7 +355,11 @@ public class HomePageActivity extends AppCompatActivity {
                 ArrayList a = (ArrayList) pair.getValue();
                 HashMap<String, Double> t = new HashMap<>();
                 for (int i = 0; i < a.size(); i++) {
-                    t.put("" + i, (Double) a.get(i));
+                    try {
+                        t.put("" + i, (Double) a.get(i));
+                    } catch (ClassCastException ex) {
+                        t.put("" + i, 0d);
+                    }
                 }
                 powerList.put((String) pair.getKey(), t);
             }

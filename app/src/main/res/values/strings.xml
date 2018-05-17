@@ -116,5 +116,9 @@
 
     <string name="pref_title_sync_frequency" />
     <string name="todo">TODO</string>
+    <string name="saveText">Save</string>
+    <string name="share">Share</string>
+    <string name="display_bar_chart">Display Bar Chart</string>
+    <string name="display_line_chart">Display Line Chart</string>
 
 </resources>

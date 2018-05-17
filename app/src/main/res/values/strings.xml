@@ -22,6 +22,13 @@
     <string name="home">Home</string>
     <string name="more">More</string>
 
+
+    <!--Onboarding Strings-->
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="onboarding_default_heading">Heading</string>
+    <string name="onboarding_default_desc">Description</string>
+
     <!--Login Screen Strings-->
     <string name="login">Log In</string>
     <string name="username">Username/Email</string>

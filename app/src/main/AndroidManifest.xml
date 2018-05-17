@@ -78,6 +78,7 @@
         <activity
             android:name=".Controller.SettingsActivity"
             android:label="@string/title_activity_settings" />
+        <activity android:name=".Controller.OnboardingActivity"></activity>
     </application>
 
 </manifest>

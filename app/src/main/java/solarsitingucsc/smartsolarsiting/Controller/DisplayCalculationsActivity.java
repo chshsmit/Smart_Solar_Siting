@@ -11,16 +11,21 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -35,9 +40,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -95,10 +105,6 @@ import static android.content.ContentValues.TAG;
 
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
-
-    //TODO: Add toolbar to this activity with the three dots
-
-
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
     private final String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
@@ -108,67 +114,244 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private double[] hourlyArray = new double[8760];
     private FirebaseAuth mAuth;
-    private FloatingActionButton saveBtn;
     private String imageName;
     private String screenshotName;
     private Bitmap thumbnail;
+    private LineChart lineChart;
+    private BarChart barChart;
+    private List<Entry> lineEntries;
+    private List<BarEntry> barEntries;
+    private boolean saved;
+    private boolean showLineChart;
+    private Spinner dropdown;
+    private HashMap<String, HashMap<String, Double>> powerMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_calc);
+        powerMap = null;
+        showLineChart = true;
 
         //Getting values from shared preferences
         setPanelConstraints();
 
+        //Free memory and set firebase auth
+        freeMemAndFirebase();
+
+        //Set up save button and progress bar
+        initializeViews();
+
+        HashMap<String, HashMap<String, Double>> powerList =
+                (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
+
+        if (powerList != null) {
+            powerMap = powerList;
+            initializeToolBar();
+//            setupDropdown(powerList);
+            saved = true;
+        }
+        else {
+            saved = false;
+            //Set values from the intent
+            getIntentValues();
+
+            //Get the image and make google request
+            setBitmap();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //On create functions
+    //----------------------------------------------------------------------------------------------
+
+    private void setBitmap() {
+        FileInputStream imageFis = null;
+        FileInputStream screenshotFis = null;
+        try {
+            imageFis = openFileInput(imageName);
+            screenshotFis = openFileInput(screenshotName);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        }
+        Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+
+        Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
+        thumbnail = makeThumbnail(originalImage, matrix);
+
+        new MakeGoogleRequest().execute(screenshot);
+        deleteFile(screenshotName);
+    }
+
+    private void freeMemAndFirebase() {
         Runtime.getRuntime().freeMemory();
         mAuth = FirebaseAuth.getInstance();
+    }
+
+    private void initializeViews() {
         findViewById(R.id.display_calc_view).setOnTouchListener(
                 new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
                     public void onSwipeRight() {
                         finish();
                     }
                 });
-        saveBtn = findViewById(R.id.button_save);
         progressBar = findViewById(R.id.progressBar);
-        HashMap<String, HashMap<String, Double>> powerList =
-                (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
-        if (powerList != null)
-            setupDropdown(powerList);
-        else {
-            latitude = getIntent().getDoubleExtra("latitude", 0.0);
-            longitude = getIntent().getDoubleExtra("longitude", 0.0);
-            imageName = getIntent().getStringExtra("imageName");
-            screenshotName = getIntent().getStringExtra("screenshotName");
-            FileInputStream imageFis = null;
-            FileInputStream screenshotFis = null;
-            try {
-                imageFis = openFileInput(imageName);
-                screenshotFis = openFileInput(screenshotName);
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
+    }
+
+    private void getIntentValues() {
+        latitude = getIntent().getDoubleExtra("latitude", 0.0);
+        longitude = getIntent().getDoubleExtra("longitude", 0.0);
+        imageName = getIntent().getStringExtra("imageName");
+        screenshotName = getIntent().getStringExtra("screenshotName");
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //Toolbar functions
+    //----------------------------------------------------------------------------------------------
+
+    private void initializeToolBar() {
+        //Toolbar setup
+        Toolbar topToolBar = findViewById(R.id.results_toolbar);
+        Drawable homeIcon = ContextCompat.getDrawable(this, R.drawable.baseline_home_black_24);
+        topToolBar.setNavigationIcon(homeIcon);
+        setSupportActionBar(topToolBar);
+        topToolBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeToHomePage();
             }
-            Bitmap originalImage = BitmapFactory.decodeStream(imageFis);
-            Matrix matrix = new Matrix();
-            matrix.postRotate(90);
+        });
+        getSupportActionBar().setTitle(null);
+    }
 
-            Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
-            thumbnail = makeThumbnail(originalImage, matrix);
-
-            new MakeGoogleRequest().execute(screenshot);
-            deleteFile(screenshotName);
+    private void changeToHomePage() {
+        if (!saved) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to go back to the home page? Unsaved data will be discarded.");
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Go back to the home page
+                    Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
+                    startActivity(homePage);
+                }
+            });
+            builder.show();
+        } else {
+            //Go back to the home page
+            Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
+            startActivity(homePage);
         }
     }
+
+
+    //ToolBar function to setup res/menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.results_bar_menu, menu);
+        dropdown = (Spinner) menu.findItem(R.id.spinner).getActionView();
+        if (powerMap != null)
+            setupDropdown(powerMap);
+        return true;
+    }
+
+    //Toolbar function for when the dots are selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.save) {
+            if (saved) {
+                Toast.makeText(DisplayCalculationsActivity.this,
+                        "Already saved!", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            if (powerMap != null) {
+                final String[] name = {""};
+                Context context = DisplayCalculationsActivity.this;
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                final EditText input = new EditText(context);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setTitle("Name: ");
+                builder.setView(input);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = input.getText().toString();
+                        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                        Matcher m = p.matcher(text);
+                        if (text.equals("")) {
+                            Toast.makeText(DisplayCalculationsActivity.this,
+                                    "Name can't be empty", Toast.LENGTH_SHORT).show();
+                            dialog.cancel();
+                        } else if (m.find()) {
+                            Toast.makeText(DisplayCalculationsActivity.this,
+                                    "Name can't contain special symbols", Toast.LENGTH_SHORT).show();
+                            dialog.cancel();
+                        } else {
+                            name[0] = input.getText().toString();
+                            storeResults(name[0], powerMap);
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+            return true;
+        }
+
+        String text = dropdown.getSelectedItem().toString();
+        if (text.equals("All"))
+            text += " months";
+        if (id == R.id.share) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            Bitmap bitmap = lineChart.getChartBitmap();
+            String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "title", null);
+            Uri bitmapUri = Uri.parse(bitmapPath);
+            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+
+            intent.putExtra(Intent.EXTRA_TEXT, text);
+            intent.setType("*/*");
+            startActivity(Intent.createChooser(intent, "Share"));
+
+            return true;
+        }
+        else if (id == R.id.change_chart_type) {
+            showLineChart = !showLineChart;
+            if (showLineChart) {
+                displayLineChart(text);
+                item.setIcon(R.drawable.baseline_bar_chart_black_24dp);
+            } else {
+                displayBarChart(text);
+                item.setIcon(R.drawable.baseline_timeline_black_24dp);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     //----------------------------------------------------------------------------------------------
     //Fucntions that we are over riding
     //----------------------------------------------------------------------------------------------
 
     @Override
-    public void onBackPressed(){
-        //Go back to the home page
-        Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
-        startActivity(homePage);
+    public void onBackPressed() {
+        changeToHomePage();
     }
 
     @Override
@@ -194,7 +377,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private String sysDataset;
 
 
-    private void setPanelConstraints(){
+    private void setPanelConstraints() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         sysCapacity = prefs.getInt("system_capacity", 4);
@@ -214,10 +397,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //This is the link that we are making our Volley call to
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
-                "api_key=" + DATASET_API_KEY + "&lat=" +latitude+ "&lon=" +longitude+
-                "&system_capacity=" +sysCapacity+ "&azimuth=" +sysAzimuth+ "&tilt=" +sysTilt+
-                "&array_type=" +sysArrayType+ "&module_type="+sysModuleType+ "&losses="+sysLosses+
-                "&dataset=" +sysDataset+ "&timeframe=hourly";
+                "api_key=" + DATASET_API_KEY + "&lat=" + latitude + "&lon=" + longitude +
+                "&system_capacity=" + sysCapacity + "&azimuth=" + sysAzimuth + "&tilt=" + sysTilt +
+                "&array_type=" + sysArrayType + "&module_type=" + sysModuleType + "&losses=" + sysLosses +
+                "&dataset=" + sysDataset + "&timeframe=hourly";
 
         //JSONObject Response Listener
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -457,7 +640,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         return inputImage;
     }
 
-
     private Bitmap makeThumbnail(Bitmap imageBitmap, Matrix matrix) {
         final int THUMBNAIL_SIZE = 64;
         imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
@@ -498,6 +680,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     solarSiting.store();
                     Toast.makeText(DisplayCalculationsActivity.this,
                             "Saved!", Toast.LENGTH_SHORT).show();
+                    saved = true;
                 }
             }
 
@@ -532,13 +715,9 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         });
     }
 
-    private void displayChart(String month, HashMap<String, HashMap<String, Double>> powerMap) {
-        LineChart chart = findViewById(R.id.chart);
-        chart.setVisibility(View.VISIBLE);
-        List<Entry> entries = new ArrayList<>();
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
+    private void generateChartData(String month, HashMap<String, HashMap<String, Double>> powerMap) {
+        lineEntries = new ArrayList<>();
+        barEntries= new ArrayList<>();
         if (month.equals("All")) {
             Double[] monthValues = new Double[12];
             HashMap<String, Double> allValues = powerMap.get(month);
@@ -549,8 +728,44 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     monthValues[i] = 0d;
             }
             for (int i = 0; i < monthValues.length; i++) {
-                entries.add(new Entry(i, monthValues[i].floatValue()));
+                lineEntries.add(new Entry(i, monthValues[i].floatValue()));
+                barEntries.add(new BarEntry((float)i, monthValues[i].floatValue()));
             }
+
+        } else {
+            Double[] hours = new Double[24];
+            HashMap<String, Double> monthValues = powerMap.get(month);
+            for (int i = 0; i < hours.length; i++) {
+                try {
+                    if (monthValues != null && monthValues.get("" + i) != null)
+                        hours[i] = monthValues.get("" + i);
+                    else
+                        hours[i] = 0d;
+                } catch (ClassCastException e) {
+                    hours[i] = 0d;
+                }
+            }
+            for (int i = 0; i < hours.length; i++) {
+                lineEntries.add(new Entry(i, hours[i].floatValue()));
+                barEntries.add(new BarEntry((float)i, hours[i].floatValue()));
+
+            }
+            String[] stringHours = new String[hours.length];
+            for (int i = 0; i < stringHours.length; i++) {
+                stringHours[i] = i + ":00";
+            }
+        }
+    }
+
+    private void displayLineChart(String month) {
+        lineChart = findViewById(R.id.line_chart);
+        barChart = findViewById(R.id.bar_chart);
+        lineChart.setVisibility(View.VISIBLE);
+        barChart.setVisibility(View.GONE);
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        if (month.equals("All")) {
             xAxis.setValueFormatter(new IAxisValueFormatter() {
                 @Override
                 public String getFormattedValue(float value, AxisBase axis) {
@@ -558,21 +773,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 }
             });
         } else {
-            Double[] hours = new Double[24];
-            HashMap<String, Double> monthValues = powerMap.get(month);
-            for (int i = 0; i < hours.length; i++) {
-                if (monthValues != null && monthValues.get("" + i) != null)
-                    hours[i] = monthValues.get("" + i);
-                else
-                    hours[i] = 0d;
-            }
-            for (int i = 0; i < hours.length; i++) {
-                entries.add(new Entry(i, hours[i].floatValue()));
-            }
-            String[] stringHours = new String[hours.length];
+            String[] stringHours = new String[24];
             for (int i = 0; i < stringHours.length; i++) {
                 stringHours[i] = i + ":00";
             }
+
             final String[] finalHours = stringHours;
             xAxis.setValueFormatter(new IAxisValueFormatter() {
                 @Override
@@ -581,14 +786,37 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 }
             });
         }
-        LineDataSet dataSet = new LineDataSet(entries, "Power in KW");
+        LineDataSet dataSet = new LineDataSet(lineEntries, "Total kW");
+        dataSet.setLineWidth(5);
         LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        chart.invalidate();
+        Description description = new Description();
+        description.setText("");
+        lineChart.setDescription(description);
+        lineChart.setData(lineData);
+        lineChart.invalidate();
+    }
+
+    private void displayBarChart(String month) {
+        barChart = findViewById(R.id.bar_chart);
+        lineChart = findViewById(R.id.line_chart);
+        barChart.setVisibility(View.VISIBLE);
+        lineChart.setVisibility(View.GONE);
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+
+        BarDataSet dataSet = new BarDataSet(barEntries, "Power in KW");
+        BarData barData = new BarData(dataSet);
+        barChart.setData(barData);
+        barChart.invalidate();
+        barData.setBarWidth(0.9f);
+        barChart.setData(barData);
+        barChart.setFitBars(true); // make the x-axis fit exactly all bars
+        barChart.invalidate(); // refresh
     }
 
     private void setupDropdown(final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth) {
-        final Spinner dropdown = findViewById(R.id.spinner);
+//        final Spinner dropdown = findViewById(R.id.spinner);
 
         try {
             Field popup = Spinner.class.getDeclaredField("mPopup");
@@ -620,7 +848,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String month = dropdown.getSelectedItem().toString();
-                displayChart(month, powerByTimeAndMonth);
+                generateChartData(month, powerByTimeAndMonth);
+                if (showLineChart)
+                    displayLineChart(month);
+                else
+                    displayBarChart(month);
             }
 
             @Override
@@ -706,7 +938,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 for (int i = 0; i < value; i++) {
                     try {
                         int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
-                        double power = getPowerForMonthAndHour(monthInt, hourInt)/6;
+                        double power = getPowerForMonthAndHour(monthInt, hourInt) / 6;
                         annualPower += power;
                         monthlyPower[monthInt] += power;
                         HashMap<String, Double> newMap = powerByTimeAndMonth.get(months[monthInt]);
@@ -735,49 +967,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 temp.put(months[i], monthlyPower[i]);
             }
             powerByTimeAndMonth.put("All", temp);
+            powerMap = powerByTimeAndMonth;
             progressBar.setVisibility(View.GONE);
-
-            saveBtn.setVisibility(View.VISIBLE);
-            saveBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final String[] name = {""};
-                    Context context = DisplayCalculationsActivity.this;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    final EditText input = new EditText(context);
-                    input.setInputType(InputType.TYPE_CLASS_TEXT);
-                    builder.setTitle("Name: ");
-                    builder.setView(input);
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String text = input.getText().toString();
-                            if (text.equals("")) {
-                                Toast.makeText(DisplayCalculationsActivity.this,
-                                        "Name can't be empty", Toast.LENGTH_SHORT).show();
-                                dialog.cancel();
-                            }
-                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-                            Matcher m = p.matcher(text);
-                            if (m.find()) {
-                                Toast.makeText(DisplayCalculationsActivity.this,
-                                        "Name can't contain special symbols", Toast.LENGTH_SHORT).show();
-                                dialog.cancel();
-                            }
-                            name[0] = input.getText().toString();
-                            storeResults(name[0], powerByTimeAndMonth);
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
-                }
-            });
-            setupDropdown(powerByTimeAndMonth);
+            //Setting up the toolbar
+            initializeToolBar();
+//            setupDropdown(powerByTimeAndMonth);
         }
     }
 }

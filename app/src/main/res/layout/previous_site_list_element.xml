@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     android:padding="5dip">
 
-    <!--  ListRow Left sied Thumbnail image -->
+    <!--  ListRow Left side Thumbnail image -->
     <LinearLayout android:id="@+id/site_image_thumbnail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/site_image"
-            android:layout_width="50dip"
-            android:layout_height="50dip"
+            android:layout_width="70dip"
+            android:layout_height="70dip"
             android:src="@drawable/ic_cam"/>
 
     </LinearLayout>
@@ -45,6 +45,7 @@
         android:textSize="12sp"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/site_image_thumbnail"
+        android:layout_toEndOf="@+id/site_image_thumbnail"
         android:text="@string/site_date" />
 
     <!-- Total Power -->
@@ -52,16 +53,12 @@
         android:id="@+id/site_power"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="26dp"
-        android:layout_marginRight="26dp"
-        android:layout_toLeftOf="@+id/fabDelete"
-        android:layout_toStartOf="@+id/fabDelete"
-        android:gravity="end"
+        android:layout_below="@id/site_date"
+        android:layout_toRightOf="@+id/site_image_thumbnail"
         android:text="@string/site_power"
-        android:textColor="#040404"
+        android:textColor="#343434"
         android:textSize="12sp"
-        android:textStyle="bold" />
+        android:layout_toEndOf="@+id/site_image_thumbnail" />
 
 
     <!-- View Calculations Arrow -->
@@ -76,16 +73,19 @@
         <!--android:layout_marginRight="81dp"-->
         <!--android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />-->
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/delete_solar_site"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:clickable="true"
-        app:backgroundTint="@android:color/holo_red_dark"
+        android:background="@drawable/outline_delete_black_24"
+        android:backgroundTint="@android:color/holo_red_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_delete" />
+        app:srcCompat="@android:drawable/ic_menu_delete"
+        android:focusable="true" />
 
 </RelativeLayout>

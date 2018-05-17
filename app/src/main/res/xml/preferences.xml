@@ -16,7 +16,6 @@
             android:summary="@string/vert_FOV_summ"
             android:key="change_vertical" />
 
-
         <CheckBoxPreference
             android:title="@string/panorama"
             android:summary="@string/panorama_summ"

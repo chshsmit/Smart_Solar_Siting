@@ -63,7 +63,7 @@
     <!--app:layout_constraintEnd_toEndOf="parent"-->
     <!--app:layout_constraintStart_toEndOf="@+id/draw_button" />-->
 
-     Top Row
+     <!--Top Row-->
     <LinearLayout
     android:id="@+id/paint_colors"
     android:layout_width="wrap_content"

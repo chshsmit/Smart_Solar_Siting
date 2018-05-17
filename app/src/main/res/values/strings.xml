@@ -17,8 +17,13 @@
     <string name="dec">Dec:</string>
     <string name="annual">Annual:</string>
 
+    <string name="facebook_app_id">1899192993433816</string>
+    <string name="fb_login_protocol_scheme">fb1899192993433816</string>
+
     <!--Toolbar Strings-->
     <string name="app_title">Smart Solar Siting</string>
+    <string name="home">Home</string>
+    <string name="more">More</string>
 
     <!--Login Screen Strings-->
     <string name="login">Log In</string>
@@ -100,5 +105,10 @@
     <string name="about">About</string>
 
     <string name="pref_title_sync_frequency" />
+    <string name="todo">TODO</string>
+    <string name="saveText">Save</string>
+    <string name="share">Share</string>
+    <string name="display_bar_chart">Display Bar Chart</string>
+    <string name="display_line_chart">Display Line Chart</string>
 
 </resources>

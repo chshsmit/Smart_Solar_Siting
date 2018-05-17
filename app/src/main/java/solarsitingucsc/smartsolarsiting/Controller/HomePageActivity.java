@@ -215,8 +215,8 @@ public class HomePageActivity extends AppCompatActivity {
                 });
             }
 
-            Button fabDelete = newView.findViewById(R.id.delete_solar_site);
-            fabDelete.setOnClickListener(new View.OnClickListener() {
+            Button deleteSolarSite = newView.findViewById(R.id.delete_solar_site);
+            deleteSolarSite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     final String[] name = {""};
@@ -314,7 +314,10 @@ public class HomePageActivity extends AppCompatActivity {
                             String date = (String) solarSiting.get("date");
                             HashMap<String, ArrayList> powerList =
                                     (HashMap<String, ArrayList>) solarSiting.get("results");
-                            String power = Math.round((Double) powerList.get("Annual").get(0) * 100.0)/100.0 + "kW";
+                            String power =
+                                    "Total power: " +
+                                    Math.round((Double) powerList.get("Annual").get(0) * 100.0)/100.0
+                                    + "kW";
                             ListElement listElement = addSiteToListView(userId, name, date, power, powerList);
                             getBitmapAndAddSite(name, userId, listElement);
                         }

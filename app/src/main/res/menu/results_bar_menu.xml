@@ -5,7 +5,7 @@
     tools:context=".Controller.DisplayCalculationsActivity">
 
     <item
-        android:id="@+id/more_results"
+        android:id="@+id/share_button"
         android:title="@string/more"
         android:icon="@drawable/baseline_share_black_24"
         android:orderInCategory="300"
@@ -16,4 +16,16 @@
         android:title="@string/home"
         android:icon="@drawable/baseline_home_black_24"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_display_bar_chart"
+        android:orderInCategory="1"
+        android:title="Display Bar Chart"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_display_line_chart"
+        android:orderInCategory="2"
+        android:title="Display Line Chart"
+        app:showAsAction="never" />
+
 </menu>

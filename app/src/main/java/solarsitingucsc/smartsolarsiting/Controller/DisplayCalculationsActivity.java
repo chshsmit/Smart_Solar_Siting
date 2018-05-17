@@ -14,6 +14,7 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -38,9 +39,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -99,8 +104,6 @@ import static android.content.ContentValues.TAG;
 public class DisplayCalculationsActivity extends AppCompatActivity {
 
 
-
-
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
     private final String GOOGLE_VISION_API_KEY = "AIzaSyDx2wu1igClYSoMYTfhvH5Mp0u5x9AxwrE";
@@ -114,6 +117,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private String imageName;
     private String screenshotName;
     private Bitmap thumbnail;
+    private LineChart lineChart;
+    private BarChart barChart;
+    private List<Entry> lineEntries;
+    private List<BarEntry> barEntries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,9 +129,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //Getting values from shared preferences
         setPanelConstraints();
-
-        //Setting up the toolbar
-        initializeToolBar();
 
         //Free memory and set firebase auth
         freeMemAndFirebase();
@@ -144,13 +148,15 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             //Get the image and make google request
             setBitmap();
         }
+
+
     }
 
     //----------------------------------------------------------------------------------------------
     //On create functions
     //----------------------------------------------------------------------------------------------
 
-    private void setBitmap(){
+    private void setBitmap() {
         FileInputStream imageFis = null;
         FileInputStream screenshotFis = null;
         try {
@@ -170,12 +176,12 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         deleteFile(screenshotName);
     }
 
-    private void freeMemAndFirebase(){
+    private void freeMemAndFirebase() {
         Runtime.getRuntime().freeMemory();
         mAuth = FirebaseAuth.getInstance();
     }
 
-    private void initializeViews(){
+    private void initializeViews() {
         findViewById(R.id.display_calc_view).setOnTouchListener(
                 new OnSwipeTouchListener(DisplayCalculationsActivity.this) {
                     public void onSwipeRight() {
@@ -187,7 +193,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
     }
 
-    private void getIntentValues(){
+    private void getIntentValues() {
         latitude = getIntent().getDoubleExtra("latitude", 0.0);
         longitude = getIntent().getDoubleExtra("longitude", 0.0);
         imageName = getIntent().getStringExtra("imageName");
@@ -204,6 +210,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         Toolbar topToolBar = findViewById(R.id.results_toolbar);
         topToolBar.setTitle("Results");
         setSupportActionBar(topToolBar);
+
     }
 
 
@@ -218,29 +225,46 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     //Toolbar function for when the dots are selected
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         int id = item.getItemId();
 
-
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        String text = spinner.getSelectedItem().toString();
+        if (text.equals("All"))
+            text += " months";
         //Handles click events on the toolbar
-        if (id == R.id.more_results) {
+        if (id == R.id.share_button) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+//            lineChart.saveToGallery("somne nane", 100);
+            Bitmap bitmap = lineChart.getChartBitmap();
+            String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "title", null);
+            Uri bitmapUri = Uri.parse(bitmapPath);
+            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+
+            intent.putExtra(Intent.EXTRA_TEXT, text);
+            intent.setType("*/*");
+            startActivity(Intent.createChooser(intent, "Share"));
+
             return true;
-        } else if (id == R.id.return_home){
+        } else if (id == R.id.return_home) {
             changeToHomeScreen();
+            return true;
+        } else if (id == R.id.action_display_bar_chart) {
+            displayBarChart(text);
+            return true;
+        } else if (id == R.id.action_display_line_chart) {
+            displayLineChart(text);
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     //----------------------------------------------------------------------------------------------
     //Fucntions that we are over riding
     //----------------------------------------------------------------------------------------------
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         //Go back to the home page
         changeToHomeScreen();
     }
@@ -268,7 +292,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private String sysDataset;
 
 
-    private void setPanelConstraints(){
+    private void setPanelConstraints() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         sysCapacity = prefs.getInt("system_capacity", 4);
@@ -288,10 +312,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //This is the link that we are making our Volley call to
         String url = "https://developer.nrel.gov/api/pvwatts/v5.json?" +
-                "api_key=" + DATASET_API_KEY + "&lat=" +latitude+ "&lon=" +longitude+
-                "&system_capacity=" +sysCapacity+ "&azimuth=" +sysAzimuth+ "&tilt=" +sysTilt+
-                "&array_type=" +sysArrayType+ "&module_type="+sysModuleType+ "&losses="+sysLosses+
-                "&dataset=" +sysDataset+ "&timeframe=hourly";
+                "api_key=" + DATASET_API_KEY + "&lat=" + latitude + "&lon=" + longitude +
+                "&system_capacity=" + sysCapacity + "&azimuth=" + sysAzimuth + "&tilt=" + sysTilt +
+                "&array_type=" + sysArrayType + "&module_type=" + sysModuleType + "&losses=" + sysLosses +
+                "&dataset=" + sysDataset + "&timeframe=hourly";
 
         //JSONObject Response Listener
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -572,6 +596,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     solarSiting.store();
                     Toast.makeText(DisplayCalculationsActivity.this,
                             "Saved!", Toast.LENGTH_SHORT).show();
+//                    saveToGallery()
                 }
             }
 
@@ -606,13 +631,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         });
     }
 
-    private void displayChart(String month, HashMap<String, HashMap<String, Double>> powerMap) {
-        LineChart chart = findViewById(R.id.chart);
-        chart.setVisibility(View.VISIBLE);
-        List<Entry> entries = new ArrayList<>();
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
+
+    private void generateChartData(String month, HashMap<String, HashMap<String, Double>> powerMap) {
+        lineEntries = new ArrayList<>();
+        barEntries= new ArrayList<>();
         if (month.equals("All")) {
             Double[] monthValues = new Double[12];
             HashMap<String, Double> allValues = powerMap.get(month);
@@ -623,14 +645,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     monthValues[i] = 0d;
             }
             for (int i = 0; i < monthValues.length; i++) {
-                entries.add(new Entry(i, monthValues[i].floatValue()));
+                lineEntries.add(new Entry(i, monthValues[i].floatValue()));
+                barEntries.add(new BarEntry((float)i, monthValues[i].floatValue()));
             }
-            xAxis.setValueFormatter(new IAxisValueFormatter() {
-                @Override
-                public String getFormattedValue(float value, AxisBase axis) {
-                    return months[(int) value];
-                }
-            });
+
         } else {
             Double[] hours = new Double[24];
             HashMap<String, Double> monthValues = powerMap.get(month);
@@ -641,13 +659,39 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     hours[i] = 0d;
             }
             for (int i = 0; i < hours.length; i++) {
-                entries.add(new Entry(i, hours[i].floatValue()));
+                lineEntries.add(new Entry(i, hours[i].floatValue()));
+                barEntries.add(new BarEntry((float)i, hours[i].floatValue()));
+
             }
             String[] stringHours = new String[hours.length];
             for (int i = 0; i < stringHours.length; i++) {
                 stringHours[i] = i + ":00";
             }
+        }
+    }
+
+    private void displayLineChart(String month) {
+        lineChart = findViewById(R.id.line_chart);
+        barChart = findViewById(R.id.bar_chart);
+        lineChart.setVisibility(View.VISIBLE);
+        barChart.setVisibility(View.GONE);
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        if (month.equals("All")) {
+            xAxis.setValueFormatter(new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, AxisBase axis) {
+                    return months[(int) value];
+                }
+            });
+        } else {
+            String[] stringHours = new String[24];
+            for (int i = 0; i < stringHours.length; i++) {
+                stringHours[i] = i + ":00";
+            }
             final String[] finalHours = stringHours;
+
             xAxis.setValueFormatter(new IAxisValueFormatter() {
                 @Override
                 public String getFormattedValue(float value, AxisBase axis) {
@@ -655,10 +699,53 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 }
             });
         }
-        LineDataSet dataSet = new LineDataSet(entries, "Power in KW");
+//        lineEntries = generateChartData(month, powerMap);
+        LineDataSet dataSet = new LineDataSet(lineEntries, "Power in KW");
+        dataSet.setLineWidth(5);
         LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        chart.invalidate();
+        lineChart.setData(lineData);
+        lineChart.invalidate();
+    }
+
+
+    private void displayBarChart(String month) {
+        barChart = findViewById(R.id.bar_chart);
+        lineChart = findViewById(R.id.line_chart);
+        barChart.setVisibility(View.VISIBLE);
+        lineChart.setVisibility(View.GONE);
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+//        if (month.equals("All")) {
+//            xAxis.setValueFormatter(new IAxisValueFormatter() {
+//                @Override
+//                public String getFormattedValue(float value, AxisBase axis) {
+//                    return months[(int) value];
+//                }
+//            });
+//        } else {
+//            String[] stringHours = new String[24];
+//            for (int i = 0; i < stringHours.length; i++) {
+//                stringHours[i] = i + ":00";
+//            }
+//            final String[] finalHours = stringHours;
+//
+//            xAxis.setValueFormatter(new IAxisValueFormatter() {
+//                @Override
+//                public String getFormattedValue(float value, AxisBase axis) {
+//                    return finalHours[(int) value];
+//                }
+//            });
+//        }
+
+        BarDataSet dataSet = new BarDataSet(barEntries, "Power in KW");
+        BarData barData = new BarData(dataSet);
+        barChart.setData(barData);
+        barChart.invalidate();
+        barData.setBarWidth(0.9f);
+        barChart.setData(barData);
+        barChart.setFitBars(true); // make the x-axis fit exactly all bars
+        barChart.invalidate(); // refresh
     }
 
     private void setupDropdown(final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth) {
@@ -694,7 +781,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String month = dropdown.getSelectedItem().toString();
-                displayChart(month, powerByTimeAndMonth);
+                generateChartData(month, powerByTimeAndMonth);
+                displayLineChart(month);
             }
 
             @Override
@@ -768,7 +856,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             Arrays.fill(monthlyPower, 0d);
             final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth = new HashMap<>();
             while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
+                Map.Entry pair = (Map.Entry) it.next();
                 String key = (String) pair.getKey();
                 int value = (int) pair.getValue();
                 int dashIndex = key.indexOf("-");
@@ -780,7 +868,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 for (int i = 0; i < value; i++) {
                     try {
                         int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
-                        double power = getPowerForMonthAndHour(monthInt, hourInt)/6;
+                        double power = getPowerForMonthAndHour(monthInt, hourInt) / 6;
                         annualPower += power;
                         monthlyPower[monthInt] += power;
                         HashMap<String, Double> newMap = powerByTimeAndMonth.get(months[monthInt]);
@@ -826,20 +914,20 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String text = input.getText().toString();
+                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+                            Matcher m = p.matcher(text);
                             if (text.equals("")) {
                                 Toast.makeText(DisplayCalculationsActivity.this,
                                         "Name can't be empty", Toast.LENGTH_SHORT).show();
                                 dialog.cancel();
-                            }
-                            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-                            Matcher m = p.matcher(text);
-                            if (m.find()) {
+                            } else if (m.find()) {
                                 Toast.makeText(DisplayCalculationsActivity.this,
                                         "Name can't contain special symbols", Toast.LENGTH_SHORT).show();
                                 dialog.cancel();
+                            } else {
+                                name[0] = input.getText().toString();
+                                storeResults(name[0], powerByTimeAndMonth);
                             }
-                            name[0] = input.getText().toString();
-                            storeResults(name[0], powerByTimeAndMonth);
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -852,6 +940,9 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 }
             });
             setupDropdown(powerByTimeAndMonth);
+            //Setting up the toolbar
+            initializeToolBar();
+
         }
     }
 
@@ -859,7 +950,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     //Fuctions to change activities
     //----------------------------------------------------------------------------------------------
 
-    private void changeToHomeScreen(){
+    private void changeToHomeScreen() {
         Intent homePage = new Intent(DisplayCalculationsActivity.this, HomePageActivity.class);
         startActivity(homePage);
     }

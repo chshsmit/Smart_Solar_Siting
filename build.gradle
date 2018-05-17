@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    
+
     repositories {
         google()
         jcenter()
@@ -16,6 +16,8 @@ buildscript {
         classpath 'com.google.gms:google-services:3.1.2'
     }
 }
+
+
 
 allprojects {
     repositories {

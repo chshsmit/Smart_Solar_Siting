@@ -110,6 +110,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.takePicture(null, null, mPicture);
     }
 
+
     public void setScreenshotName(String screenshotName) {
         this.screenshotName = screenshotName;
     }

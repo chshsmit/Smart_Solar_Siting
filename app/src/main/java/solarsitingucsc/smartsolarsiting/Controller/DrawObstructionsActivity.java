@@ -16,7 +16,10 @@ import android.view.View;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import solarsitingucsc.smartsolarsiting.Model.ScreenshotUtils;
 import solarsitingucsc.smartsolarsiting.R;
 
 import org.opencv.android.OpenCVLoader;
@@ -113,8 +116,8 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         imageView.setImageBitmap(rotatedImage);
 
 
-        FloatingActionButton fabDelete = findViewById(R.id.fabDelete);
-        FloatingActionButton fabConfirm = findViewById(R.id.fabConfirm);
+        final FloatingActionButton fabDelete = findViewById(R.id.fabDelete);
+        final FloatingActionButton fabConfirm = findViewById(R.id.fabConfirm);
         fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,6 +127,24 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         fabConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                fabConfirm.setVisibility(View.GONE);
+                fabDelete.setVisibility(View.GONE);
+                FileInputStream imageFis = null;
+                String ipScreenshot = takeScreenshot();
+                try {
+                    imageFis = openFileInput(ipScreenshot);
+                } catch (FileNotFoundException e) {
+                    Log.d(TAG, "File not found: " + e.getMessage());
+                }
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 2;
+                Bitmap originalImage = BitmapFactory.decodeStream(imageFis,null,options);
+                Matrix matrix = new Matrix();
+                matrix.postRotate(90);
+
+                Bitmap ipImage = Bitmap.createBitmap(originalImage, 0, 0, originalImage.getWidth(),
+                        originalImage.getHeight());
+
                 Context context = getBaseContext();
                 Intent intent = new Intent(context, DisplayCalculationsActivity.class);
                 intent.putExtra("imageName", imageName);
@@ -133,9 +154,13 @@ public class DrawObstructionsActivity extends AppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 //send bitmap to DisplayCalculationsActivity
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                rotatedImage.compress(Bitmap.CompressFormat.PNG, 100, bs);
+                ipImage.compress(Bitmap.CompressFormat.PNG, 100, bs);
                 intent.putExtra("byteArray", bs.toByteArray());
                 context.startActivity(intent);
+                fabConfirm.setVisibility(View.VISIBLE);
+                fabDelete.setVisibility(View.VISIBLE);
+//                fabConfirm.show();
+//                fabDelete.show();
                 finish();
             }
         });
@@ -182,5 +207,29 @@ public class DrawObstructionsActivity extends AppCompatActivity {
             markers.convertTo(markers,CvType.CV_8U);
             return markers;
         }
+    }
+
+    private String takeScreenshot() {
+        try {
+            File screenshotFile = getInternalOutputMediaFile(this);
+            ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), screenshotFile);
+
+            //Save screenshot to phone's images
+//            File screenshotFile2 = getExternalOutputMediaFile(MEDIA_TYPE_IMAGE);
+//            ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), screenshotFile2);
+
+            return screenshotFile.getName();
+        } catch (NullPointerException ignored) {
+            ignored.printStackTrace();
+        }
+        return "";
+    }
+
+    private static File getInternalOutputMediaFile(Context context) {
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) +
+                "SCREENSHOT";
+        File file = new File(context.getFilesDir(), timeStamp);
+        return file;
     }
 }

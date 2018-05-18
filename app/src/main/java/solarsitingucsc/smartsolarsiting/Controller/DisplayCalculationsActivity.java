@@ -221,10 +221,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             b = BitmapFactory.decodeByteArray(
                     getIntent().getByteArrayExtra("byteArray"),0,getIntent()
                             .getByteArrayExtra("byteArray").length, options);
-//            watershed = (ImageView) findViewById(R.id.watershed);
-//            watershed.setImageBitmap(b);
-//            watershed.setScaleType(ImageView.ScaleType.FIT_XY);
-//            watershed.setImageBitmap(b);
+            watershed = (ImageView) findViewById(R.id.watershed);
+            watershed.setImageBitmap(b);
+            watershed.setScaleType(ImageView.ScaleType.FIT_XY);
+            watershed.setImageBitmap(b);
         }
 //        dots = (ImageView) findViewById(R.id.dots);
 //        dots.setImageBitmap(screenshot);
@@ -1147,7 +1147,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             HashMap<String, Double> temp = new HashMap<>();
             for (int i = 0; i < monthlyPower.length; i++) {
                 temp.put(months[i], monthlyPower[i]);
-                Log.d(TAG, "month: " + i + " power: " + monthlyPower[i]);
+                Log.d(TAG, "month: " + i + " power w/ ip: " + monthlyPower[i] + " power w/o: " + ipMonthlyPower[i]);
             }
             powerByTimeAndMonth.put("All", temp);
             powerMap = powerByTimeAndMonth;
@@ -1168,8 +1168,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                     vertices.get(box).get(0).getX(), vertices.get(box).get(0).getY(), 20, 20);
             for (int k = 0; k < 400; k++) {
 //                    for (int j = 0; j < 20; j++) {
-                if (Color.red(pixels[k]) != 255 && Color.green(pixels[k]) != 255 &&
-                        Color.blue(pixels[k]) != 255) {
+                if (Color.red(pixels[k]) <= 250 && Color.green(pixels[k]) <= 250 &&
+                        Color.blue(pixels[k]) <= 250) {
                     Log.d(TAG, "NOT ADDED");
                     return false;
                 }

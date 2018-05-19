@@ -40,10 +40,12 @@ public class SliderAdapter extends PagerAdapter {
     };
 
     private String[] slide_descriptions = {
-            "Welcome description",
+            "Welcome to Smart Solar Siting",
             "Something about power",
-            "Customizing settings",
-            "Find out more with the tutorial"
+            "Customize your panel and camera in the settings! Click the cog in the top " +
+                    "right corner on the homepage to access them!",
+            "If you have any more questions view our tooltips and tutorial video" +
+                    "in the settings!"
     };
 
 

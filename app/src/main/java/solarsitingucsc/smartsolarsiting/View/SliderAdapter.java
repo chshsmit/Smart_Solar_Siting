@@ -7,6 +7,7 @@ import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -29,9 +30,14 @@ public class SliderAdapter extends PagerAdapter {
 
     //Arrays to fill in the values
     private int[] slide_images = {
+            R.drawable.welcome_onboarding,
+            R.drawable.power_onboarding,
+            R.drawable.settings_onboarding,
+            R.drawable.help_onboarding
 
     };
 
+    //TODO: Change headings
     private String[] slide_headings = {
             "Welcome",
             "Solar",
@@ -39,6 +45,7 @@ public class SliderAdapter extends PagerAdapter {
             "Help"
     };
 
+    //TODO:Change Descriptions
     private String[] slide_descriptions = {
             "Welcome to Smart Solar Siting",
             "Something about power",
@@ -60,8 +67,6 @@ public class SliderAdapter extends PagerAdapter {
     }
 
 
-
-
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         mLayoutInflater = (LayoutInflater) mContext.
@@ -69,13 +74,16 @@ public class SliderAdapter extends PagerAdapter {
 
         View view = mLayoutInflater.inflate(R.layout.onboarding_slide_layout,
                 container, false);
-        //This is where we set values based on the layouts
 
+        //Initializing Views
         TextView slideHeading = (TextView) view.findViewById(R.id.slide_heading);
         TextView slideDescription = (TextView) view.findViewById(R.id.slide_description);
+        ImageView myIcon = (ImageView) view.findViewById(R.id.slide_image);
 
+        //Setting values within the views
         slideHeading.setText(slide_headings[position]);
         slideDescription.setText(slide_descriptions[position]);
+        myIcon.setImageResource(slide_images[position]);
 
         container.addView(view);
         return view;
@@ -85,26 +93,5 @@ public class SliderAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((ConstraintLayout) object);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 

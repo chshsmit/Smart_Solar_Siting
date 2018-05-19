@@ -68,6 +68,10 @@ public class OnboardingActivity extends AppCompatActivity {
         });
     }
 
+    //----------------------------------------------------------------------------------------------
+    //These change the functionality of the next button
+    //----------------------------------------------------------------------------------------------
+
     private void changeOnClickToFinish(Button button){
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +104,7 @@ public class OnboardingActivity extends AppCompatActivity {
             mDots[i] = new TextView(this);
             mDots[i].setText(Html.fromHtml("&#8226;"));
             mDots[i].setTextSize(35);
-            mDots[i].setTextColor(getResources().getColor(R.color.colorTransparentWhite));
+            mDots[i].setTextColor(getResources().getColor(R.color.colorWhite));
 
             mDotLayout.addView(mDots[i]);
         }

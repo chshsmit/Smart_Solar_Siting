@@ -20,6 +20,8 @@
     <string name="facebook_app_id">1899192993433816</string>
     <string name="fb_login_protocol_scheme">fb1899192993433816</string>
 
+    <string name="file_provider_authority" translatable="false">solarsitingucsc.smartsolarsiting.fileprovider</string>
+
     <!--Toolbar Strings-->
     <string name="app_title">Smart Solar Siting</string>
     <string name="home">Home</string>

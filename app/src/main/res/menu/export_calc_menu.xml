@@ -6,7 +6,7 @@
         android:id="@+id/export_json"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:title="Export JSON"
+        android:title="@string/json_export"
         app:showAsAction="ifRoom" />
 
 
@@ -14,7 +14,7 @@
         android:id="@+id/export_csv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:title="Export CSV"
+        android:title="@string/csv_export"
         app:showAsAction="ifRoom" />
 
 
@@ -22,7 +22,7 @@
         android:id="@+id/export_jpeg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:title="Export JPEG"
+        android:title="@string/jpeg_export"
         app:showAsAction="ifRoom" />
 
 

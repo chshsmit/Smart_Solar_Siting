@@ -20,6 +20,11 @@
     <string name="facebook_app_id">1899192993433816</string>
     <string name="fb_login_protocol_scheme">fb1899192993433816</string>
 
+    <!--Export Strings-->
+    <string name="json_export">Export JSON</string>
+    <string name="jpeg_export">Export JPEG</string>
+    <string name="csv_export">Export CSV</string>
+
     <!--Toolbar Strings-->
     <string name="app_title">Smart Solar Siting</string>
     <string name="home">Home</string>

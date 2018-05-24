@@ -32,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -369,21 +370,30 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             return true;
         }
 
+        //TODO: Add popup menu for JSON, CSV, and JPEG
         String text = dropdown.getSelectedItem().toString();
         if (text.equals("All"))
             text += " months";
         if (id == R.id.share) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            Bitmap bitmap = lineChart.getChartBitmap();
-            String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "title", null);
-            Uri bitmapUri = Uri.parse(bitmapPath);
-            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
 
-            intent.putExtra(Intent.EXTRA_TEXT, text);
-            intent.setType("*/*");
-            startActivity(Intent.createChooser(intent, "Share"));
+            View menuViewItem = findViewById(R.id.share);
+            PopupMenu exportMenu = new PopupMenu(this, menuViewItem);
+            exportMenu.inflate(R.menu.export_calc_menu);
+
+            exportMenu.show();
+
+//            Intent intent = new Intent(Intent.ACTION_SEND);
+//            Bitmap bitmap = lineChart.getChartBitmap();
+//            String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "title", null);
+//            Uri bitmapUri = Uri.parse(bitmapPath);
+//            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+//
+//            intent.putExtra(Intent.EXTRA_TEXT, text);
+//            intent.setType("*/*");
+//            startActivity(Intent.createChooser(intent, "Share"));
 
             return true;
+
         }
         else if (id == R.id.change_chart_type) {
             showLineChart = !showLineChart;

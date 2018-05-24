@@ -254,7 +254,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     //About Page
     //----------------------------------------------------------------------------------------------
 
-
+    //TODO: Add an about page
     //Toast utility Function
     public static void toastMessage(String message, Context currentActivity)
     {

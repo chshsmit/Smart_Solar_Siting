@@ -85,6 +85,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("sys_tilt"));
             bindPreferenceSummaryToValue(findPreference("sys_azimuth"));
             bindPreferenceSummaryToValue(findPreference("sys_dataset"));
+            bindPreferenceSummaryToValue(findPreference("change_vertical"));
+            bindPreferenceSummaryToValue(findPreference("change_horizontal"));
         }
     }
 

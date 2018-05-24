@@ -126,7 +126,7 @@
             android:key="signout">
         </solarsitingucsc.smartsolarsiting.View.SignoutDialogPreference>
 
-        <Preference
+        <solarsitingucsc.smartsolarsiting.View.AboutPreference
             android:title="@string/about"
             android:key="about"/>
     </PreferenceCategory>

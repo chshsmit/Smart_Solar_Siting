@@ -2,6 +2,10 @@
 <resources>
     <integer name="ZERO">0</integer>
 
+    <integer name="fov_max">180</integer>
+    <integer name="fov_min">0</integer>
+
+
     <integer name="sys_cap_max">500000</integer>
     <integer name="sys_cap_min">1</integer>
 

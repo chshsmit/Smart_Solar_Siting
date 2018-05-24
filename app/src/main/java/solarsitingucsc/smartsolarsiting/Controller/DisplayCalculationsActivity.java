@@ -154,7 +154,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         initializeViews();
 
         HashMap<String, HashMap<String, Double>> powerList =
-                (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
+                (HashMap<String, HashMap<String, Double>>) getIntent()
+                        .getSerializableExtra("powerList");
 
         if (powerList != null) {
             powerMap = powerList;

@@ -2,6 +2,8 @@ package solarsitingucsc.smartsolarsiting.Controller;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -49,7 +51,7 @@ import solarsitingucsc.smartsolarsiting.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-
+    //TODO:Find a way to relate firebase account to onboarding variable
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;
@@ -62,8 +64,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         mAuth = FirebaseAuth.getInstance();
+
+        Toolbar topToolBar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(topToolBar);
+
 
         if (mAuth.getCurrentUser() == null) {
 
@@ -213,11 +218,11 @@ public class LoginActivity extends AppCompatActivity {
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
-                            Intent intent = new Intent(getApplication(), MainActivity.class);
                             if (!snapshot.child(user.getUid()).exists()) {
                                 new User(user.getUid(), user.getDisplayName(), user.getEmail());
                             }
-                            startActivity(intent);
+                            changeToHomePage();
+
                         }
 
                         @Override
@@ -242,6 +247,11 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    private void changeToHomePage() {
+        Intent intent = new Intent(getApplication(), HomePageActivity.class);
+        startActivity(intent);
     }
 //
 //    private static final String TAG = "LoginActivity";

@@ -78,6 +78,9 @@
             android:name=".Controller.SettingsActivity"
             android:label="@string/title_activity_settings" />
 
+        <activity android:name=".Controller.OnboardingActivity"></activity>
+
+
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
 

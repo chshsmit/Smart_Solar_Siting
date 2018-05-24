@@ -59,12 +59,13 @@
     <string name="pan_settings">Panel Settings</string>
     <string name="extra_settings">Extras</string>
 
+    <string name="fov_dialog">Set a value between 0 and 180</string>
 
     <string name="hor_FOV">Horizontal Field of View</string>
-    <string name="hor_FOV_summ">Set camera\'s horizontal field of view</string>
+    <string name="hor_FOV_summ">Set camera\'s horizontal field of view. Current = </string>
 
     <string name="vert_FOV">Vertical Field of View</string>
-    <string name="vert_FOV_summ">Set camera\'s vertical field of view</string>
+    <string name="vert_FOV_summ">Set camera\'s vertical field of view. Current = </string>
 
     <string name="panorama">Panorama</string>
     <string name="panorama_summ">Indicate whether you want panorama turned on</string>

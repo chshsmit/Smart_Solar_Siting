@@ -142,7 +142,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     switch(preference.getKey()){
 
                         case "system_capacity":
-
+                            System.out.println("Sys_Cap");
                             if(valueNotInRange(intValue, R.integer.sys_cap_min, R.integer.sys_cap_max)){
                                 break;
                             }
@@ -171,6 +171,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 break;
                             }
                             preference.setSummary(mContext.getString(R.string.sys_azimuth_summ)
+                                    +" "+stringValue+ (char) 0x00B0 );
+                            break;
+
+                        case "change_horizontal":
+                            System.out.println("Horizontal");
+                            if(valueNotInRange(intValue, R.integer.ZERO, R.integer.fov_max)){
+                                break;
+                            }
+                            preference.setSummary(mContext.getString(R.string.hor_FOV_summ)
+                                    +" "+stringValue+ (char) 0x00B0 );
+                            break;
+
+                        case "change_vertical":
+                            System.out.println("Vertical");
+                            if(valueNotInRange(intValue, R.integer.ZERO, R.integer.fov_max)){
+                                break;
+                            }
+                            preference.setSummary(mContext.getString(R.string.vert_FOV_summ)
                                     +" "+stringValue+ (char) 0x00B0 );
                             break;
 

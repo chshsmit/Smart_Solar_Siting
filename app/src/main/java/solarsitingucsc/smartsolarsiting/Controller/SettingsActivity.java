@@ -235,8 +235,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     //----------------------------------------------------------------------------------------------
 
 
-
-
     //Toast utility Function
     public static void toastMessage(String message, Context currentActivity)
     {

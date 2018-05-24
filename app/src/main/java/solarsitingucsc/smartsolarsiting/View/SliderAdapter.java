@@ -48,7 +48,8 @@ public class SliderAdapter extends PagerAdapter {
     //TODO:Change Descriptions
     private String[] slide_descriptions = {
             "Welcome to Smart Solar Siting",
-            "Something about power",
+            "Our platform allows you to perform solar site surveys right from your mobile phone!" +
+                    "Find all your solar site surveu needs here!",
             "Customize your panel and camera in the settings! Click the cog in the top " +
                     "right corner on the homepage to access them!",
             "If you have any more questions view our tooltips and tutorial video" +

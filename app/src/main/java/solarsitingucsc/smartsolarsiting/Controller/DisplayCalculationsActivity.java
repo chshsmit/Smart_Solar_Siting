@@ -129,24 +129,19 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private boolean showLineChart;
     private Spinner dropdown;
     private HashMap<String, HashMap<String, Double>> powerMap;
-    private Bitmap originalImage;
-    private Bitmap rotatedImage;
-    private Bitmap screenshot;
     private Bitmap b;
-    private ImageView watershed;
-    private ImageView dots;
-    private List<List<Vertex>> janV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> febV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> marV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> aprV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> mayV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> junV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> julV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> augV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> sepV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> octV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> novV = new ArrayList<List<Vertex>>();
-    private List<List<Vertex>> decV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> janV = new ArrayList<>();
+    private List<List<Vertex>> febV = new ArrayList<>();
+    private List<List<Vertex>> marV = new ArrayList<>();
+    private List<List<Vertex>> aprV = new ArrayList<>();
+    private List<List<Vertex>> mayV = new ArrayList<>();
+    private List<List<Vertex>> junV = new ArrayList<>();
+    private List<List<Vertex>> julV = new ArrayList<>();
+    private List<List<Vertex>> augV = new ArrayList<>();
+    private List<List<Vertex>> sepV = new ArrayList<>();
+    private List<List<Vertex>> octV = new ArrayList<>();
+    private List<List<Vertex>> novV = new ArrayList<>();
+    private List<List<Vertex>> decV = new ArrayList<>();
     private int janBox = 0;
     private int febBox = 0;
     private int marBox = 0;
@@ -169,27 +164,21 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //Getting values from shared preferences
         setPanelConstraints();
-
         //Free memory and set firebase auth
         freeMemAndFirebase();
-
         //Set up save button and progress bar
         initializeViews();
-
         HashMap<String, HashMap<String, Double>> powerList =
                 (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
-
         if (powerList != null) {
             powerMap = powerList;
             initializeToolBar();
-//            setupDropdown(powerList);
             saved = true;
         }
         else {
             saved = false;
             //Set values from the intent
             getIntentValues();
-
             //Get the image and make google request
             setBitmap();
         }
@@ -221,15 +210,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             b = BitmapFactory.decodeByteArray(
                     getIntent().getByteArrayExtra("byteArray"),0,getIntent()
                             .getByteArrayExtra("byteArray").length, options);
-            watershed = (ImageView) findViewById(R.id.watershed);
-            watershed.setImageBitmap(b);
-            watershed.setScaleType(ImageView.ScaleType.FIT_XY);
-            watershed.setImageBitmap(b);
         }
-//        dots = (ImageView) findViewById(R.id.dots);
-//        dots.setImageBitmap(screenshot);
-//        dots.setScaleType(ImageView.ScaleType.FIT_XY);
-//        dots.setImageBitmap(screenshot);
 
         b = Bitmap.createScaledBitmap(b,screenshot.getWidth(),screenshot.getHeight(),true);
         Log.d(TAG, "watershed width x height: " + b.getWidth() +"x" + b.getHeight());
@@ -663,12 +644,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private int getLevenshteinDistance(String a, String b) {
         a = a.toLowerCase();
         b = b.toLowerCase();
-        // i == 0
         int[] costs = new int[b.length() + 1];
         for (int j = 0; j < costs.length; j++)
             costs[j] = j;
         for (int i = 1; i <= a.length(); i++) {
-            // j == 0; nw = lev(i - 1, j)
             costs[0] = i;
             int nw = i - 1;
             for (int j = 1; j <= b.length(); j++) {
@@ -869,7 +848,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     }
 
     private void setupDropdown(final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth) {
-//        final Spinner dropdown = findViewById(R.id.spinner);
 
         try {
             Field popup = Spinner.class.getDeclaredField("mPopup");
@@ -963,7 +941,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 if(textAnnotations!=null) {
                     for (int i = 0; i < textAnnotations.size() - 1; i++) {
                         Log.d(TAG, "TA Element: " + Integer.toString(i));
-//                    EntityAnnotation point = textAnnotations.get(i);
 
                         BoundingPoly textBox = textAnnotations.get(i).getBoundingPoly();
                         String desc = textAnnotations.get(i).getDescription();
@@ -983,8 +960,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                             else if (month.equals("10")) novV.add(textBox.getVertices());
                             else if (month.equals("11")) decV.add(textBox.getVertices());
                         }
-
-//                    vertices.add(textBox.getVertices());
                     }
                     Log.d(TAG, "jan length: " + Integer.toString(janV.size()));
                     Log.d(TAG, "feb length: " + Integer.toString(febV.size()));
@@ -1154,35 +1129,28 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             //Setting up the toolbar
             initializeToolBar();
-//            setupDropdown(powerByTimeAndMonth);
         }
     }
 
     public boolean processPixels(List<List<Vertex>> vertices, int box)
     {
         if(box<vertices.size()) {
-//            Log.d(TAG, "month size: " + vertices.size() + " verx: " + vertices.get(box).get(0).getX());
-//            if (vertices.get(box).get(0) != null) {
             int[] pixels = new int[400];
             b.getPixels(pixels, 0, 20,
                     vertices.get(box).get(0).getX(), vertices.get(box).get(0).getY(), 20, 20);
             for (int k = 0; k < 400; k++) {
-//                    for (int j = 0; j < 20; j++) {
                 if (Color.red(pixels[k]) <= 250 && Color.green(pixels[k]) <= 250 &&
                         Color.blue(pixels[k]) <= 250) {
                     Log.d(TAG, "NOT ADDED");
                     return false;
                 }
-//                    }
             }
-//            }
         }
         return true;
     }
 
     private double getPower(int month, int hour) {
         //We increment by 24 hour time periods
-//        Log.d(TAG, "month: " + Integer.toString(month));
         final int TWENTY_FOUR_HOURS = 24;
         double[] arrayForMonth = splitForMonth(month);
         double totalAcWatts = 0;
@@ -1191,6 +1159,5 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         }
         return totalAcWatts/1000;   //Converting from Watts to Kilowatts
     }
-
 }
 

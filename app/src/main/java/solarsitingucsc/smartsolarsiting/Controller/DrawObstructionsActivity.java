@@ -159,8 +159,6 @@ public class DrawObstructionsActivity extends AppCompatActivity {
                 context.startActivity(intent);
                 fabConfirm.setVisibility(View.VISIBLE);
                 fabDelete.setVisibility(View.VISIBLE);
-//                fabConfirm.show();
-//                fabDelete.show();
                 finish();
             }
         });
@@ -169,7 +167,6 @@ public class DrawObstructionsActivity extends AppCompatActivity {
     public Mat steptowatershed(Mat img, Mat gray_mat)
     {
         Mat threeChannel = new Mat();
-//        Mat gray_mat=new Mat();
         Imgproc.cvtColor(gray_mat,img,Imgproc.COLOR_RGBA2RGB);
         Log.d(TAG, "hihihihih" + Integer.toString(img.width()));
         Imgproc.cvtColor(img, threeChannel, Imgproc.COLOR_BGR2GRAY);
@@ -213,11 +210,6 @@ public class DrawObstructionsActivity extends AppCompatActivity {
         try {
             File screenshotFile = getInternalOutputMediaFile(this);
             ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), screenshotFile);
-
-            //Save screenshot to phone's images
-//            File screenshotFile2 = getExternalOutputMediaFile(MEDIA_TYPE_IMAGE);
-//            ScreenshotUtils.savePic(ScreenshotUtils.takeScreenShot(this), screenshotFile2);
-
             return screenshotFile.getName();
         } catch (NullPointerException ignored) {
             ignored.printStackTrace();

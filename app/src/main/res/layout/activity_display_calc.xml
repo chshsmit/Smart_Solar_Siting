@@ -83,12 +83,4 @@
         app:backgroundTint="@android:color/holo_green_light"
         android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/watershed"
-        android:layout_width="91dp"
-        android:layout_height="88dp"
-        app:srcCompat="@drawable/baseline_bar_chart_black_36dp"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="52dp" />
-
 </android.support.constraint.ConstraintLayout>

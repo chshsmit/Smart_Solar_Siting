@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="/Users/andrewguterres/Desktop/develop/openCVLibrary341/src/main/shaders"/></dataSet><dataSet config="debug"><source path="/Users/andrewguterres/Desktop/develop/openCVLibrary341/src/debug/shaders"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="C:\Users\user\Smart Solar Siting\CMPS116\openCVLibrary341\src\main\shaders"/></dataSet><dataSet config="debug"><source path="C:\Users\user\Smart Solar Siting\CMPS116\openCVLibrary341\src\debug\shaders"/></dataSet></merger>

@@ -15,10 +15,14 @@ import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -80,14 +84,19 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.CDL;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -164,18 +173,22 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         //Getting values from shared preferences
         setPanelConstraints();
+
         //Free memory and set firebase auth
         freeMemAndFirebase();
+
         //Set up save button and progress bar
         initializeViews();
+
         HashMap<String, HashMap<String, Double>> powerList =
-                (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
+                (HashMap<String, HashMap<String, Double>>) getIntent()
+                        .getSerializableExtra("powerList");
+
         if (powerList != null) {
             powerMap = powerList;
             initializeToolBar();
             saved = true;
-        }
-        else {
+        } else {
             saved = false;
             //Set values from the intent
             getIntentValues();
@@ -300,6 +313,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     }
 
     //Toolbar function for when the dots are selected
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -350,22 +364,53 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
         }
 
         String text = dropdown.getSelectedItem().toString();
-        if (text.equals("All"))
-            text += " months";
         if (id == R.id.share) {
+
+            String eol = System.getProperty("line.separator");
+            File file = new File("data/data/solarsitingucsc.smartsolarsiting/test.csv");
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            try (Writer writer = new FileWriter("data/data/solarsitingucsc.smartsolarsiting/test.csv")) {
+                for (HashMap<String, Double> stringDoubleHashMap : powerMap.values()) {
+                    for (String val : stringDoubleHashMap.keySet()) {
+                        writer.append(val)
+                                .append(',')
+                                .append(Double.toString(stringDoubleHashMap.get(val)))
+                                .append(eol);
+                    }
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace(System.err);
+            }
+            Uri path = FileProvider.getUriForFile(getApplicationContext(),
+                    getString(R.string.file_provider_authority),
+                    file);
             Intent intent = new Intent(Intent.ACTION_SEND);
-            Bitmap bitmap = lineChart.getChartBitmap();
+            Bitmap bitmap;
+            if (showLineChart) {
+                bitmap = lineChart.getChartBitmap();
+            } else {
+                bitmap = lineChart.getChartBitmap();
+            }
             String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "title", null);
             Uri bitmapUri = Uri.parse(bitmapPath);
             intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
-
+            if (text.equals("All"))
+                text += " months";
             intent.putExtra(Intent.EXTRA_TEXT, text);
+            intent.putExtra(Intent.EXTRA_STREAM, path);
             intent.setType("*/*");
+
+
             startActivity(Intent.createChooser(intent, "Share"));
 
             return true;
-        }
-        else if (id == R.id.change_chart_type) {
+        } else if (id == R.id.change_chart_type) {
             showLineChart = !showLineChart;
             if (showLineChart) {
                 displayLineChart(text);
@@ -749,7 +794,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
     private void generateChartData(String month, HashMap<String, HashMap<String, Double>> powerMap) {
         lineEntries = new ArrayList<>();
-        barEntries= new ArrayList<>();
+        barEntries = new ArrayList<>();
         if (month.equals("All")) {
             Double[] monthValues = new Double[12];
             HashMap<String, Double> allValues = powerMap.get(month);
@@ -761,7 +806,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             }
             for (int i = 0; i < monthValues.length; i++) {
                 lineEntries.add(new Entry(i, monthValues[i].floatValue()));
-                barEntries.add(new BarEntry((float)i, monthValues[i].floatValue()));
+                barEntries.add(new BarEntry((float) i, monthValues[i].floatValue()));
             }
 
         } else {
@@ -779,7 +824,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             }
             for (int i = 0; i < hours.length; i++) {
                 lineEntries.add(new Entry(i, hours[i].floatValue()));
-                barEntries.add(new BarEntry((float)i, hours[i].floatValue()));
+                barEntries.add(new BarEntry((float) i, hours[i].floatValue()));
 
             }
             String[] stringHours = new String[hours.length];
@@ -995,7 +1040,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             Arrays.fill(monthlyPower, 0d);
             final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth = new HashMap<>();
             while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
+                Map.Entry pair = (Map.Entry) it.next();
                 String key = (String) pair.getKey();
                 int value = (int) pair.getValue();
                 int dashIndex = key.indexOf("-");

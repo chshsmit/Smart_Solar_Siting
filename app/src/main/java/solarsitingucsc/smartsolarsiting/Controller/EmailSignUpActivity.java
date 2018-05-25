@@ -1,7 +1,9 @@
 package solarsitingucsc.smartsolarsiting.Controller;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -87,9 +89,8 @@ public class EmailSignUpActivity extends AppCompatActivity {
                             Toast.makeText(EmailSignUpActivity.this,
                                     "Verification email sent to " + user.getEmail(),
                                     Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplication(), HomePageActivity
-                                    .class);
-                            startActivity(intent);
+
+                            changeOnboarding();
                         } else {
                             Toast.makeText(EmailSignUpActivity.this,
                                     "Failed to send verification email.",
@@ -98,6 +99,12 @@ public class EmailSignUpActivity extends AppCompatActivity {
                     }
                 });
         }
+    }
+
+    private void changeOnboarding(){
+        Intent onboarding = new Intent(EmailSignUpActivity.this,
+                OnboardingActivity.class);
+        startActivity(onboarding);
     }
 
 

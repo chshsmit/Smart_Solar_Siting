@@ -45,6 +45,12 @@ public class MainActivity extends Activity {
     private FrameLayout cameraPreviewPane;
     private ProgressBar progressBar;
 
+
+    static{
+        System.loadLibrary("opencv_java3");
+        System.loadLibrary("MyLib");
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -243,8 +249,5 @@ public class MainActivity extends Activity {
         });
 
     }
-
-
-
 
 }

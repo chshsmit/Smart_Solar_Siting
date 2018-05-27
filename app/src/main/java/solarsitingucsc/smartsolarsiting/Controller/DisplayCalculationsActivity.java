@@ -101,9 +101,11 @@ import java.util.Calendar;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -340,14 +342,35 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
                 }
             }
             try (Writer writer = new FileWriter("data/data/solarsitingucsc.smartsolarsiting/test.csv")) {
-                for (HashMap<String, Double> stringDoubleHashMap : powerMap.values()) {
-                    for (String val : stringDoubleHashMap.keySet()) {
-                        writer.append(val)
-                                .append(',')
-                                .append(Double.toString(stringDoubleHashMap.get(val)))
-                                .append(eol);
-                    }
+                String header = "Time, " + Arrays.toString(powerMap.keySet().toArray()).replaceAll("\\[(.*?)\\]", "$1").replace("All, ", "").replace("Annual, ", "");
+                writer.append(header).append(eol);
+                StringBuilder totals = new StringBuilder("Totals,");
+                Set<String> times = new HashSet<>();
+                for (String key : (powerMap.keySet().toArray(new String[0]))) {
+                    if(!key.equals("All") && !key.equals("Annual"))
+                        totals.append(powerMap.get("All").get(key)).append(",");
                 }
+                for (String stringDoubleHashMap : powerMap.keySet()) {
+                    if(!stringDoubleHashMap.equals("All"))
+                        times.addAll(Arrays.asList(powerMap.get(stringDoubleHashMap).keySet().toArray(new String[0])));
+                }
+                StringBuilder row = new StringBuilder();
+                for (String time : times) {
+                    row.append(time).append(",");
+                    for (String key : powerMap.keySet()) {
+                        if (!key.equals("All") && !key.equals("Annual")) {
+                            HashMap<String, Double> vals = powerMap.get(key);
+                            Double val = vals.get(time);
+                            if (val == null)
+                                row.append(",");
+                            else
+                                row.append(val.toString()).append(",");
+                        }
+                    }
+                    writer.append(row.toString()).append(eol);
+                    row = new StringBuilder();
+                }
+                writer.append(eol).append(eol).append(totals.toString());
             } catch (IOException ex) {
                 ex.printStackTrace(System.err);
             }
@@ -850,6 +873,9 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         BarDataSet dataSet = new BarDataSet(barEntries, "Power in KW");
         BarData barData = new BarData(dataSet);
+        Description description = new Description();
+        description.setText("");
+        lineChart.setDescription(description);
         barChart.setData(barData);
         barChart.invalidate();
         barData.setBarWidth(0.9f);

@@ -25,6 +25,8 @@
     <string name="jpeg_export">Export JPEG</string>
     <string name="csv_export">Export CSV</string>
 
+    <string name="file_provider_authority" translatable="false">solarsitingucsc.smartsolarsiting.fileprovider</string>
+
     <!--Toolbar Strings-->
     <string name="app_title">Smart Solar Siting</string>
     <string name="home">Home</string>

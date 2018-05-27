@@ -378,7 +378,6 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
 
         //Exporting Options
         if (id == R.id.share) {
-
             View menuViewItem = findViewById(R.id.share);
             PopupMenu exportMenu = new PopupMenu(this, menuViewItem);
             exportMenu.setOnMenuItemClickListener(this);

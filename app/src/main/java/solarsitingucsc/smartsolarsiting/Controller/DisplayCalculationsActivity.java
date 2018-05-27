@@ -142,7 +142,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
     private boolean showLineChart;
     private Spinner dropdown;
     private HashMap<String, HashMap<String, Double>> powerMap;
-//    private Bitmap originalImage;
+    //    private Bitmap originalImage;
 //    private Bitmap rotatedImage;
 //    private Bitmap screenshot;
     private Bitmap b;
@@ -225,10 +225,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
 
         Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
         thumbnail = makeThumbnail(originalImage, matrix);
-        if(getIntent().hasExtra("byteArray")) {
+        if (getIntent().hasExtra("byteArray")) {
             Log.d(TAG, "FOUNDBYTEARRAY");
             b = BitmapFactory.decodeByteArray(
-                    getIntent().getByteArrayExtra("byteArray"),0,getIntent()
+                    getIntent().getByteArrayExtra("byteArray"), 0, getIntent()
                             .getByteArrayExtra("byteArray").length, options);
 //            watershed = (ImageView) findViewById(R.id.watershed);
 //            watershed.setImageBitmap(b);
@@ -236,8 +236,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
 //            watershed.setImageBitmap(b);
         }
 
-        b = Bitmap.createScaledBitmap(b,screenshot.getWidth(),screenshot.getHeight(),true);
-        Log.d(TAG, "watershed width x height: " + b.getWidth() +"x" + b.getHeight());
+        b = Bitmap.createScaledBitmap(b, screenshot.getWidth(), screenshot.getHeight(), true);
+        Log.d(TAG, "watershed width x height: " + b.getWidth() + "x" + b.getHeight());
         Log.d(TAG, "dots width x height: " + screenshot.getWidth() + "x" + screenshot.getHeight());
         new MakeGoogleRequest().execute(screenshot);
         deleteFile(screenshotName);
@@ -388,8 +388,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
             exportMenu.show();
             return true;
 
-        }
-        else if (id == R.id.change_chart_type) {
+        } else if (id == R.id.change_chart_type) {
             showLineChart = !showLineChart;
             if (showLineChart) {
                 displayLineChart(text);
@@ -407,9 +406,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
     //Export popup menu functions
     //----------------------------------------------------------------------------------------------
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    public boolean onMenuItemClick(MenuItem item){
-        switch(item.getItemId()) {
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.export_json:
                 exportJSON();
                 return true;
@@ -422,32 +422,108 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                 exportJPEG();
                 return true;
 
-                default:
-                    return false;
+            default:
+                return false;
         }
     }
 
 
-
-    private void exportJSON(){
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void exportJSON() {
         System.out.println("JSON Exporting");
+        String text = dropdown.getSelectedItem().toString();
+        Gson gsonObj = new Gson();
+        String jsonStr = gsonObj.toJson(powerMap);
+        File file = new File("data/data/solarsitingucsc.smartsolarsiting/export.json");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try (Writer writer = new FileWriter("data/data/solarsitingucsc.smartsolarsiting/export.json")) {
+            writer.append(jsonStr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Uri path = FileProvider.getUriForFile(getApplicationContext(),
+                getString(R.string.file_provider_authority),
+                file);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        intent.putExtra(Intent.EXTRA_STREAM, path);
+        intent.setType("*/*");
+        startActivity(Intent.createChooser(intent, "Share"));
     }
 
-    private void exportCSV(){
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void exportCSV() {
         System.out.println("CSV Exporting");
+        String text = dropdown.getSelectedItem().toString();
+        File file = new File("data/data/solarsitingucsc.smartsolarsiting/export.csv");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try (Writer writer = new FileWriter("data/data/solarsitingucsc.smartsolarsiting/export.csv")) {
+            String eol = System.getProperty("line.separator");
+            String header = "Time, " + Arrays.toString(powerMap.keySet().toArray()).replaceAll("\\[(.*?)\\]", "$1").replace("All, ", "").replace("Annual, ", "");
+            writer.append(header).append(eol);
+            StringBuilder totals = new StringBuilder("Totals,");
+            Set<String> times = new HashSet<>();
+            for (String key : (powerMap.keySet().toArray(new String[0]))) {
+                if (!key.equals("All") && !key.equals("Annual"))
+                    totals.append(powerMap.get("All").get(key)).append(",");
+            }
+            for (String stringDoubleHashMap : powerMap.keySet()) {
+                if (!stringDoubleHashMap.equals("All"))
+                    times.addAll(Arrays.asList(powerMap.get(stringDoubleHashMap).keySet().toArray(new String[0])));
+            }
+            StringBuilder row = new StringBuilder();
+            for (String time : times) {
+                row.append(time).append(",");
+                for (String key : powerMap.keySet()) {
+                    if (!key.equals("All") && !key.equals("Annual")) {
+                        HashMap<String, Double> vals = powerMap.get(key);
+                        Double val = vals.get(time);
+                        if (val == null)
+                            row.append(",");
+                        else
+                            row.append(val.toString()).append(",");
+                    }
+                }
+                writer.append(row.toString()).append(eol);
+                row = new StringBuilder();
+            }
+            writer.append(eol).append(eol).append(totals.toString());
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
+        Uri path = FileProvider.getUriForFile(getApplicationContext(),
+                getString(R.string.file_provider_authority),
+                file);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        intent.putExtra(Intent.EXTRA_STREAM, path);
+        intent.setType("*/*");
+        startActivity(Intent.createChooser(intent, "Share"));
     }
 
 
-    private void exportJPEG(){
+    private void exportJPEG() {
         System.out.println("JPEG Exporting");
         String text = dropdown.getSelectedItem().toString();
-
         Intent intent = new Intent(Intent.ACTION_SEND);
         Bitmap bitmap = lineChart.getChartBitmap();
         String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "title", null);
         Uri bitmapUri = Uri.parse(bitmapPath);
         intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
-
+        if (text.equals("All"))
+            text += " months";
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("*/*");
         startActivity(Intent.createChooser(intent, "Share"));
@@ -1016,7 +1092,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                 //This contains the coordinates for each -- to be used later
                 List<EntityAnnotation> textAnnotations = batchResponse.getResponses().get(0)
                         .getTextAnnotations();
-                if(textAnnotations!=null) {
+                if (textAnnotations != null) {
                     for (int i = 0; i < textAnnotations.size() - 1; i++) {
                         Log.d(TAG, "TA Element: " + Integer.toString(i));
 
@@ -1069,7 +1145,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
             Double annualPower = 0d;
             final Double[] monthlyPower = new Double[12];
             int[] ipMonthlyPower = new int[12];
-            int ipPower =0;
+            int ipPower = 0;
             Arrays.fill(monthlyPower, 0d);
             final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth = new HashMap<>();
             while (it.hasNext()) {
@@ -1085,94 +1161,71 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                 for (int i = 0; i < value; i++) {
                     try {
                         int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
-                        double power=0;
-                        if (monthInt == 0 && janV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(janV,janBox) && janBox<janV.size())
-                            {
+                        double power = 0;
+                        if (monthInt == 0 && janV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(janV, janBox) && janBox < janV.size()) {
                                 janBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, janV) / 6;
-                        }
-                        else if (monthInt == 1 && febV.size()!=0){
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(febV, febBox) && febBox<febV.size())
-                            {
+                        } else if (monthInt == 1 && febV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(febV, febBox) && febBox < febV.size()) {
                                 febBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, febV) / 6;
 
-                        }
-                        else if (monthInt == 2 && marV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(marV, marBox) && marBox<marV.size())
-                            {
+                        } else if (monthInt == 2 && marV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(marV, marBox) && marBox < marV.size()) {
                                 marBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, marV) / 6;
-                        }
-                        else if (monthInt == 3 && aprV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(aprV, aprBox) && aprBox<aprV.size())
-                            {
+                        } else if (monthInt == 3 && aprV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(aprV, aprBox) && aprBox < aprV.size()) {
                                 aprBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, aprV) / 6;
-                        }
-                        else if (monthInt == 4 && mayV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(mayV, mayBox) && mayBox<mayV.size())
-                            {
+                        } else if (monthInt == 4 && mayV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(mayV, mayBox) && mayBox < mayV.size()) {
                                 mayBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, mayV) / 6;
-                        }
-                        else if (monthInt == 5 && junV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(junV, junBox) && junBox<junV.size())
-                            {
+                        } else if (monthInt == 5 && junV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(junV, junBox) && junBox < junV.size()) {
                                 junBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, junV) / 6;
-                        }
-                        else if (monthInt == 6 && julV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(julV, julBox) && julBox<julV.size())
-                            {
+                        } else if (monthInt == 6 && julV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(julV, julBox) && julBox < julV.size()) {
                                 julBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, julV) / 6;
-                        }
-                        else if (monthInt == 7 && augV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(augV, augBox) && augBox<augV.size())
-                            {
+                        } else if (monthInt == 7 && augV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(augV, augBox) && augBox < augV.size()) {
                                 augBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, augV) / 6;
-                        }
-                        else if (monthInt == 8 && sepV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(sepV, sepBox) && sepBox<sepV.size())
-                            {
+                        } else if (monthInt == 8 && sepV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(sepV, sepBox) && sepBox < sepV.size()) {
                                 sepBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, sepV) / 6;
-                        }
-                        else if (monthInt == 9 && octV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(octV, octBox) && octBox<octV.size())
-                            {
+                        } else if (monthInt == 9 && octV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(octV, octBox) && octBox < octV.size()) {
                                 octBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, octV) / 6;
-                        }
-                        else if (monthInt == 10 && novV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(novV, novBox) && novBox<novV.size())
-                            {
+                        } else if (monthInt == 10 && novV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(novV, novBox) && novBox < novV.size()) {
                                 novBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, novV) / 6;
-                        }
-                        else if (monthInt == 11 && decV.size()!=0) {
-                            Log.d(TAG,"Month: " + monthInt);
-                            if(!processPixels(decV, decBox) && decBox<decV.size())
-                            {
+                        } else if (monthInt == 11 && decV.size() != 0) {
+                            Log.d(TAG, "Month: " + monthInt);
+                            if (!processPixels(decV, decBox) && decBox < decV.size()) {
                                 decBox++;
                             } else power = getPowerForMonthAndHour(monthInt, hourInt, decV) / 6;
                         }
-                        double pow = getPower(monthInt, hourInt)/6;
-                        ipPower += getPower(monthInt,hourInt);
+                        double pow = getPower(monthInt, hourInt) / 6;
+                        ipPower += getPower(monthInt, hourInt);
                         annualPower += power;
                         monthlyPower[monthInt] += power;
                         ipMonthlyPower[monthInt] += pow;
@@ -1210,9 +1263,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
         }
     }
 
-    public boolean processPixels(List<List<Vertex>> vertices, int box)
-    {
-        if(box<vertices.size()) {
+    public boolean processPixels(List<List<Vertex>> vertices, int box) {
+        if (box < vertices.size()) {
             int[] pixels = new int[400];
             b.getPixels(pixels, 0, 20,
                     vertices.get(box).get(0).getX(), vertices.get(box).get(0).getY(), 20, 20);
@@ -1232,10 +1284,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
         final int TWENTY_FOUR_HOURS = 24;
         double[] arrayForMonth = splitForMonth(month);
         double totalAcWatts = 0;
-        for(int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
+        for (int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS) {
             totalAcWatts += arrayForMonth[index];
         }
-        return totalAcWatts/1000;   //Converting from Watts to Kilowatts
+        return totalAcWatts / 1000;   //Converting from Watts to Kilowatts
     }
 }
 

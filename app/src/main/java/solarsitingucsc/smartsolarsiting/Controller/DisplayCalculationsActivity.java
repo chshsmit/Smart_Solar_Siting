@@ -491,7 +491,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                         HashMap<String, Double> vals = powerMap.get(key);
                         Double val = vals.get(time);
                         if (val == null)
-                            row.append(",");
+                            row.append("0,");
                         else
                             row.append(val.toString()).append(",");
                     }

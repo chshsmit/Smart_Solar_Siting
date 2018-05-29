@@ -266,7 +266,6 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         for (int i = 0; i < averageArray.length; i++) {
             canvas.save();
 
-            //TODO:Attempt to change the dx and dy values to make the camera work in landscape
             if(Math.toDegrees(orientation[0]) < 0) {
                 //AZIMUTH CORRECTION
                 dx = (float) ( (canvas.getWidth()/ horizontalFOV) *
@@ -289,7 +288,6 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
             }
 
 
-            //TODO:Attempt to switch the translation to see if the camera will work in landscape
             // wait to translate the dx so the horizon doesn't get pushed off
             canvas.translate(0.0f, 0.0f-dy);
 

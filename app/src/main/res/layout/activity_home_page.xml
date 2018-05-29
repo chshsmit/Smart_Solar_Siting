@@ -34,6 +34,7 @@
 
     </ListView>
 
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/newSolarSite"
         android:layout_width="match_parent"
@@ -48,6 +49,8 @@
         app:layout_constraintTop_toBottomOf="@+id/previous_site_list_view"
         app:menu="@menu/bottom_nav_items">
     </android.support.design.widget.BottomNavigationView>
+
+
 
 
 </android.support.constraint.ConstraintLayout>

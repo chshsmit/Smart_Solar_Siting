@@ -9,12 +9,27 @@
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/hor_FOV"
             android:summary="@string/hor_FOV_summ"
-            android:key="change_horizontal" />
+            android:dialogMessage="@string/fov_dialog"
+            android:defaultValue="50"
+            android:key="change_horizontal"
+            preference:maxValue="@integer/fov_max"
+            preference:minValue="@integer/ZERO"/>
 
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/vert_FOV"
             android:summary="@string/vert_FOV_summ"
-            android:key="change_vertical" />
+            android:dialogMessage="@string/fov_dialog"
+            android:defaultValue="50"
+            android:key="change_vertical"
+            preference:minValue="@integer/ZERO"
+            preference:maxValue="@integer/fov_max"/>
+
+        <CheckBoxPreference
+            android:title="@string/land_orient"
+            android:summary="@string/land_orient_summ"
+            android:defaultValue="false"
+            android:key="land_orient"
+            />
 
         <CheckBoxPreference
             android:title="@string/panorama"

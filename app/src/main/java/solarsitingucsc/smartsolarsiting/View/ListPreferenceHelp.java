@@ -11,14 +11,6 @@ import android.util.AttributeSet;
 import android.support.v7.widget.TooltipCompat;
 
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.LayoutInflater;
-
-import android.widget.LinearLayout;
-
-import android.widget.ImageButton;
-import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import solarsitingucsc.smartsolarsiting.Controller.SettingsActivity;
 import solarsitingucsc.smartsolarsiting.R;
@@ -29,9 +21,7 @@ import solarsitingucsc.smartsolarsiting.R;
  */
 
 public class ListPreferenceHelp extends ListPreference {
-    private final Listener helpListener = new Listener();
 
-    //public static final String DEFAULT_TIP = "";
     private String TOOLTIP_STR;
 
     public ListPreferenceHelp(Context context, AttributeSet attrs) {
@@ -47,20 +37,11 @@ public class ListPreferenceHelp extends ListPreference {
     @Override protected void onBindView(View view) {
         super.onBindView(view);
 
-
-        ImageButton tooltipButton = (ImageButton) view.findViewById(R.id.PrefTooltip);
-        tooltipButton.setOnClickListener(helpListener);
+        View tooltipButton = view.findViewById(R.id.PrefTooltip);
+        //tooltipButton.setOnClickListener(helpListener);
         TooltipCompat.setTooltipText(tooltipButton,TOOLTIP_STR);
-    }
+        // TODO: Fix listener conflict / test further on other devices
 
-    /** Listener to open tooltip on click */
-    /** TODO: FIX CONFLICT WITH PREFERENCE LISTENER */
-
-    private class Listener implements CompoundButton.OnClickListener {
-        @Override public void onClick(View btnView) {
-            Toast tip = Toast.makeText(btnView.getContext(),TOOLTIP_STR,Toast.LENGTH_LONG);
-            tip.show();
-        }
     }
 
 }

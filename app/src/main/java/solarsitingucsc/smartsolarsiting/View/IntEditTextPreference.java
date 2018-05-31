@@ -26,6 +26,10 @@ public class IntEditTextPreference extends EditTextPreference {
     private int MAX_VALUE;
     private String TOOLTIP_STRING;
 
+    //----------------------------------------------------------------------------------------------
+    //Constructor Functions to obtain values from styles
+    //----------------------------------------------------------------------------------------------
+
     public IntEditTextPreference(Context context) {
         super(context);
     }
@@ -49,6 +53,10 @@ public class IntEditTextPreference extends EditTextPreference {
         TOOLTIP_STRING = a.getString(R.styleable.IntEditTextPreference_editTextTip);
     }
 
+    //----------------------------------------------------------------------------------------------
+    //Functions to handle the clicking of the tooltip function and binding of the view
+    //----------------------------------------------------------------------------------------------
+
     @Override
     protected void onBindView(View view) {
         super.onBindView(view);
@@ -59,6 +67,10 @@ public class IntEditTextPreference extends EditTextPreference {
         // TODO: Fix listener conflict / test further on other devices
 
     }
+
+    //----------------------------------------------------------------------------------------------
+    //Functions to save entered value and assure it is in the proper range
+    //----------------------------------------------------------------------------------------------
 
 
     @Override

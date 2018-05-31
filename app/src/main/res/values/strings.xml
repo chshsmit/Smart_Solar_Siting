@@ -110,8 +110,7 @@
     <string name="sys_dataset">System Dataset</string>
     <string name="sys_dataset_summ">Choose the dataset you wish to use.</string>
     <string name="sys_dataset_dialog">
-      The default NSRDB dataset sources weather conditions within your 4x4km grid cell. 
-      Legacy TMY datasets source from the nearest NREL weather station.</string>
+      Meteorological data source: NSRDB (4x4km grid cell), TMY (nearest weather station).</string>
 
     <string name="help">More information</string>
 

@@ -94,23 +94,15 @@
             preference:minValue="@integer/ZERO"
             preference:maxValue="@integer/sys_azimuth_max"/>
 
-        <ListPreference
+        <solarsitingucsc.smartsolarsiting.View.ListPreferenceHelp
             android:defaultValue="nsrdb"
             android:entries="@array/sys_dataset_entries"
             android:entryValues="@array/sys_dataset_values"
             android:key="sys_dataset"
             android:summary="@string/sys_dataset_summ"
             android:title="@string/sys_dataset"
-             />
-
-        <solarsitingucsc.smartsolarsiting.View.PreferenceHelp
-            android:dialogMessage="@string/sys_dataset_dialog"
-            android:icon="?android:attr/actionModeFindDrawable"
-            android:key="sys_dataset_help"
-            android:negativeButtonText=""
-            android:positiveButtonText="Okay"
-            android:summary="@string/help"
-            android:title="" />
+            android:layout="@layout/listpreference_help_layout"
+            preference:tipText="@string/sys_dataset_dialog"/>
 
 
     </PreferenceCategory>

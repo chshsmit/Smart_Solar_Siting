@@ -4,4 +4,8 @@
         <attr name="minValue" format="integer|reference"/>
         <attr name="maxValue" format="integer|reference"/>
     </declare-styleable>
+
+    <declare-styleable name="ListPreferenceHelp">
+        <attr name="tipText" format="string|reference"/>
+    </declare-styleable>
 </resources>

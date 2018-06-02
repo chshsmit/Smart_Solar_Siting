@@ -57,7 +57,7 @@
             android:layout="@layout/listpreference_help_layout"
             preference:minValue="@integer/sys_cap_min"
             preference:maxValue="@integer/sys_cap_max"
-            preference:editTextTip="Something about system capacity"/>
+            preference:editTextTip="@string/sys_cap_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.ListPreferenceHelp
             android:title="@string/sys_mod_type"
@@ -66,7 +66,7 @@
             android:defaultValue="1"
             android:key="sys_mod_type"
             android:layout="@layout/listpreference_help_layout"
-            preference:tipText="Choose the module type of your system"/>
+            preference:tipText="@string/sys_mod_type_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_losses"
@@ -77,7 +77,7 @@
             android:layout="@layout/listpreference_help_layout"
             preference:minValue="@integer/sys_losses_min"
             preference:maxValue="@integer/sys_losses_max"
-            preference:editTextTip="Something about system losses"/>
+            preference:editTextTip="@string/sys_losses_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.ListPreferenceHelp
             android:title="@string/sys_arr_type"
@@ -86,7 +86,7 @@
             android:defaultValue="1"
             android:key="sys_arr_type"
             android:layout="@layout/listpreference_help_layout"
-            preference:tipText="Choose the array type of your system"/>
+            preference:tipText="@string/sys_arr_type_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_tilt"
@@ -97,7 +97,7 @@
             android:layout="@layout/listpreference_help_layout"
             preference:minValue="@integer/ZERO"
             preference:maxValue="@integer/sys_tilt_max"
-            preference:editTextTip="Something about system tilt"/>
+            preference:editTextTip="@string/sys_tilt_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_azimuth"
@@ -108,7 +108,7 @@
             android:layout="@layout/listpreference_help_layout"
             preference:minValue="@integer/ZERO"
             preference:maxValue="@integer/sys_azimuth_max"
-            preference:editTextTip="Something about system azimuth"/>
+            preference:editTextTip="@string/sys_azimuth_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.ListPreferenceHelp
             android:defaultValue="nsrdb"
@@ -118,7 +118,7 @@
             android:summary="@string/sys_dataset_summ"
             android:title="@string/sys_dataset"
             android:layout="@layout/listpreference_help_layout"
-            preference:tipText="@string/sys_dataset_dialog"/>
+            preference:tipText="@string/sys_dataset_tip"/>
 
 
     </PreferenceCategory>

@@ -24,11 +24,19 @@ public class ListPreferenceHelp extends ListPreference {
 
     private String TOOLTIP_STR;
 
+    //----------------------------------------------------------------------------------------------
+    //Constructor
+    //----------------------------------------------------------------------------------------------
+
     public ListPreferenceHelp(Context context, AttributeSet attrs) {
         super(context, attrs);
         final TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.ListPreferenceHelp);
         TOOLTIP_STR = a.getString(R.styleable.ListPreferenceHelp_tipText);
     }
+
+    //----------------------------------------------------------------------------------------------
+    //Binding the view
+    //----------------------------------------------------------------------------------------------
 
     /** Since the Preference base class handles the icon and summary (or summaryOn and summaryOff in TwoStatePreference)
      * we only need to handle the tooltip button here. Simply get it from the previously created layout, set the data

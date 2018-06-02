@@ -128,4 +128,21 @@
     <string name="display_bar_chart">Display Bar Chart</string>
     <string name="display_line_chart">Display Line Chart</string>
 
+
+    <!--About Page Strings-->
+    <string name="dev_team_header">Development Team</string>
+    <string name="dev_team_names">Christopher Smith, Mattheo Ioannou, \n Nicole Thompson,
+                                    Andrew Guterres, \n Sam Singh, Henry Hargreaves</string>
+    <string name="version_info">Smart Solar Siting Version 1.0.0</string>
+
+
+
+
+
+
+
+
+
+
+
 </resources>

@@ -488,12 +488,16 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                 row.append(time).append(",");
                 for (String key : powerMap.keySet()) {
                     if (!key.equals("All") && !key.equals("Annual")) {
-                        HashMap<String, Double> vals = powerMap.get(key);
-                        Double val = vals.get(time);
-                        if (val == null)
-                            row.append(",");
-                        else
-                            row.append(val.toString()).append(",");
+                        try {
+                            HashMap<String, Double> vals = powerMap.get(key);
+                            Double val = Double.valueOf(vals.get(time));
+                            if (val == null)
+                                row.append("0,");
+                            else
+                                row.append(val.toString()).append(",");
+                        }catch(Throwable e){
+                            System.out.println();
+                        }
                     }
                 }
                 writer.append(row.toString()).append(eol);

@@ -19,3 +19,7 @@ local.properties
 /.idea/modules.xml
 /.idea
 /.idea/vcs.xml
+openCVLibrary341/build/*
+/openCVLibrary341/build/*
+/openCVLibrary341/build/
+openCVLibrary341/build/

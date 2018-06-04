@@ -153,10 +153,10 @@ public final class Grena3 {
     private static AzimuthZenithAngle[] calculateWholeMonth(int year, int month, double latitude,
                                                             double longitude){
         int hourIndex = 0, startTime = 6, endTime = 22, startDay = 1, deltaT = 68,
-                minuteIncrement = 10;
+                minuteIncrement = 15;
         GregorianCalendar currentDay = new GregorianCalendar(year, month, startDay, startTime, 0);
         AzimuthZenithAngle position;
-        AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[(endTime - startTime) * 6];
+        AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[(endTime - startTime) * 4];
 
         while(currentDay.get(Calendar.MONTH) == month) {
 

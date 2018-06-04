@@ -1170,65 +1170,65 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(janV, janBox) && janBox < janV.size()) {
                                 janBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, janV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, janV) / 4;
                         } else if (monthInt == 1 && febV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(febV, febBox) && febBox < febV.size()) {
                                 febBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, febV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, febV) / 4;
 
                         } else if (monthInt == 2 && marV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(marV, marBox) && marBox < marV.size()) {
                                 marBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, marV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, marV) / 4;
                         } else if (monthInt == 3 && aprV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(aprV, aprBox) && aprBox < aprV.size()) {
                                 aprBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, aprV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, aprV) / 4;
                         } else if (monthInt == 4 && mayV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(mayV, mayBox) && mayBox < mayV.size()) {
                                 mayBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, mayV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, mayV) / 4;
                         } else if (monthInt == 5 && junV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(junV, junBox) && junBox < junV.size()) {
                                 junBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, junV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, junV) / 4;
                         } else if (monthInt == 6 && julV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(julV, julBox) && julBox < julV.size()) {
                                 julBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, julV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, julV) / 4;
                         } else if (monthInt == 7 && augV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(augV, augBox) && augBox < augV.size()) {
                                 augBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, augV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, augV) / 4;
                         } else if (monthInt == 8 && sepV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(sepV, sepBox) && sepBox < sepV.size()) {
                                 sepBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, sepV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, sepV) / 4;
                         } else if (monthInt == 9 && octV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(octV, octBox) && octBox < octV.size()) {
                                 octBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, octV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, octV) / 4;
                         } else if (monthInt == 10 && novV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(novV, novBox) && novBox < novV.size()) {
                                 novBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, novV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, novV) / 4;
                         } else if (monthInt == 11 && decV.size() != 0) {
                             Log.d(TAG, "Month: " + monthInt);
                             if (!processPixels(decV, decBox) && decBox < decV.size()) {
                                 decBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, decV) / 6;
+                            } else power = getPowerForMonthAndHour(monthInt, hourInt, decV) / 4;
                         }
-                        double pow = getPower(monthInt, hourInt) / 6;
+                        double pow = getPower(monthInt, hourInt) / 4;
                         ipPower += getPower(monthInt, hourInt);
                         annualPower += power;
                         monthlyPower[monthInt] += power;

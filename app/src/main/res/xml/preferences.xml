@@ -12,8 +12,10 @@
             android:dialogMessage="@string/fov_dialog"
             android:defaultValue="50"
             android:key="change_horizontal"
+            android:layout="@layout/preference_help_layout"
             preference:maxValue="@integer/fov_max"
-            preference:minValue="@integer/ZERO"/>
+            preference:minValue="@integer/ZERO"
+            preference:editTextTip="Something about cam fov"/>
 
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/vert_FOV"
@@ -21,8 +23,10 @@
             android:dialogMessage="@string/fov_dialog"
             android:defaultValue="50"
             android:key="change_vertical"
+            android:layout="@layout/preference_help_layout"
             preference:minValue="@integer/ZERO"
-            preference:maxValue="@integer/fov_max"/>
+            preference:maxValue="@integer/fov_max"
+            preference:editTextTip="Something about cam fov"/>
 
         <CheckBoxPreference
             android:title="@string/land_orient"
@@ -50,15 +54,19 @@
             android:dialogMessage="@string/sys_cap_dialog"
             android:defaultValue="4"
             android:key="system_capacity"
+            android:layout="@layout/preference_help_layout"
             preference:minValue="@integer/sys_cap_min"
-            preference:maxValue="@integer/sys_cap_max"/>
+            preference:maxValue="@integer/sys_cap_max"
+            preference:editTextTip="@string/sys_cap_tip"/>
 
-        <ListPreference
+        <solarsitingucsc.smartsolarsiting.View.ListPreferenceHelp
             android:title="@string/sys_mod_type"
             android:entries="@array/sys_mod_type_entries"
             android:entryValues="@array/sys_mod_type_values"
             android:defaultValue="1"
-            android:key="sys_mod_type" />
+            android:key="sys_mod_type"
+            android:layout="@layout/preference_help_layout"
+            preference:tipText="@string/sys_mod_type_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_losses"
@@ -66,15 +74,19 @@
             android:dialogMessage="@string/sys_losses_dialog"
             android:defaultValue="10"
             android:key="sys_losses"
+            android:layout="@layout/preference_help_layout"
             preference:minValue="@integer/sys_losses_min"
-            preference:maxValue="@integer/sys_losses_max"/>
+            preference:maxValue="@integer/sys_losses_max"
+            preference:editTextTip="@string/sys_losses_tip"/>
 
-        <ListPreference
+        <solarsitingucsc.smartsolarsiting.View.ListPreferenceHelp
             android:title="@string/sys_arr_type"
             android:entries="@array/sys_arr_type_entries"
             android:entryValues="@array/sys_arr_type_values"
             android:defaultValue="1"
-            android:key="sys_arr_type" />
+            android:key="sys_arr_type"
+            android:layout="@layout/preference_help_layout"
+            preference:tipText="@string/sys_arr_type_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_tilt"
@@ -82,8 +94,10 @@
             android:dialogMessage="@string/sys_tilt_dialog"
             android:defaultValue="40"
             android:key="sys_tilt"
+            android:layout="@layout/preference_help_layout"
             preference:minValue="@integer/ZERO"
-            preference:maxValue="@integer/sys_tilt_max"/>
+            preference:maxValue="@integer/sys_tilt_max"
+            preference:editTextTip="@string/sys_tilt_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/sys_azimuth"
@@ -91,26 +105,20 @@
             android:dialogMessage="@string/sys_azimuth_dialog"
             android:defaultValue="180"
             android:key="sys_azimuth"
+            android:layout="@layout/preference_help_layout"
             preference:minValue="@integer/ZERO"
-            preference:maxValue="@integer/sys_azimuth_max"/>
+            preference:maxValue="@integer/sys_azimuth_max"
+            preference:editTextTip="@string/sys_azimuth_tip"/>
 
-        <ListPreference
+        <solarsitingucsc.smartsolarsiting.View.ListPreferenceHelp
             android:defaultValue="nsrdb"
             android:entries="@array/sys_dataset_entries"
             android:entryValues="@array/sys_dataset_values"
             android:key="sys_dataset"
             android:summary="@string/sys_dataset_summ"
             android:title="@string/sys_dataset"
-             />
-
-        <solarsitingucsc.smartsolarsiting.View.PreferenceHelp
-            android:dialogMessage="@string/sys_dataset_dialog"
-            android:icon="?android:attr/actionModeFindDrawable"
-            android:key="sys_dataset_help"
-            android:negativeButtonText=""
-            android:positiveButtonText="Okay"
-            android:summary="@string/help"
-            android:title="" />
+            android:layout="@layout/preference_help_layout"
+            preference:tipText="@string/sys_dataset_tip"/>
 
 
     </PreferenceCategory>
@@ -126,7 +134,7 @@
             android:key="signout">
         </solarsitingucsc.smartsolarsiting.View.SignoutDialogPreference>
 
-        <Preference
+        <solarsitingucsc.smartsolarsiting.View.AboutPreference
             android:title="@string/about"
             android:key="about"/>
     </PreferenceCategory>

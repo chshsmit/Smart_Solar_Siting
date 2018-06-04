@@ -51,7 +51,6 @@ import solarsitingucsc.smartsolarsiting.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-    //TODO:Find a way to relate firebase account to onboarding variable
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;

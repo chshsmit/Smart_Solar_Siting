@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/export_json"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:title="@string/json_export"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/export_csv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:title="@string/csv_export"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/export_jpeg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:title="@string/jpeg_export"
+        app:showAsAction="ifRoom" />
+
+
+
+</menu>

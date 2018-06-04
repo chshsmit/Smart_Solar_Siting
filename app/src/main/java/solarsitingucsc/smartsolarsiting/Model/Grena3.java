@@ -156,7 +156,7 @@ public final class Grena3 {
                 minuteIncrement = 15;
         GregorianCalendar currentDay = new GregorianCalendar(year, month, startDay, startTime, 0);
         AzimuthZenithAngle position;
-        AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[(endTime - startTime) * 4];
+        AzimuthZenithAngle[] averagePositionForMonth = new AzimuthZenithAngle[(endTime - startTime) * (60 / minuteIncrement)];
 
         while(currentDay.get(Calendar.MONTH) == month) {
 

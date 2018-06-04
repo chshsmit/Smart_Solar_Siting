@@ -307,12 +307,12 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                     canvas.getHeight()/2 + (CIRCLE_RADIUS - ((2*CIRCLE_RADIUS)/3)), timePaint);
 
             //write the name of the month at the highest point of elevation on the arc
-            if (i != averageArray.length - 1 && averageArray[i].getElevationFromTheHorizon() >
-                    averageArray[i + 1].getElevationFromTheHorizon() && !foundHighestPoint) {
-                String text = new DateFormatSymbols().getMonths()[month];
-                canvas.drawText(text, canvas.getWidth()/2, canvas.getHeight()/2, targetPaint);
-                foundHighestPoint = true;
-            }
+//            if (i != averageArray.length - 1 && averageArray[i].getElevationFromTheHorizon() >
+//                    averageArray[i + 1].getElevationFromTheHorizon() && !foundHighestPoint) {
+//                String text = new DateFormatSymbols().getMonths()[month];
+//                canvas.drawText(text, canvas.getWidth()/2, canvas.getHeight()/2, targetPaint);
+//                foundHighestPoint = true;
+//            }
 
 
             canvas.restore();

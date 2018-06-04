@@ -28,22 +28,22 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
+        android:indeterminate="true"
+        android:translationZ="2dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/results_toolbar"
-        android:indeterminate="true"
-        android:translationZ="2dp"
-        android:visibility="gone" />
+        app:layout_constraintTop_toBottomOf="@id/results_toolbar" />
 
     <!--<Spinner-->
-        <!--android:id="@+id/spinner"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:visibility="visible"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/results_toolbar" />-->
+    <!--android:id="@+id/spinner"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:visibility="visible"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/results_toolbar" />-->
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"
@@ -79,16 +79,34 @@
         android:layout_marginEnd="13dp"
         android:layout_marginRight="13dp"
         android:clickable="true"
-        app:srcCompat="@android:drawable/ic_menu_save"
+        android:visibility="gone"
         app:backgroundTint="@android:color/holo_green_light"
-        android:visibility="gone" />
+        app:srcCompat="@android:drawable/ic_menu_save" />
 
     <ImageView
         android:id="@+id/watershed"
-        android:layout_width="91dp"
-        android:layout_height="88dp"
-        app:srcCompat="@drawable/baseline_bar_chart_black_36dp"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="52dp" />
+        android:layout_width="128dp"
+        android:layout_height="202dp"
+        android:layout_marginBottom="313dp"
+        android:layout_marginEnd="85dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dots"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/results_toolbar"
+        app:srcCompat="@drawable/baseline_bar_chart_black_36dp" />
+
+    <ImageView
+        android:id="@+id/dots"
+        android:layout_width="139dp"
+        android:layout_height="189dp"
+        android:layout_marginBottom="326dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.934"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/results_toolbar"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/baseline_bar_chart_black_24dp" />
 
 </android.support.constraint.ConstraintLayout>

@@ -19,6 +19,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.hardware.Camera;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.opencv.core.Mat;
@@ -33,7 +35,10 @@ import java.util.List;
 
 import solarsitingucsc.smartsolarsiting.R;
 
-import static solarsitingucsc.smartsolarsiting.Controller.NativePanorama.processPanorama;
+//import static solarsitingucsc.smartsolarsiting.Controller.NativePanorama.processPanorama;
+
+import solarsitingucsc.smartsolarsiting.View.CameraPreview;
+import solarsitingucsc.smartsolarsiting.View.DrawOnTop;
 
 
 public class PanoramaActivity extends AppCompatActivity {
@@ -46,7 +51,12 @@ public class PanoramaActivity extends AppCompatActivity {
     private boolean safeToTakePicture = true; // Is it safe to capture a picture?
     private List<Mat> listImage = new ArrayList<>();
 
+
     ProgressDialog ringProgressDialog;
+
+    // used to draw dots on screen
+    private DrawOnTop mDraw;
+    private FrameLayout cameraPreviewPane;
 
 
 
@@ -78,13 +88,23 @@ public class PanoramaActivity extends AppCompatActivity {
         isPreview = false;
         mSurfaceView = (SurfaceView)findViewById(R.id.surfaceView);
         mSurfaceView.getHolder().addCallback(mSurfaceCallback);
+
         mSurfaceViewOnTop = (SurfaceView)findViewById(R.id.surfaceViewOnTop);
         mSurfaceViewOnTop.setZOrderOnTop(true); // necessary
         mSurfaceViewOnTop.getHolder().setFormat(PixelFormat.TRANSPARENT);
+
+
         captureBtn = (Button) findViewById(R.id.capture);
         captureBtn.setOnClickListener(captureOnClickListener);
+
         saveBtn = (Button) findViewById(R.id.save);
         saveBtn.setOnClickListener(saveOnClickListener);
+
+        //shows the dots on the preview
+        cameraPreviewPane = (FrameLayout) findViewById(R.id.surfaceDots);
+        mDraw = new DrawOnTop(getApplicationContext());
+        cameraPreviewPane.addView(mDraw);
+
 
 
     } //end of on create
@@ -208,10 +228,12 @@ public class PanoramaActivity extends AppCompatActivity {
             try {
             // Tell the camera to display the frame on this surfaceview
                 mCam.setPreviewDisplay(holder);
+
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.d("SurfaceHolderErrorTag", "SurfaceHolder not working");
             }
+
         }
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {

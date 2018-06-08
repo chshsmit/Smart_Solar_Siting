@@ -15,8 +15,16 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+<<<<<<< HEAD
 import android.util.Log;
 import android.view.SurfaceHolder;
+=======
+//<<<<<<< HEAD
+//=======
+import android.util.Log;
+import android.view.SurfaceHolder;
+//>>>>>>> panorama
+>>>>>>> a54bc013e4f38b15aecb18e94e5d52cb50b4f3d0
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -33,6 +41,18 @@ import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 
 import android.support.design.widget.FloatingActionButton;
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+
+import com.google.api.client.util.BackOffUtils;
+
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
+>>>>>>> panorama
+>>>>>>> a54bc013e4f38b15aecb18e94e5d52cb50b4f3d0
 public class MainActivity extends Activity {
 
     private CameraPreview mCameraPreview;

@@ -1,2 +1,10 @@
 include ':app'
+<<<<<<< HEAD
 include ':openCVLibrary341'
+=======
+<<<<<<< HEAD
+include ':openCVLibrary341'
+=======
+include ':openCVLibrary340'
+>>>>>>> panorama
+>>>>>>> a54bc013e4f38b15aecb18e94e5d52cb50b4f3d0

@@ -71,6 +71,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a54bc013e4f38b15aecb18e94e5d52cb50b4f3d0
         <activity
             android:name=".Controller.HomePageActivity"
             android:configChanges="screenSize" />
@@ -115,9 +119,17 @@
         </provider>
 
 
+<<<<<<< HEAD
         <activity android:name=".Controller.PanoramaActivity"> </activity>
 
 
+=======
+=======
+        <activity android:name=".Controller.DrawObstructionsActivity" />
+        <activity android:name=".Controller.DisplayCalculationsActivity" />
+        <activity android:name=".Controller.PanoramaActivity"> </activity>
+>>>>>>> panorama
+>>>>>>> a54bc013e4f38b15aecb18e94e5d52cb50b4f3d0
     </application>
 
 

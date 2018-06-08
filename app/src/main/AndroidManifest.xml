@@ -115,6 +115,9 @@
         </provider>
 
 
+        <activity android:name=".Controller.PanoramaActivity"> </activity>
+
+
     </application>
 
 

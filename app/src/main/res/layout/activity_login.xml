@@ -92,7 +92,7 @@
         android:layout_marginTop="@dimen/login_fab_top_margin"
         android:clickable="true"
         android:focusable="true"
-        app:backgroundTint="@color/com_facebook_button_background_color_focused"
+        app:backgroundTint="@color/dark_blue"
         app:layout_constraintStart_toStartOf="@+id/FacebookFloatingButton"
         app:layout_constraintTop_toBottomOf="@+id/loginButton"
         app:rippleColor="@color/cardview_light_background"
@@ -108,12 +108,12 @@
         android:layout_marginTop="@dimen/login_fab_top_margin"
         android:clickable="true"
         android:focusable="true"
-        app:backgroundTint="@color/com_facebook_blue"
+        app:backgroundTint="@color/dark_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/GoogleFloatingButton"
-        app:rippleColor="@color/com_facebook_blue"
-        app:srcCompat="@drawable/com_facebook_button_icon_blue" />
+        app:rippleColor="@color/dark_blue"
+        app:srcCompat="@drawable/googleg_standard_color_18" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/button_facebook_login"

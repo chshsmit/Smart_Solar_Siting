@@ -1,2 +1,6 @@
 include ':app'
+<<<<<<< HEAD
 include ':openCVLibrary341'
+=======
+include ':openCVLibrary340'
+>>>>>>> panorama

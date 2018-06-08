@@ -71,6 +71,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
         <activity
             android:name=".Controller.HomePageActivity"
             android:configChanges="screenSize" />
@@ -115,6 +116,11 @@
         </provider>
 
 
+=======
+        <activity android:name=".Controller.DrawObstructionsActivity" />
+        <activity android:name=".Controller.DisplayCalculationsActivity" />
+        <activity android:name=".Controller.PanoramaActivity"> </activity>
+>>>>>>> panorama
     </application>
 
 

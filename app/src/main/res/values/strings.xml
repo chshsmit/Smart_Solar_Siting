@@ -16,6 +16,7 @@
     <string name="nov">Nov:</string>
     <string name="dec">Dec:</string>
     <string name="annual">Annual:</string>
+<<<<<<< HEAD
 
     <string name="facebook_app_id">1899192993433816</string>
     <string name="fb_login_protocol_scheme">fb1899192993433816</string>
@@ -155,4 +156,7 @@
 
 
 
+=======
+    <string name="title_activity_main2">Main2Activity</string>
+>>>>>>> panorama
 </resources>

@@ -15,7 +15,7 @@
             android:layout="@layout/preference_help_layout"
             preference:maxValue="@integer/fov_max"
             preference:minValue="@integer/ZERO"
-            preference:editTextTip="Something about cam fov"/>
+            preference:editTextTip="@string/hor_FOV_tip"/>
 
         <solarsitingucsc.smartsolarsiting.View.IntEditTextPreference
             android:title="@string/vert_FOV"
@@ -26,7 +26,7 @@
             android:layout="@layout/preference_help_layout"
             preference:minValue="@integer/ZERO"
             preference:maxValue="@integer/fov_max"
-            preference:editTextTip="Something about cam fov"/>
+            preference:editTextTip="@string/vert_FOV_tip"/>
 
         <CheckBoxPreference
             android:title="@string/land_orient"

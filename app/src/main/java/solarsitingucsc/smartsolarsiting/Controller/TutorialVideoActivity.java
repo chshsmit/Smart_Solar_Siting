@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import solarsitingucsc.smartsolarsiting.R;
 
-public class TutorialVideo extends AppCompatActivity {
+public class TutorialVideoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

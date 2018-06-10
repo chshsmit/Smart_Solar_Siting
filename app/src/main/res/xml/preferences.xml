@@ -126,6 +126,18 @@
 
 
     <PreferenceCategory android:title="@string/extra_settings">
+        <Preference
+            android:title="@string/pref_tutorial"
+            android:summary="@string/pref_tutorial_summ"
+            android:key="pref_tutorial"
+
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="solarsitingucsc.smartsolarsiting"
+
+            />
+
+
         <solarsitingucsc.smartsolarsiting.View.SignoutDialogPreference
             android:title="@string/signout"
             android:dialogMessage="@string/signout_message"

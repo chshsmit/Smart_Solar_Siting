@@ -99,10 +99,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Controller.AboutPage"></activity>
-
-
+        <activity android:name=".Controller.AboutPage" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -114,11 +111,7 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-
+        <activity android:name=".Controller.TutorialVideo"></activity>
     </application>
-
-
-
-
 
 </manifest>

@@ -6,4 +6,10 @@
     android:layout_height="match_parent"
     tools:context="solarsitingucsc.smartsolarsiting.Controller.TutorialVideoActivity">
 
+    <VideoView
+        android:id="@+id/tutorial_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
 </android.support.constraint.ConstraintLayout>

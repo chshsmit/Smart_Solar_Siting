@@ -485,30 +485,22 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
             String header = "Time, " + Arrays.toString(powerMap.keySet().toArray()).replaceAll("\\[(.*?)\\]", "$1").replace("All, ", "").replace("Annual, ", "");
             writer.append(header).append(eol);
             StringBuilder totals = new StringBuilder("Totals,");
-            Set<String> times = new HashSet<>();
+            String[] times = new String[]{"6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"};
             for (String key : (powerMap.keySet().toArray(new String[0]))) {
                 if (!key.equals("All") && !key.equals("Annual"))
                     totals.append(powerMap.get("All").get(key)).append(",");
-            }
-            for (String stringDoubleHashMap : powerMap.keySet()) {
-                if (!stringDoubleHashMap.equals("All"))
-                    times.addAll(Arrays.asList(powerMap.get(stringDoubleHashMap).keySet().toArray(new String[0])));
             }
             StringBuilder row = new StringBuilder();
             for (String time : times) {
                 row.append(time).append(",");
                 for (String key : powerMap.keySet()) {
                     if (!key.equals("All") && !key.equals("Annual")) {
-                        try {
-                            HashMap<String, Double> vals = powerMap.get(key);
-                            Double val = Double.valueOf(vals.get(time));
-                            if (val == null)
-                                row.append("0,");
-                            else
-                                row.append(val.toString()).append(",");
-                        }catch(Throwable e){
-                            System.out.println();
-                        }
+                        HashMap<String, Double> vals = powerMap.get(key);
+                        Double val = vals.get(time.substring( 0, time.indexOf(":")));
+                        if (val == null)
+                            row.append("0,");
+                        else
+                            row.append(val.toString()).append(",");
                     }
                 }
                 writer.append(row.toString()).append(eol);

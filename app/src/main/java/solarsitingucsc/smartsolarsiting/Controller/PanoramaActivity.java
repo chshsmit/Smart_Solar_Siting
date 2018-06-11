@@ -2,6 +2,8 @@ package solarsitingucsc.smartsolarsiting.Controller;
 
 //import android.graphics.Camera;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 
 import org.opencv.core.Mat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import org.opencv.android.Utils;
@@ -124,14 +127,25 @@ public class PanoramaActivity extends AppCompatActivity {
                     tempobjadr[i]= listImage.get(i).getNativeObjAddr();
                 }
                 // Create a Mat to store the final panorama image
-                Mat result = new Mat();
+                Mat resultpic = new Mat();
                 // Call the OpenCV C++ Code to perform stitching process
-                NativePanorama.processPanorama(tempobjadr, result.getNativeObjAddr());
+                NativePanorama.processPanorama(tempobjadr, resultpic.getNativeObjAddr());
+
+//                Bitmap bm = Bitmap.createBitmap(resultpic.cols(), resultpic.rows(),Bitmap.Config.ARGB_8888);
+//                Utils.matToBitmap(resultpic, bm);
+
+//                Context context = getBaseContext();
+//                Intent intent = new Intent(context, DrawObstructionsActivity.class);
+//                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+//                bm.compress(Bitmap.CompressFormat.PNG, 100, bs);
+//                intent.putExtra("byteArray", bs.toByteArray());
+//                context.startActivity(intent);
+
                 // Save the image to external storage
                 File sdcard = Environment.getExternalStorageDirectory();
                 final String fileName = sdcard.getAbsolutePath() + "/opencv_" +
                         System.currentTimeMillis() + ".png";
-                Imgcodecs.imwrite(fileName, result);
+                Imgcodecs.imwrite(fileName, resultpic);
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -139,7 +153,9 @@ public class PanoramaActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "File saved at: " +
                                 fileName, Toast.LENGTH_LONG).show();
                     }
-                });
+                    });
+
+
                 listImage.clear();
             } catch (Exception e) {
                 e.printStackTrace();

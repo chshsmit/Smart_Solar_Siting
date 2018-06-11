@@ -114,6 +114,7 @@ public class MainActivity extends Activity {
         cameraPreviewPane.addView(mDraw);
 
         configureCaptureButton();
+        configurePanoramaButton();
     }
 
     /**

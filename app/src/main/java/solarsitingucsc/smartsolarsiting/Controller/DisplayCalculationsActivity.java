@@ -496,7 +496,12 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                 for (String key : powerMap.keySet()) {
                     if (!key.equals("All") && !key.equals("Annual")) {
                         HashMap<String, Double> vals = powerMap.get(key);
-                        Double val = vals.get(time.substring( 0, time.indexOf(":")));
+                        Double val;
+                        try {
+                            val = vals.get(time.substring(0, time.indexOf(":")));
+                        } catch (ClassCastException e) {
+                            val = 0d;
+                        }
                         if (val == null)
                             row.append("0,");
                         else

@@ -480,7 +480,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                 if (!key.equals("All") && !key.equals("Annual"))
                     totals.append(powerMap.get("All").get(key)).append(",");
             }
-
+//            Set<String> times = new HashSet<>();
+//
 //            for (String stringDoubleHashMap : powerMap.keySet()) {
 //                if (!stringDoubleHashMap.equals("All"))
 //                    times.addAll(Arrays.asList(powerMap.get(stringDoubleHashMap).keySet().toArray(new String[0])));

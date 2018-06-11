@@ -59,6 +59,7 @@
         <activity
             android:name=".Controller.DisplayCalculationsActivity"
             android:configChanges="screenSize" />
+        <activity android:name=".Controller.PanoramaActivity"> </activity>
         <activity
             android:name=".Controller.EmailSignUpActivity"
             android:configChanges="screenSize" />

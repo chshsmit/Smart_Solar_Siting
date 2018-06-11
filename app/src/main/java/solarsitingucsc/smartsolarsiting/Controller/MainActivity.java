@@ -4,16 +4,21 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
@@ -28,12 +33,24 @@ import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 
 import android.support.design.widget.FloatingActionButton;
 
+
+import com.google.api.client.util.BackOffUtils;
+
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
 public class MainActivity extends Activity {
 
     private CameraPreview mCameraPreview;
     private DrawOnTop mDraw;
     private FrameLayout cameraPreviewPane;
     private ProgressBar progressBar;
+
+
+    static{
+        System.loadLibrary("opencv_java3");
+        System.loadLibrary("MyLib");
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,6 +115,7 @@ public class MainActivity extends Activity {
         cameraPreviewPane.addView(mDraw);
 
         configureCaptureButton();
+        configurePanoramaButton();
     }
 
     /**
@@ -222,4 +240,31 @@ public class MainActivity extends Activity {
 //
 //        return mediaFile;
 //    }
+
+
+
+
+    /*
+    * Function that allows button to switch to panorama activity
+    * */
+    public void configurePanoramaButton() {
+        Button panoButton = (Button) findViewById(R.id.panoramaButton);
+        panoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = getBaseContext();
+                Intent intent = new Intent(context, PanoramaActivity.class);
+
+                mCameraPreview.surfaceDestroyed(mCameraPreview.getHolder());
+
+                startActivity(intent);
+                //finish();
+
+
+            }
+
+        });
+
+    }
+
 }

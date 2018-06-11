@@ -392,16 +392,11 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
         if (text.equals("All"))
             text += " months";
         if (id == R.id.share) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            Bitmap bitmap = lineChart.getChartBitmap();
-            String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "title", null);
-            Uri bitmapUri = Uri.parse(bitmapPath);
-            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
-
-            intent.putExtra(Intent.EXTRA_TEXT, text);
-            intent.setType("*/*");
-            startActivity(Intent.createChooser(intent, "Share"));
-
+            View menuViewItem = findViewById(R.id.share);
+            PopupMenu exportMenu = new PopupMenu(this, menuViewItem);
+            exportMenu.setOnMenuItemClickListener(this);
+            exportMenu.inflate(R.menu.export_calc_menu);
+            exportMenu.show();
             return true;
         }
         else if (id == R.id.change_chart_type) {
@@ -490,28 +485,30 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
             String header = "Time, " + Arrays.toString(powerMap.keySet().toArray()).replaceAll("\\[(.*?)\\]", "$1").replace("All, ", "").replace("Annual, ", "");
             writer.append(header).append(eol);
             StringBuilder totals = new StringBuilder("Totals,");
-            String[] times = new String[]{"6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"};
+            Set<String> times = new HashSet<>();
             for (String key : (powerMap.keySet().toArray(new String[0]))) {
                 if (!key.equals("All") && !key.equals("Annual"))
                     totals.append(powerMap.get("All").get(key)).append(",");
             }
-//            Set<String> times = new HashSet<>();
-//
-//            for (String stringDoubleHashMap : powerMap.keySet()) {
-//                if (!stringDoubleHashMap.equals("All"))
-//                    times.addAll(Arrays.asList(powerMap.get(stringDoubleHashMap).keySet().toArray(new String[0])));
-//            }
+            for (String stringDoubleHashMap : powerMap.keySet()) {
+                if (!stringDoubleHashMap.equals("All"))
+                    times.addAll(Arrays.asList(powerMap.get(stringDoubleHashMap).keySet().toArray(new String[0])));
+            }
             StringBuilder row = new StringBuilder();
             for (String time : times) {
                 row.append(time).append(",");
                 for (String key : powerMap.keySet()) {
                     if (!key.equals("All") && !key.equals("Annual")) {
-                        HashMap<String, Double> vals = powerMap.get(key);
-                        Double val = vals.get(time.substring( 0, time.indexOf(":")));
-                        if (val == null)
-                            row.append("0,");
-                        else
-                            row.append(val.toString()).append(",");
+                        try {
+                            HashMap<String, Double> vals = powerMap.get(key);
+                            Double val = Double.valueOf(vals.get(time));
+                            if (val == null)
+                                row.append("0,");
+                            else
+                                row.append(val.toString()).append(",");
+                        }catch(Throwable e){
+                            System.out.println();
+                        }
                     }
                 }
                 writer.append(row.toString()).append(eol);

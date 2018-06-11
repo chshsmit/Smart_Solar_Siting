@@ -126,6 +126,10 @@
 
     <string name="help">More information</string>
 
+    <string name="pref_tutorial">Tutorial</string>
+    <string name="pref_tutorial_summ">View the tutorial video</string>
+
+
     <string name="signout">Sign Out</string>
     <string name="signout_message">Are you sure you want to sign out?</string>
     <string name="signout_pos">Yes</string>
@@ -146,15 +150,6 @@
     <string name="dev_team_names">Christopher Smith, Mattheo Ioannou, \n Nicole Thompson,
                                     Andrew Guterres, \n Sam Singh, Henry Hargreaves</string>
     <string name="version_info">Smart Solar Siting Version 1.0.0</string>
-
-
-
-
-
-
-
-
-
 
 
 </resources>

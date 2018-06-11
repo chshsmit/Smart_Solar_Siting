@@ -15,10 +15,14 @@ import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +36,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -80,15 +85,21 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.CDL;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
+import java.nio.DoubleBuffer;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,6 +111,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Set;
@@ -109,7 +121,8 @@ import solarsitingucsc.smartsolarsiting.R;
 
 import static android.content.ContentValues.TAG;
 
-public class DisplayCalculationsActivity extends AppCompatActivity {
+public class DisplayCalculationsActivity extends AppCompatActivity implements
+        PopupMenu.OnMenuItemClickListener {
 
     private double latitude, longitude;
     private final String DATASET_API_KEY = "iF9CgCZD45uP45g5ybzqYdvLINrToH60600nH9it";
@@ -325,6 +338,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     }
 
     //Toolbar function for when the dots are selected
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -401,6 +415,136 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    //----------------------------------------------------------------------------------------------
+    //Export popup menu functions
+    //----------------------------------------------------------------------------------------------
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.export_json:
+                exportJSON();
+                return true;
+
+            case R.id.export_csv:
+                exportCSV();
+                return true;
+
+            case R.id.export_jpeg:
+                exportJPEG();
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void exportJSON() {
+        System.out.println("JSON Exporting");
+        String text = dropdown.getSelectedItem().toString();
+        Gson gsonObj = new Gson();
+        String jsonStr = gsonObj.toJson(powerMap);
+        File file = new File("data/data/solarsitingucsc.smartsolarsiting/export.json");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try (Writer writer = new FileWriter("data/data/solarsitingucsc.smartsolarsiting/export.json")) {
+            writer.append(jsonStr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Uri path = FileProvider.getUriForFile(getApplicationContext(),
+                getString(R.string.file_provider_authority),
+                file);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        intent.putExtra(Intent.EXTRA_STREAM, path);
+        intent.setType("*/*");
+        startActivity(Intent.createChooser(intent, "Share"));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void exportCSV() {
+        System.out.println("CSV Exporting");
+        String text = dropdown.getSelectedItem().toString();
+        File file = new File("data/data/solarsitingucsc.smartsolarsiting/export.csv");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try (Writer writer = new FileWriter("data/data/solarsitingucsc.smartsolarsiting/export.csv")) {
+            String eol = System.getProperty("line.separator");
+            String header = "Time, " + Arrays.toString(powerMap.keySet().toArray()).replaceAll("\\[(.*?)\\]", "$1").replace("All, ", "").replace("Annual, ", "");
+            writer.append(header).append(eol);
+            StringBuilder totals = new StringBuilder("Totals,");
+            String[] times = new String[]{"6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"};
+            for (String key : (powerMap.keySet().toArray(new String[0]))) {
+                if (!key.equals("All") && !key.equals("Annual"))
+                    totals.append(powerMap.get("All").get(key)).append(",");
+            }
+//            Set<String> times = new HashSet<>();
+//
+//            for (String stringDoubleHashMap : powerMap.keySet()) {
+//                if (!stringDoubleHashMap.equals("All"))
+//                    times.addAll(Arrays.asList(powerMap.get(stringDoubleHashMap).keySet().toArray(new String[0])));
+//            }
+            StringBuilder row = new StringBuilder();
+            for (String time : times) {
+                row.append(time).append(",");
+                for (String key : powerMap.keySet()) {
+                    if (!key.equals("All") && !key.equals("Annual")) {
+                        HashMap<String, Double> vals = powerMap.get(key);
+                        Double val = vals.get(time.substring( 0, time.indexOf(":")));
+                        if (val == null)
+                            row.append("0,");
+                        else
+                            row.append(val.toString()).append(",");
+                    }
+                }
+                writer.append(row.toString()).append(eol);
+                row = new StringBuilder();
+            }
+            writer.append(eol).append(eol).append(totals.toString());
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
+        Uri path = FileProvider.getUriForFile(getApplicationContext(),
+                getString(R.string.file_provider_authority),
+                file);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        intent.putExtra(Intent.EXTRA_STREAM, path);
+        intent.setType("*/*");
+        startActivity(Intent.createChooser(intent, "Share"));
+    }
+
+
+    private void exportJPEG() {
+        System.out.println("JPEG Exporting");
+        String text = dropdown.getSelectedItem().toString();
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        Bitmap bitmap = lineChart.getChartBitmap();
+        String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "title", null);
+        Uri bitmapUri = Uri.parse(bitmapPath);
+        intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+        if (text.equals("All"))
+            text += " months";
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        intent.setType("*/*");
+        startActivity(Intent.createChooser(intent, "Share"));
     }
 
 
@@ -670,12 +814,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
     private int getLevenshteinDistance(String a, String b) {
         a = a.toLowerCase();
         b = b.toLowerCase();
-        // i == 0
         int[] costs = new int[b.length() + 1];
         for (int j = 0; j < costs.length; j++)
             costs[j] = j;
         for (int i = 1; i <= a.length(); i++) {
-            // j == 0; nw = lev(i - 1, j)
             costs[0] = i;
             int nw = i - 1;
             for (int j = 1; j <= b.length(); j++) {
@@ -867,6 +1009,9 @@ public class DisplayCalculationsActivity extends AppCompatActivity {
 
         BarDataSet dataSet = new BarDataSet(barEntries, "Power in KW");
         BarData barData = new BarData(dataSet);
+        Description description = new Description();
+        description.setText("");
+        lineChart.setDescription(description);
         barChart.setData(barData);
         barChart.invalidate();
         barData.setBarWidth(0.9f);

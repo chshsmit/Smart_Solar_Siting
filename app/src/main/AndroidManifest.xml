@@ -51,14 +51,15 @@
         <activity
             android:name=".Controller.MainActivity"
             android:configChanges="screenSize"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Controller.DrawObstructionsActivity"
             android:configChanges="screenSize" />
         <activity
             android:name=".Controller.DisplayCalculationsActivity"
-            android:configChanges="screenSize" />
+            android:configChanges="screenSize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Controller.EmailSignUpActivity"
             android:configChanges="screenSize" />

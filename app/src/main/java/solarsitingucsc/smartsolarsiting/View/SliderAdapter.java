@@ -40,7 +40,7 @@ public class SliderAdapter extends PagerAdapter {
     //TODO: Change headings
     private String[] slide_headings = {
             "Welcome",
-            "Solar",
+            "Solar Siting",
             "Customize",
             "Help"
     };
@@ -49,7 +49,7 @@ public class SliderAdapter extends PagerAdapter {
     private String[] slide_descriptions = {
             "Welcome to Smart Solar Siting",
             "Our platform allows you to perform solar site surveys right from your mobile phone!" +
-                    "Find all your solar site surveu needs here!",
+                    "Find all your solar site survey needs here!",
             "Customize your panel and camera in the settings! Click the cog in the top " +
                     "right corner on the homepage to access them!",
             "If you have any more questions view our tooltips and tutorial video" +

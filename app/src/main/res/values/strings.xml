@@ -70,9 +70,11 @@
 
     <string name="hor_FOV">Horizontal Field of View</string>
     <string name="hor_FOV_summ">Set camera\'s horizontal field of view. Current = </string>
+    <string name="hor_FOV_tip">For camera attachments or modifications that extend field of view.</string>
 
     <string name="vert_FOV">Vertical Field of View</string>
     <string name="vert_FOV_summ">Set camera\'s vertical field of view. Current = </string>
+    <string name="vert_FOV_tip">For camera attachments or modifications that extend field of view.</string>
 
     <string name="panorama">Panorama</string>
     <string name="panorama_summ">Indicate whether you want panorama turned on</string>
@@ -86,32 +88,41 @@
     <string name="sys_cap">System Capacity</string>
     <string name="sys_cap_summ">Set your system\'s nameplate capacity. Current = </string>
     <string name="sys_cap_dialog">Set a value between 1 and 500000 </string>
+    <string name="sys_cap_tip">The DC power rating of the array in kilowatts at standard test
+        conditions.</string>
 
     <string name="sys_mod_type">Module Type</string>
     <string name="sys_mod_type_summ">Change your system\'s module type. Current = </string>
     <string name="sys_mod_type_dialog">Choose a module type</string>
+    <string name="sys_mod_type_tip">The type of photovoltaic material (standard or premium crystalline
+        silicon, or thin film).</string>
 
     <string name="sys_losses">Losses</string>
     <string name="sys_losses_summ">Change your system\'s losses. Current = </string>
     <string name="sys_losses_dialog">Set a value between -5 and 99</string>
+    <string name="sys_losses_tip">Losses in efficiency based on soil, snow, other degradation and
+        conductivity factors.</string>
 
     <string name="sys_arr_type">Array Type</string>
     <string name="sys_arr_type_summ">Change your system\'s array type. Current = </string>
-    <string name="sys_arr_type_dialog">Choose an array type</string>
+    <string name="sys_arr_type_tip">The solar array can be either fixed, mounted, or mounted on
+        an axis that follows the sun. (pveducation.com)</string>
 
     <string name="sys_tilt">System Tilt</string>
     <string name="sys_tilt_summ">Change your system\'s tilt. Current = </string>
     <string name="sys_tilt_dialog">Set a value between 0 snd 90</string>
+    <string name="sys_tilt_tip">Angle from horizontal (roof pitch, or angle of tracking axis).</string>
 
     <string name="sys_azimuth">System Azimuth</string>
     <string name="sys_azimuth_summ">Change your system\'s azimuth angle. Current = </string>
     <string name="sys_azimuth_dialog">Set a value between 0 and 359</string>
+    <string name="sys_azimuth_tip">Angle the array faces, from true north. Due south = 180.
+        (Does not apply to 2-axis)</string>
 
     <string name="sys_dataset">System Dataset</string>
     <string name="sys_dataset_summ">Choose the dataset you wish to use.</string>
-    <string name="sys_dataset_dialog">
-      The default NSRDB dataset sources weather conditions within your 4x4km grid cell. 
-      Legacy TMY datasets source from the nearest NREL weather station.</string>
+    <string name="sys_dataset_tip">
+      Meteorological data source: NSRDB (4x4km grid cell), TMY (nearest weather station).</string>
 
     <string name="help">More information</string>
 
@@ -128,5 +139,22 @@
     <string name="share">Share</string>
     <string name="display_bar_chart">Display Bar Chart</string>
     <string name="display_line_chart">Display Line Chart</string>
+
+
+    <!--About Page Strings-->
+    <string name="dev_team_header">Development Team</string>
+    <string name="dev_team_names">Christopher Smith, Mattheo Ioannou, \n Nicole Thompson,
+                                    Andrew Guterres, \n Sam Singh, Henry Hargreaves</string>
+    <string name="version_info">Smart Solar Siting Version 1.0.0</string>
+
+
+
+
+
+
+
+
+
+
 
 </resources>

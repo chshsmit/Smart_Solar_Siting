@@ -254,7 +254,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     //About Page
     //----------------------------------------------------------------------------------------------
 
-    //TODO: Add an about page
+    public static void changeToAbout(){
+        Intent about = new Intent(mContext, AboutPage.class);
+        mContext.startActivity(about);
+    }
+
     //Toast utility Function
     public static void toastMessage(String message, Context currentActivity)
     {

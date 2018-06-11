@@ -114,6 +114,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Set;
 
 import solarsitingucsc.smartsolarsiting.Model.SolarSiting;
 import solarsitingucsc.smartsolarsiting.R;
@@ -143,22 +144,24 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
     private boolean showLineChart;
     private Spinner dropdown;
     private HashMap<String, HashMap<String, Double>> powerMap;
-    //    private Bitmap originalImage;
-//    private Bitmap rotatedImage;
-//    private Bitmap screenshot;
+    private Bitmap originalImage;
+    private Bitmap rotatedImage;
+    private Bitmap screenshot;
     private Bitmap b;
-    private List<List<Vertex>> janV = new ArrayList<>();
-    private List<List<Vertex>> febV = new ArrayList<>();
-    private List<List<Vertex>> marV = new ArrayList<>();
-    private List<List<Vertex>> aprV = new ArrayList<>();
-    private List<List<Vertex>> mayV = new ArrayList<>();
-    private List<List<Vertex>> junV = new ArrayList<>();
-    private List<List<Vertex>> julV = new ArrayList<>();
-    private List<List<Vertex>> augV = new ArrayList<>();
-    private List<List<Vertex>> sepV = new ArrayList<>();
-    private List<List<Vertex>> octV = new ArrayList<>();
-    private List<List<Vertex>> novV = new ArrayList<>();
-    private List<List<Vertex>> decV = new ArrayList<>();
+    private ImageView watershed;
+    private ImageView dots;
+    private List<List<Vertex>> janV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> febV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> marV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> aprV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> mayV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> junV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> julV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> augV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> sepV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> octV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> novV = new ArrayList<List<Vertex>>();
+    private List<List<Vertex>> decV = new ArrayList<List<Vertex>>();
     private int janBox = 0;
     private int febBox = 0;
     private int marBox = 0;
@@ -171,7 +174,10 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
     private int octBox = 0;
     private int novBox = 0;
     private int decBox = 0;
-
+    private List<EntityAnnotation> textAnnotations;
+    private int textCount = 0;
+    private List<String> textDescriptions = new ArrayList<String>();
+    private Set<String> numCheck = new HashSet<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -189,17 +195,19 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
         initializeViews();
 
         HashMap<String, HashMap<String, Double>> powerList =
-                (HashMap<String, HashMap<String, Double>>) getIntent()
-                        .getSerializableExtra("powerList");
+                (HashMap<String, HashMap<String, Double>>) getIntent().getSerializableExtra("powerList");
 
         if (powerList != null) {
             powerMap = powerList;
             initializeToolBar();
+//            setupDropdown(powerList);
             saved = true;
-        } else {
+        }
+        else {
             saved = false;
             //Set values from the intent
             getIntentValues();
+
             //Get the image and make google request
             setBitmap();
         }
@@ -226,19 +234,24 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
 
         Bitmap screenshot = BitmapFactory.decodeStream(screenshotFis);
         thumbnail = makeThumbnail(originalImage, matrix);
-        if (getIntent().hasExtra("byteArray")) {
+        if(getIntent().hasExtra("byteArray")) {
             Log.d(TAG, "FOUNDBYTEARRAY");
             b = BitmapFactory.decodeByteArray(
-                    getIntent().getByteArrayExtra("byteArray"), 0, getIntent()
+                    getIntent().getByteArrayExtra("byteArray"),0,getIntent()
                             .getByteArrayExtra("byteArray").length, options);
-//            watershed = (ImageView) findViewById(R.id.watershed);
-//            watershed.setImageBitmap(b);
-//            watershed.setScaleType(ImageView.ScaleType.FIT_XY);
-//            watershed.setImageBitmap(b);
-        }
 
-        b = Bitmap.createScaledBitmap(b, screenshot.getWidth(), screenshot.getHeight(), true);
-        Log.d(TAG, "watershed width x height: " + b.getWidth() + "x" + b.getHeight());
+        }
+//        dots = (ImageView) findViewById(R.id.dots);
+//        dots.setImageBitmap(screenshot);
+//        dots.setScaleType(ImageView.ScaleType.FIT_XY);
+//        dots.setImageBitmap(screenshot);
+
+        b = Bitmap.createScaledBitmap(b,screenshot.getWidth(),screenshot.getHeight(),true);
+//        watershed = (ImageView) findViewById(R.id.watershed);
+//        watershed.setImageBitmap(b);
+//        watershed.setScaleType(ImageView.ScaleType.FIT_XY);
+//        watershed.setImageBitmap(b);
+        Log.d(TAG, "watershed width x height: " + b.getWidth() +"x" + b.getHeight());
         Log.d(TAG, "dots width x height: " + screenshot.getWidth() + "x" + screenshot.getHeight());
         new MakeGoogleRequest().execute(screenshot);
         deleteFile(screenshotName);
@@ -378,18 +391,20 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
         String text = dropdown.getSelectedItem().toString();
         if (text.equals("All"))
             text += " months";
-
-
-        //Exporting Options
         if (id == R.id.share) {
-            View menuViewItem = findViewById(R.id.share);
-            PopupMenu exportMenu = new PopupMenu(this, menuViewItem);
-            exportMenu.setOnMenuItemClickListener(this);
-            exportMenu.inflate(R.menu.export_calc_menu);
-            exportMenu.show();
-            return true;
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            Bitmap bitmap = lineChart.getChartBitmap();
+            String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "title", null);
+            Uri bitmapUri = Uri.parse(bitmapPath);
+            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
 
-        } else if (id == R.id.change_chart_type) {
+            intent.putExtra(Intent.EXTRA_TEXT, text);
+            intent.setType("*/*");
+            startActivity(Intent.createChooser(intent, "Share"));
+
+            return true;
+        }
+        else if (id == R.id.change_chart_type) {
             showLineChart = !showLineChart;
             if (showLineChart) {
                 displayLineChart(text);
@@ -728,6 +743,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                 hours[i - 1] = "0" + i;
             else
                 hours[i - 1] = i + "";
+            numCheck.add(hours[i-1]);
         }
         Map<String, Integer> result = new HashMap<>();
         for (String s : response) {
@@ -903,7 +919,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
 
     private void generateChartData(String month, HashMap<String, HashMap<String, Double>> powerMap) {
         lineEntries = new ArrayList<>();
-        barEntries = new ArrayList<>();
+        barEntries= new ArrayList<>();
         if (month.equals("All")) {
             Double[] monthValues = new Double[12];
             HashMap<String, Double> allValues = powerMap.get(month);
@@ -915,7 +931,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
             }
             for (int i = 0; i < monthValues.length; i++) {
                 lineEntries.add(new Entry(i, monthValues[i].floatValue()));
-                barEntries.add(new BarEntry((float) i, monthValues[i].floatValue()));
+                barEntries.add(new BarEntry((float)i, monthValues[i].floatValue()));
             }
 
         } else {
@@ -933,7 +949,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
             }
             for (int i = 0; i < hours.length; i++) {
                 lineEntries.add(new Entry(i, hours[i].floatValue()));
-                barEntries.add(new BarEntry((float) i, hours[i].floatValue()));
+                barEntries.add(new BarEntry((float)i, hours[i].floatValue()));
 
             }
             String[] stringHours = new String[hours.length];
@@ -1005,6 +1021,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
     }
 
     private void setupDropdown(final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth) {
+//        final Spinner dropdown = findViewById(R.id.spinner);
 
         try {
             Field popup = Spinner.class.getDeclaredField("mPopup");
@@ -1093,17 +1110,24 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
             if (batchResponse != null) {
                 TextAnnotation fullTextAnnotation = batchResponse.getResponses().get(0).getFullTextAnnotation();
                 //This contains the coordinates for each -- to be used later
-                List<EntityAnnotation> textAnnotations = batchResponse.getResponses().get(0)
+                textAnnotations = batchResponse.getResponses().get(0)
                         .getTextAnnotations();
-                if (textAnnotations != null) {
+                if(textAnnotations!=null) {
                     for (int i = 0; i < textAnnotations.size() - 1; i++) {
-                        Log.d(TAG, "TA Element: " + Integer.toString(i));
+                        Log.d(TAG, "TA Element: " + Integer.toString(i) + " " + textAnnotations.get(i).getDescription());
+//                    EntityAnnotation point = textAnnotations.get(i);
 
                         BoundingPoly textBox = textAnnotations.get(i).getBoundingPoly();
-                        String desc = textAnnotations.get(i).getDescription();
+//                        Log.d(TAG, "size: " + textBox.getVertices().get(0).getX()+" "+textBox.getVertices().get(0).getY()
+//                        + " "+ textBox.getVertices().get(2).getX()+" "+textBox.getVertices().get(2).getY());
+                        String TA = textAnnotations.get(i).getDescription();
+                        String desc = analyseString(TA);
+                        Log.d(TAG, "actual string: " + desc);
                         if (desc.length() == 5) {
-                            Log.d(TAG, desc);
+//                            Log.d(TAG, desc);
+                            textCount++;
                             String month = desc.substring(0, 2);
+                            textDescriptions.add(desc);
                             if (month.equals("00")) janV.add(textBox.getVertices());
                             else if (month.equals("01")) febV.add(textBox.getVertices());
                             else if (month.equals("02")) marV.add(textBox.getVertices());
@@ -1117,6 +1141,8 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
                             else if (month.equals("10")) novV.add(textBox.getVertices());
                             else if (month.equals("11")) decV.add(textBox.getVertices());
                         }
+
+//                    vertices.add(textBox.getVertices());
                     }
                     Log.d(TAG, "jan length: " + Integer.toString(janV.size()));
                     Log.d(TAG, "feb length: " + Integer.toString(febV.size()));
@@ -1143,6 +1169,7 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
 
         @Override
         protected void onPostExecute(String response) {
+//            Log.d(TAG, "RESPONSE: " + response);
             Map<String, Integer> result = translateResponseToMap(response);
             Iterator it = result.entrySet().iterator();
             Double annualPower = 0d;
@@ -1151,105 +1178,115 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
             int ipPower = 0;
             Arrays.fill(monthlyPower, 0d);
             final HashMap<String, HashMap<String, Double>> powerByTimeAndMonth = new HashMap<>();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
-                String key = (String) pair.getKey();
-                int value = (int) pair.getValue();
-                int dashIndex = key.indexOf("-");
-                String month = "", hour = "";
-                if (dashIndex != -1) {
-                    month = key.substring(0, dashIndex);
-                    hour = key.substring(dashIndex + 1, key.length());
-                }
-                for (int i = 0; i < value; i++) {
-                    try {
-                        int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
-                        double power = 0;
-                        if (monthInt == 0 && janV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(janV, janBox) && janBox < janV.size()) {
-                                janBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, janV) / 6;
-                        } else if (monthInt == 1 && febV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(febV, febBox) && febBox < febV.size()) {
-                                febBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, febV) / 6;
+//            while (it.hasNext()) {
+            for(int j=0;j<textDescriptions.size();j++) {
+//                Map.Entry pair = (Map.Entry) it.next();
+//                String key = (String) pair.getKey();
+//                int value = (int) pair.getValue();
+//                int dashIndex = key.indexOf("-");
+//                String month = "", hour = "";
+//                if (dashIndex != -1) {
+//                    month = key.substring(0, dashIndex);
+//                    hour = key.substring(dashIndex + 1, key.length());
+//                }
+//                Log.d(TAG, "key: " + key + " value: " + value);
+//                for (int i = 0; i < value; i++) {
+//                    try {
+//                        int monthInt = Integer.parseInt(month), hourInt = Integer.parseInt(hour);
+                String month = textDescriptions.get(j).substring(0, 2);
+                String hour = textDescriptions.get(j).substring(3, 5);
+                if (numCheck.contains(month) && numCheck.contains(hour)) {
+                    int monthInt = Integer.parseInt(month);
+                    int hourInt = Integer.parseInt(hour);
+                    double power = 0;
+                    if (monthInt == 0 && janV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(janV, janBox) && janBox < janV.size()) {
+                            janBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, janV) / 4;
+                    } else if (monthInt == 1 && febV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(febV, febBox) && febBox < febV.size()) {
+                            febBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, febV) / 4;
 
-                        } else if (monthInt == 2 && marV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(marV, marBox) && marBox < marV.size()) {
-                                marBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, marV) / 6;
-                        } else if (monthInt == 3 && aprV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(aprV, aprBox) && aprBox < aprV.size()) {
-                                aprBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, aprV) / 6;
-                        } else if (monthInt == 4 && mayV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(mayV, mayBox) && mayBox < mayV.size()) {
-                                mayBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, mayV) / 6;
-                        } else if (monthInt == 5 && junV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(junV, junBox) && junBox < junV.size()) {
-                                junBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, junV) / 6;
-                        } else if (monthInt == 6 && julV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(julV, julBox) && julBox < julV.size()) {
-                                julBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, julV) / 6;
-                        } else if (monthInt == 7 && augV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(augV, augBox) && augBox < augV.size()) {
-                                augBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, augV) / 6;
-                        } else if (monthInt == 8 && sepV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(sepV, sepBox) && sepBox < sepV.size()) {
-                                sepBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, sepV) / 6;
-                        } else if (monthInt == 9 && octV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(octV, octBox) && octBox < octV.size()) {
-                                octBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, octV) / 6;
-                        } else if (monthInt == 10 && novV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(novV, novBox) && novBox < novV.size()) {
-                                novBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, novV) / 6;
-                        } else if (monthInt == 11 && decV.size() != 0) {
-                            Log.d(TAG, "Month: " + monthInt);
-                            if (!processPixels(decV, decBox) && decBox < decV.size()) {
-                                decBox++;
-                            } else power = getPowerForMonthAndHour(monthInt, hourInt, decV) / 6;
-                        }
-                        double pow = getPower(monthInt, hourInt) / 6;
-                        ipPower += getPower(monthInt, hourInt);
-                        annualPower += power;
-                        monthlyPower[monthInt] += power;
-                        ipMonthlyPower[monthInt] += pow;
-                        HashMap<String, Double> newMap = powerByTimeAndMonth.get(months[monthInt]);
-                        if (newMap == null) {
-                            HashMap<String, Double> n = new HashMap<>();
-                            n.put("" + hourInt, power);
-                            powerByTimeAndMonth.put(months[monthInt], n);
-                        } else {
-                            if (newMap.get("" + hourInt) == null) {
-                                powerByTimeAndMonth.get(months[monthInt]).put("" + hourInt, power);
-                            } else {
-                                powerByTimeAndMonth.get(months[monthInt]).put("" + hourInt, newMap.get("" + hourInt) + power);
-                            }
-                        }
-                    } catch (NumberFormatException e) {
-                        break;
+                    } else if (monthInt == 2 && marV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(marV, marBox) && marBox < marV.size()) {
+                            marBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, marV) / 4;
+                    } else if (monthInt == 3 && aprV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(aprV, aprBox) && aprBox < aprV.size()) {
+                            aprBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, aprV) / 4;
+                    } else if (monthInt == 4 && mayV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(mayV, mayBox) && mayBox < mayV.size()) {
+                            mayBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, mayV) / 4;
+                    } else if (monthInt == 5 && junV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(junV, junBox) && junBox < junV.size()) {
+                            junBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, junV) / 4;
+                    } else if (monthInt == 6 && julV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(julV, julBox) && julBox < julV.size()) {
+                            julBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, julV) / 4;
+                    } else if (monthInt == 7 && augV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(augV, augBox) && augBox < augV.size()) {
+                            augBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, augV) / 4;
+                    } else if (monthInt == 8 && sepV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(sepV, sepBox) && sepBox < sepV.size()) {
+                            sepBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, sepV) / 4;
+                    } else if (monthInt == 9 && octV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(octV, octBox) && octBox < octV.size()) {
+                            octBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, octV) / 4;
+                    } else if (monthInt == 10 && novV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(novV, novBox) && novBox < novV.size()) {
+                            novBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, novV) / 4;
+                    } else if (monthInt == 11 && decV.size() != 0) {
+                        Log.d(TAG, "Month: " + monthInt);
+                        if (!processPixels(decV, decBox) && decBox < decV.size()) {
+                            decBox++;
+                        } else power = getPowerForMonthAndHour(monthInt, hourInt, decV) / 4;
                     }
+                    double pow = getPower(monthInt, hourInt) / 4;
+                    ipPower += getPower(monthInt, hourInt);
+                    annualPower += power;
+                    monthlyPower[monthInt] += power;
+//                    Log.d(TAG, "monthly power: " + power);
+                    ipMonthlyPower[monthInt] += pow;
+                    HashMap<String, Double> newMap = powerByTimeAndMonth.get(months[monthInt]);
+                    if (newMap == null) {
+                        HashMap<String, Double> n = new HashMap<>();
+                        n.put("" + hourInt, power);
+                        powerByTimeAndMonth.put(months[monthInt], n);
+                    } else {
+                        if (newMap.get("" + hourInt) == null) {
+                            powerByTimeAndMonth.get(months[monthInt]).put("" + hourInt, power);
+                        } else {
+                            powerByTimeAndMonth.get(months[monthInt]).put("" + hourInt, newMap.get("" + hourInt) + power);
+                        }
+                    }
+//                    } catch (NumberFormatException e) {
+//                        break;
+//                    }
+//                }
+//                it.remove(); // avoids a ConcurrentModificationException
                 }
-                it.remove(); // avoids a ConcurrentModificationException
             }
+//            }
             HashMap<String, Double> t = new HashMap<>();
             t.put("0", annualPower);
             powerByTimeAndMonth.put("Annual", t);
@@ -1263,19 +1300,35 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
             progressBar.setVisibility(View.GONE);
             //Setting up the toolbar
             initializeToolBar();
+//            setupDropdown(powerByTimeAndMonth);
         }
     }
 
-    public boolean processPixels(List<List<Vertex>> vertices, int box) {
-        if (box < vertices.size()) {
-            int[] pixels = new int[400];
-            b.getPixels(pixels, 0, 20,
-                    vertices.get(box).get(0).getX(), vertices.get(box).get(0).getY(), 20, 20);
-            for (int k = 0; k < 400; k++) {
-                if (Color.red(pixels[k]) <= 250 && Color.green(pixels[k]) <= 250 &&
-                        Color.blue(pixels[k]) <= 250) {
-                    Log.d(TAG, "NOT ADDED");
-                    return false;
+    public boolean processPixels(List<List<Vertex>> vertices, int box)
+    {
+        if(box<vertices.size()) {
+//            Log.d(TAG, "month size: " + vertices.size() + " verx: " + vertices.get(box).get(0).getX());
+            if (vertices.get(box).get(0).getX() != null && vertices.get(box).get(0).getY() !=null) {
+                int[] pixels = new int[400];
+//            Log.d(TAG, "X: " + vertices.get(box).get(0).getX());
+//                Log.d(TAG, "Y: " + vertices.get(box).get(0).getY());
+                int x = vertices.get(box).get(0).getX();
+                int y = vertices.get(box).get(0).getY();
+                int width, height;
+                if(b.getWidth()-x < 20) width = b.getWidth()-x;
+                else width = 20;
+                if(b.getHeight()-y < 20) height = b.getHeight()-y;
+                else height = 20;
+
+                b.getPixels(pixels, 0, 20, x, y, width, height);
+                for (int k = 0; k < 400; k++) {
+//                    for (int j = 0; j < 20; j++) {
+                    if (Color.red(pixels[k]) <= 230 && Color.green(pixels[k]) <= 230 &&
+                            Color.blue(pixels[k]) <= 230) {
+                        Log.d(TAG, "NOT ADDED");
+                        return false;
+                    }
+//                    }
                 }
             }
         }
@@ -1284,13 +1337,52 @@ public class DisplayCalculationsActivity extends AppCompatActivity implements
 
     private double getPower(int month, int hour) {
         //We increment by 24 hour time periods
+//        Log.d(TAG, "month: " + Integer.toString(month));
         final int TWENTY_FOUR_HOURS = 24;
         double[] arrayForMonth = splitForMonth(month);
         double totalAcWatts = 0;
-        for (int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS) {
+        for(int index = hour; index < arrayForMonth.length; index += TWENTY_FOUR_HOURS){
             totalAcWatts += arrayForMonth[index];
         }
-        return totalAcWatts / 1000;   //Converting from Watts to Kilowatts
+        return totalAcWatts/1000;   //Converting from Watts to Kilowatts
     }
+
+    private String analyseString(String text)
+    {
+        int dash = text.indexOf("-");
+        text.replace("g","9");
+        text.replace("B", "8");
+        if(dash>1 && text.length()>4)
+        {
+            if(text.charAt(dash-1)<='9' && text.charAt(dash-1)>='0')
+            {
+                if(text.charAt(dash-2)<='9' && text.charAt(dash-2)>='0')
+                {
+                    if(text.charAt(dash+2)<='9' && text.charAt(dash+2)>='0')
+                    {
+                        if(text.charAt(dash+1)<='9' && text.charAt(dash+1)>='0')
+                        {
+                            return text.substring(0,dash+3);
+                        }
+                    }
+                }
+            }
+        } else if(dash==1)
+        {
+            if(text.charAt(dash-1)<='9' && text.charAt(dash-1)>='3')
+            {
+                if(text.charAt(dash+2)<='9' && text.charAt(dash+2)>='0')
+                {
+                    if(text.charAt(dash+1)<='9' && text.charAt(dash+1)>='0')
+                    {
+                        return "1" + text.substring(0,dash+2);
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+
 }
 

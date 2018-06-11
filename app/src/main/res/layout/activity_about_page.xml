@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="solarsitingucsc.smartsolarsiting.Controller.AboutPage">
+
+
+    <!--TODO: Change Dimens to fit all screens-->
+
+
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/about_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+
+    <ImageView
+        android:id="@+id/team_logo"
+        android:layout_width="164dp"
+        android:layout_height="164dp"
+        android:layout_below="@+id/about_toolbar"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/todo"
+        app:srcCompat="@drawable/smart_siting_logo" />
+
+
+    <TextView
+        android:id="@+id/dev_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/team_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="39dp"
+        android:text="@string/dev_team_header"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/dev_team"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dev_header"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="38dp"
+        android:text="@string/dev_team_names"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+
+
+    <TextView
+        android:id="@+id/app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:text="@string/version_info" />
+
+
+</RelativeLayout>

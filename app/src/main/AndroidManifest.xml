@@ -111,7 +111,6 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-        <activity android:name=".Controller.TutorialVideoActivity"></activity>
     </application>
 
 </manifest>

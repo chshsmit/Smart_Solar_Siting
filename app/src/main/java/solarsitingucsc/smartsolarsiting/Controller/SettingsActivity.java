@@ -18,6 +18,7 @@ import android.preference.RingtonePreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -249,6 +250,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         mContext.startActivity(login);
     }
 
+    //----------------------------------------------------------------------------------------------
+    //Playing tutorial video
+    //----------------------------------------------------------------------------------------------
+
+    public static void playTutorialVideo(){
+        Intent vidIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/_iFV-Lw6Msg"));
+
+        mContext.startActivity(vidIntent);
+        Log.i("Video", "Video playing...");
+    }
 
     //----------------------------------------------------------------------------------------------
     //About Page

@@ -126,20 +126,12 @@
 
 
     <PreferenceCategory android:title="@string/extra_settings">
-        <Preference
+
+        <solarsitingucsc.smartsolarsiting.View.TutorialPreference
             android:title="@string/pref_tutorial"
             android:summary="@string/pref_tutorial_summ"
             android:key="pref_tutorial" >
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:targetPackage="solarsitingucsc.smartsolarsiting"
-                android:targetClass="solarsitingucsc.smartsolarsiting.Controller.TutorialVideoActivity" />
-        </Preference>
-
-
-
-
-
+        </solarsitingucsc.smartsolarsiting.View.TutorialPreference>
 
         <solarsitingucsc.smartsolarsiting.View.SignoutDialogPreference
             android:title="@string/signout"

@@ -15,6 +15,142 @@
     <string name="oct">Oct:</string>
     <string name="nov">Nov:</string>
     <string name="dec">Dec:</string>
-    <string name="annual">Annual:</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="annual">Annual:</string>
+
+    <string name="facebook_app_id">1899192993433816</string>
+    <string name="fb_login_protocol_scheme">fb1899192993433816</string>
+
+    <!--Export Strings-->
+    <string name="json_export">Export JSON</string>
+    <string name="jpeg_export">Export JPEG</string>
+    <string name="csv_export">Export CSV</string>
+
+    <string name="file_provider_authority" translatable="false">solarsitingucsc.smartsolarsiting.fileprovider</string>
+
+    <!--Toolbar Strings-->
+    <string name="app_title">Smart Solar Siting</string>
+    <string name="home">Home</string>
+    <string name="more">More</string>
+
+
+    <!--Onboarding Strings-->
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="onboarding_default_heading">Heading</string>
+    <string name="onboarding_default_desc">Description</string>
+
+    <!--Login Screen Strings-->
+    <string name="login">Log In</string>
+    <string name="username">Username/Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="new_user">New user? Create an account here!</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_account">Create Account</string>
+
+
+    <!--HomePageStrings-->
+    <string name="new_site">New Solar Site</string>
+    <string name="settings">Settings</string>
+
+    <string name="site_name">Site Name</string>
+    <string name="site_date">MM/DD/YYYY</string>
+    <string name="site_power">XXX watts</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="cam_settings">Camera Settings</string>
+    <string name="pan_settings">Panel Settings</string>
+    <string name="extra_settings">Extras</string>
+
+    <string name="fov_dialog">Set a value between 0 and 180</string>
+
+    <string name="hor_FOV">Horizontal Field of View</string>
+    <string name="hor_FOV_summ">Set camera\'s horizontal field of view. Current = </string>
+    <string name="hor_FOV_tip">For camera attachments or modifications that extend field of view.</string>
+
+    <string name="vert_FOV">Vertical Field of View</string>
+    <string name="vert_FOV_summ">Set camera\'s vertical field of view. Current = </string>
+    <string name="vert_FOV_tip">For camera attachments or modifications that extend field of view.</string>
+
+    <string name="panorama">Panorama</string>
+    <string name="panorama_summ">Indicate whether you want panorama turned on</string>
+
+    <string name="land_orient">Landscape Orientation</string>
+    <string name="land_orient_summ">Set the camera orientation to landscape</string>
+
+    <string name="fisheye_dist">Fisheye Distortion</string>
+    <string name="fisheye_dist_summ">Enable Fisheye Distortion</string>
+
+    <string name="sys_cap">System Capacity</string>
+    <string name="sys_cap_summ">Set your system\'s nameplate capacity. Current = </string>
+    <string name="sys_cap_dialog">Set a value between 1 and 500000 </string>
+    <string name="sys_cap_tip">The DC power rating of the array in kilowatts at standard test
+        conditions.</string>
+
+    <string name="sys_mod_type">Module Type</string>
+    <string name="sys_mod_type_summ">Change your system\'s module type. Current = </string>
+    <string name="sys_mod_type_dialog">Choose a module type</string>
+    <string name="sys_mod_type_tip">The type of photovoltaic material (standard or premium crystalline
+        silicon, or thin film).</string>
+
+    <string name="sys_losses">Losses</string>
+    <string name="sys_losses_summ">Change your system\'s losses. Current = </string>
+    <string name="sys_losses_dialog">Set a value between -5 and 99</string>
+    <string name="sys_losses_tip">Losses in efficiency based on soil, snow, other degradation and
+        conductivity factors.</string>
+
+    <string name="sys_arr_type">Array Type</string>
+    <string name="sys_arr_type_summ">Change your system\'s array type. Current = </string>
+    <string name="sys_arr_type_tip">The solar array can be either fixed, mounted, or mounted on
+        an axis that follows the sun. (pveducation.com)</string>
+
+    <string name="sys_tilt">System Tilt</string>
+    <string name="sys_tilt_summ">Change your system\'s tilt. Current = </string>
+    <string name="sys_tilt_dialog">Set a value between 0 snd 90</string>
+    <string name="sys_tilt_tip">Angle from horizontal (roof pitch, or angle of tracking axis).</string>
+
+    <string name="sys_azimuth">System Azimuth</string>
+    <string name="sys_azimuth_summ">Change your system\'s azimuth angle. Current = </string>
+    <string name="sys_azimuth_dialog">Set a value between 0 and 359</string>
+    <string name="sys_azimuth_tip">Angle the array faces, from true north. Due south = 180.
+        (Does not apply to 2-axis)</string>
+
+    <string name="sys_dataset">System Dataset</string>
+    <string name="sys_dataset_summ">Choose the dataset you wish to use.</string>
+    <string name="sys_dataset_tip">
+      Meteorological data source: NSRDB (4x4km grid cell), TMY (nearest weather station).</string>
+
+    <string name="help">More information</string>
+
+    <string name="pref_tutorial">Tutorial</string>
+    <string name="pref_tutorial_summ">View the tutorial video</string>
+
+
+    <string name="signout">Sign Out</string>
+    <string name="signout_message">Are you sure you want to sign out?</string>
+    <string name="signout_pos">Yes</string>
+    <string name="signout_neg">Cancel</string>
+
+    <string name="about">About</string>
+
+    <string name="pref_title_sync_frequency" />
+    <string name="todo">TODO</string>
+    <string name="saveText">Save</string>
+    <string name="share">Share</string>
+    <string name="display_bar_chart">Display Bar Chart</string>
+    <string name="display_line_chart">Display Line Chart</string>
+
+
+    <!--About Page Strings-->
+    <string name="dev_team_header">Development Team</string>
+    <string name="dev_team_names">Christopher Smith, Mattheo Ioannou, \n Nicole Thompson,
+                                    Andrew Guterres, \n Sam Singh, Henry Hargreaves</string>
+    <string name="version_info">Smart Solar Siting Version 1.0.0</string>
+
+
 </resources>

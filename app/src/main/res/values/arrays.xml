@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sys_mod_type_entries">
+        <item>Standard</item>
+        <item>Premium</item>
+        <item>Thin Film</item>
+    </string-array>
+
+
+    <string-array name="sys_mod_type_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+
+    <string-array name="sys_arr_type_entries">
+        <item>Fixed - Open rack</item>
+        <item>Fixed - Roof Mounted</item>
+        <item>1-Axis</item>
+        <item>1-Axis Backtracking</item>
+        <item>2-Axis</item>
+    </string-array>
+
+    <string-array name="sys_arr_type_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+
+    <string-array name="sys_dataset_entries">
+        <item>TMY2 Station Data</item>
+        <item>TMY3 Station Data</item>
+        <item>NSRDB Grid Data</item>
+    </string-array>
+
+
+    <string-array name="sys_dataset_values">
+        <item>tmy2</item>
+        <item>tmy3</item>
+        <item>nsrdb</item>
+    </string-array>
+
+    <string-array name="months">
+        <item>All</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
+</resources>

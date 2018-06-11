@@ -1,3 +1,21 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="onboarding_image">200dp</dimen>
+
+
+    <!--//////////////////////////////////////////-->
+    <!--Dimension values for Login Screen-->
+    <!--//////////////////////////////////////////-->
+
+    <dimen name="elevation">4dp</dimen>
+    <dimen name="login_side_margin">50dp</dimen>
+    <dimen name="login_top_margin">30dp</dimen>
+
+
+    <!--Homepage-->
+    <dimen name="previous_site_list_height">75dp</dimen>
+    <dimen name="bottom_nav_height">56dp</dimen>
+
 </resources>

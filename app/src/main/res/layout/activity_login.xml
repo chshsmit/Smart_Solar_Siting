@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteY="81dp">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="0dp"
+        android:layout_height="164dp"
+        android:layout_marginEnd="@dimen/login_side_margin"
+        android:layout_marginStart="@dimen/login_side_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+        app:srcCompat="@drawable/smart_siting_logo"
+        android:contentDescription="@string/todo" />
+
+
+    <EditText
+        android:id="@+id/emailInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="@dimen/login_side_margin"
+        android:layout_marginStart="@dimen/login_side_margin"
+        android:layout_marginTop="@dimen/login_top_margin"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageView3" />
+
+    <EditText
+        android:id="@+id/passwordIn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/GoogleFloatingButton"
+        android:layout_alignLeft="@+id/emailInput"
+        android:layout_alignStart="@+id/emailInput"
+        android:layout_marginTop="@dimen/login_top_margin"
+        android:layout_marginEnd="@dimen/login_side_margin"
+        android:layout_marginStart="@dimen/login_side_margin"
+        android:ems="10"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailInput" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="0dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="@dimen/login_top_margin"
+        android:layout_marginEnd="@dimen/login_side_margin"
+        android:layout_marginStart="@dimen/login_side_margin"
+        android:background="@null"
+        android:text="@string/login"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordIn" />
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/GoogleFloatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/FacebookFloatingButton"
+        android:layout_alignLeft="@+id/FacebookFloatingButton"
+        android:layout_alignStart="@+id/FacebookFloatingButton"
+        android:layout_marginTop="@dimen/login_fab_top_margin"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/com_facebook_button_background_color_focused"
+        app:layout_constraintStart_toStartOf="@+id/FacebookFloatingButton"
+        app:layout_constraintTop_toBottomOf="@+id/loginButton"
+        app:rippleColor="@color/cardview_light_background"
+        app:srcCompat="@drawable/googleg_standard_color_18" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/FacebookFloatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+
+        android:layout_marginTop="@dimen/login_fab_top_margin"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/com_facebook_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/GoogleFloatingButton"
+        app:rippleColor="@color/com_facebook_blue"
+        app:srcCompat="@drawable/com_facebook_button_icon_blue" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/button_facebook_login"
+        android:layout_width="39dp"
+        android:layout_height="34dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        tools:layout_editor_absoluteX="173dp"
+        tools:layout_editor_absoluteY="415dp"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
+
+
+
+    <Button
+        android:id="@+id/createAccount"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="167dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/create_account"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/FacebookFloatingButton" />
+
+
+</android.support.constraint.ConstraintLayout>

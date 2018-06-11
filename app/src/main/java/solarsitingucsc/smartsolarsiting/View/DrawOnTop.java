@@ -108,6 +108,8 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
         Camera.Parameters params = camera.getParameters();
         verticalFOV = params.getVerticalViewAngle();
         horizontalFOV = params.getHorizontalViewAngle();
+        System.out.println("VerticalFOV= "+verticalFOV);
+        System.out.println("HorizontalFOV= "+horizontalFOV);
         camera.release();
     }
 
@@ -263,6 +265,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
 
         for (int i = 0; i < averageArray.length; i++) {
             canvas.save();
+
             if(Math.toDegrees(orientation[0]) < 0) {
                 //AZIMUTH CORRECTION
                 dx = (float) ( (canvas.getWidth()/ horizontalFOV) *
@@ -284,11 +287,14 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                                 averageArray[i].getElevationFromTheHorizon()*-1)));
             }
 
+
             // wait to translate the dx so the horizon doesn't get pushed off
             canvas.translate(0.0f, 0.0f-dy);
 
             // now translate the dx
             canvas.translate(0.0f-dx, 0.0f);
+
+
 
             // draw our point -- we've rotated and translated this to the right spot already
             canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, CIRCLE_RADIUS,
@@ -305,6 +311,7 @@ public class DrawOnTop extends View implements SensorEventListener, LocationList
                 canvas.drawText(text, canvas.getWidth()/2, canvas.getHeight()/2, targetPaint);
                 foundHighestPoint = true;
             }
+
 
             canvas.restore();
         }

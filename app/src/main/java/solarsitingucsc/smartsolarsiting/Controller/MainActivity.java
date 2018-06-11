@@ -5,21 +5,22 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.view.SurfaceHolder;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -33,7 +34,6 @@ import solarsitingucsc.smartsolarsiting.View.CameraPreview;
 import android.support.design.widget.FloatingActionButton;
 
 
-import com.google.api.client.util.BackOffUtils;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
@@ -54,14 +54,29 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        //Setting orientation of the view based on shared prefs
+        setOrientation();
+
         checkForPermissionsAndOpenCamera();
-        if (progressBar == null ) {
+        if (progressBar == null)
             progressBar = findViewById(R.id.progressBar);
-        } else {
+        else
             progressBar.setVisibility(View.GONE);
+    }
+
+    private void setOrientation(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        boolean land_orientation = prefs.getBoolean("land_orient", false);
+        if(land_orientation){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
+
+
 
     /**
      * Process the result from the asking of permissions
@@ -99,7 +114,6 @@ public class MainActivity extends Activity {
         cameraPreviewPane.addView(mDraw);
 
         configureCaptureButton();
-        configurePanoramaButton();
     }
 
     /**
@@ -148,7 +162,8 @@ public class MainActivity extends Activity {
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressBar.setVisibility(View.VISIBLE);
+                if (progressBar != null )
+                    progressBar.setVisibility(View.VISIBLE);
                 String path = takeScreenshot();
                 Location userLocation = mDraw.lastLocation;
 

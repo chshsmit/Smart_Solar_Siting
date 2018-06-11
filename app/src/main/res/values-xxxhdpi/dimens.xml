@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Login Screen-->
+    <dimen name="elevation">4dp</dimen>
+    <dimen name="login_side_margin">50dp</dimen>
+    <dimen name="login_top_margin">30dp</dimen>
+
+    <dimen name="login_fab_top_margin">25dp</dimen>
+
+    <!--Onboarding Slide-->
+
+    <dimen name="onboarding_top_margin">50dp</dimen>
+    <dimen name="onboarding_side_image_margin">80dp</dimen>
+    <dimen name="onboarding_side_text_margin">50dp</dimen>
+    <dimen name="onboarding_vert_text_margin">20dp</dimen>
+
+
+    <!--Homepage-->
+    <dimen name="previous_site_list_height">75dp</dimen>
+
+
+
+
+</resources>

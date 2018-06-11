@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/previous_site_list_height"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="5dip">
+
+    <!--  ListRow Left side Thumbnail image -->
+    <LinearLayout android:id="@+id/site_image_thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dip"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dip">
+
+        <ImageView
+            android:id="@+id/site_image"
+            android:layout_width="70dip"
+            android:layout_height="70dip"
+            android:src="@drawable/ic_cam"/>
+
+    </LinearLayout>
+
+    <!-- Title Of Solar Site-->
+    <TextView
+        android:id="@+id/site_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/site_image_thumbnail"
+        android:layout_toRightOf="@+id/site_image_thumbnail"
+        android:text="@string/site_name"
+        android:textColor="#040404"
+        android:typeface="sans"
+        android:textSize="15sp"
+        android:textStyle="bold"/>
+
+    <!-- Date of Site -->
+    <TextView
+        android:id="@+id/site_date"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/site_name"
+        android:textColor="#343434"
+        android:textSize="12sp"
+        android:layout_marginTop="1dip"
+        android:layout_toRightOf="@+id/site_image_thumbnail"
+        android:layout_toEndOf="@+id/site_image_thumbnail"
+        android:text="@string/site_date" />
+
+    <!-- Total Power -->
+    <TextView
+        android:id="@+id/site_power"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/site_date"
+        android:layout_toRightOf="@+id/site_image_thumbnail"
+        android:text="@string/site_power"
+        android:textColor="#343434"
+        android:textSize="12sp"
+        android:layout_toEndOf="@+id/site_image_thumbnail" />
+
+
+    <!-- View Calculations Arrow -->
+    <!--<ImageView-->
+        <!--android:id="@+id/imageView4"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_below="@+id/site_name"-->
+        <!--android:layout_marginEnd="81dp"-->
+        <!--android:layout_marginRight="81dp"-->
+        <!--android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />-->
+
+    <Button
+        android:id="@+id/delete_solar_site"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:background="@drawable/outline_delete_black_24"
+        android:backgroundTint="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_delete"
+        android:focusable="true" />
+
+</RelativeLayout>

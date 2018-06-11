@@ -27,6 +27,7 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
+
     public static final String DEBUG_TAG = "CameraPreview Log";
     private SurfaceHolder mHolder;
     private Camera mCamera;
@@ -69,6 +70,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.setParameters(params);
 
         mCamera.setDisplayOrientation((info.orientation - degrees + 360) % 360);
+        //mCamera.setDisplayOrientation(90);
+        //mCamera.setDisplayOrientation(270);
 
         try {
             mCamera.setPreviewDisplay(mHolder);
@@ -109,6 +112,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public void takePicture() {
         mCamera.takePicture(null, null, mPicture);
     }
+
 
     public void setScreenshotName(String screenshotName) {
         this.screenshotName = screenshotName;

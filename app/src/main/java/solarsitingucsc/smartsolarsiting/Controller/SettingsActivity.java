@@ -255,7 +255,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     //----------------------------------------------------------------------------------------------
 
     public static void playTutorialVideo(){
-        Intent vidIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/_iFV-Lw6Msg"));
+        Intent vidIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/" +
+                "_iFV-Lw6Msg"));
 
         mContext.startActivity(vidIntent);
         Log.i("Video", "Video playing...");
